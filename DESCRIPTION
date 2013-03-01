@@ -1,0 +1,9 @@
+Package: Quandl
+Title: Quandl Data Connection
+Version: 1.1
+Date: 2013-02-19
+Author: Raymond McTaggart
+Maintainer: Raymond McTaggart <raymond@quandl.com>
+Description: This package interacts directly with the Quandl API to offer data in a number of formats usable in R.
+Depends: XML, zoo, xts
+License: GPL-2

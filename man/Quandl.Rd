@@ -1,28 +1,59 @@
 \name{Quandl}
 \alias{Quandl}
-\title{Quandl API}
-\description{Pulls Data from the Quandl API.}
-\usage{Quandl(code, type = "raw", start_date = NULL, end_date = NULL, transformation = "", collapse = "",authcode=Quandlr$auth_token)}
+\title{Pulls Data from the Quandl API}
+\usage{
+  Quandl(code, type = c("raw", "ts", "zoo", "xts"),
+    start_date, end_date,
+    transformation = c("", "diff", "rdiff", "normalize", "cumul"),
+    collapse = c("", "weekly", "monthly", "quarterly", "annual"),
+    authcode = auth_token)
+}
 \arguments{
-  \item{code}{Dataset code on Quandl.}
-  \item{type}{Type of data returned. Can be [raw],[ts],[zoo],or[xts].}
-  \item{start_date}{Use to truncate data by start date. [yyyy-mm-dd]}
-  \item{end_date}{Use to truncate data by end date.[yyyy-mm-dd]}
-  \item{transformation}{Apply Quandl API data transformations.}
+  \item{code}{Dataset code on Quandl specified as a
+  string.}
+
+  \item{type}{Type of data returned specified as string.
+  Can be 'raw', 'ts', 'zoo' or 'xts'.}
+
+  \item{start_date}{Use to truncate data by start date in
+  'yyyy-mm-dd' format.}
+
+  \item{end_date}{Use to truncate data by end date in
+  'yyyy-mm-dd' format.}
+
+  \item{transformation}{Apply Quandl API data
+  transformations.}
+
   \item{collapse}{Collapse frequency of Data.}
-  \item{authcode}{Authentication Token for extended API access.}
+
+  \item{authcode}{Authentication Token for extended API
+  access.}
 }
 \value{
-Depending on the outpug flag the class is either data.frame, time series, xts, or zoo
-\item{data}{Named data matrix with dimensions depending on the dataset.}
+  Depending on the outpug flag the class is either
+  data.frame, time series, xts, or zoo
 }
-\references{This R package uses the Quandl API. For more information go to http://www.quandl.com/api. For more help on the package itself go to http://www.quandl.com/help/r.}
-\author{Raymond McTaggart}
+\description{
+  An authentication token is needed for access to the
+  Quandl API multiple times. Set your \code{access_token}
+  in \code{Quandl:::auth_token} as a string.
+}
+\details{
+  For instructions on finding your authentication token go
+  to www.quandl.com/API
+}
 \examples{
-\dontrun{quandldata = Quandl("NSE/OIL",collapse="monthly",start_date="2013-01-01",type="ts")
-plot(quandldata[,1])}
+\dontrun{
+quandldata = Quandl("NSE/OIL", collapse="monthly", start_date="2013-01-01", type="ts")
+plot(quandldata[,1])
+}
+}
+\author{
+  Raymond McTaggart
+}
+\references{
+  This R package uses the Quandl API. For more information
+  go to http://www.quandl.com/api. For more help on the
+  package itself go to http://www.quandl.com/help/r.
 }
 
-\keyword{quandl}
-\keyword{api}
-\keyword{data}

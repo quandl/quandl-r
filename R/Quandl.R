@@ -1,8 +1,22 @@
-auth_token <- NULL
+auth_token <- NA
+
+#' Query or set Quandl API token
+#' @param auth_token Optionally passed parameter to set Quandl \code{auth_token}.
+#' @return Returns invisibly the currently set \code{auth_token}.
+#' @seealso \code{\link{Quandl}}
+#' @examples \dontrun{
+#' Quandl.auth('foobar')
+#' }
+#' @export
+Quandl.auth <- function(auth_token) {
+    if (!missing(auth_token))
+        assignInNamespace('auth_token', auth_token, 'Quandl')
+    invisible(Quandl:::auth_token)
+}
 
 #' Pulls Data from the Quandl API
 #'
-#' An authentication token is needed for access to the Quandl API multiple times. Set your \code{access_token} in \code{Quandl:::auth_token} as a string.
+#' An authentication token is needed for access to the Quandl API multiple times. Set your \code{access_token} with \code{Quandl.auth} function.
 #'
 #' For instructions on finding your authentication token go to www.quandl.com/API
 #' @param code Dataset code on Quandl specified as a string.
@@ -11,10 +25,11 @@ auth_token <- NULL
 #' @param end_date Use to truncate data by end date in 'yyyy-mm-dd' format.
 #' @param transformation Apply Quandl API data transformations.
 #' @param collapse Collapse frequency of Data.
-#' @param authcode Authentication Token for extended API access.
+#' @param authcode Authentication Token for extended API access by default set by \code{\link{Quandl.auth}}.
 #' @return Depending on the outpug flag the class is either data.frame, time series, xts, or zoo
 #' @references This R package uses the Quandl API. For more information go to http://www.quandl.com/api. For more help on the package itself go to http://www.quandl.com/help/r.
 #' @author Raymond McTaggart
+#' @seealso \code{\link{Quandl.auth}}
 #' @examples \dontrun{
 #' quandldata = Quandl("NSE/OIL", collapse="monthly", start_date="2013-01-01", type="ts")
 #' plot(quandldata[,1])
@@ -23,7 +38,7 @@ auth_token <- NULL
 #' @importFrom zoo zoo
 #' @importFrom xts xts
 #' @export
-Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts'), start_date, end_date, transformation = c('', 'diff', 'rdiff', 'normalize', 'cumul'), collapse = c('', 'weekly', 'monthly', 'quarterly', 'annual'), authcode = auth_token) {
+Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts'), start_date, end_date, transformation = c('', 'diff', 'rdiff', 'normalize', 'cumul'), collapse = c('', 'weekly', 'monthly', 'quarterly', 'annual'), authcode = Quandl.auth()) {
 
     ## Check params
     type           <- match.arg(type)
@@ -42,7 +57,7 @@ Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts'), start_date, end_da
 
     ## Check if data is available & grab metadata (although it's one extra API request)
     string = paste("http://www.quandl.com/api/v1/datasets/", code, ".xml?", "&rows=0", sep="")
-    if(is.null(authcode))
+    if (is.na(authcode))
         warning("It would appear you aren't using an authentication token. Please visit http://www.quandl.com/help/r or your usage may be limited.")
     else
         string = paste(string, "&auth_token=", authcode, sep = "")
@@ -58,7 +73,7 @@ Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts'), start_date, end_da
 
     ## Build API URL and add auth_token if available
     string = paste("http://www.quandl.com/api/v1/datasets/", code, ".csv?&sort_order=asc", sep="")
-    if (!is.null(authcode))
+    if (!is.na(authcode))
         string <- paste(string, "&auth_token=", authcode, sep = "")
 
     ## Add API options

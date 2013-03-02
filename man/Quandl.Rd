@@ -6,7 +6,7 @@
     start_date, end_date,
     transformation = c("", "diff", "rdiff", "normalize", "cumul"),
     collapse = c("", "weekly", "monthly", "quarterly", "annual"),
-    authcode = auth_token)
+    authcode = Quandl.auth())
 }
 \arguments{
   \item{code}{Dataset code on Quandl specified as a
@@ -27,7 +27,7 @@
   \item{collapse}{Collapse frequency of Data.}
 
   \item{authcode}{Authentication Token for extended API
-  access.}
+  access by default set by \code{\link{Quandl.auth}}.}
 }
 \value{
   Depending on the outpug flag the class is either
@@ -36,7 +36,7 @@
 \description{
   An authentication token is needed for access to the
   Quandl API multiple times. Set your \code{access_token}
-  in \code{Quandl:::auth_token} as a string.
+  with \code{Quandl.auth} function.
 }
 \details{
   For instructions on finding your authentication token go
@@ -55,5 +55,8 @@ plot(quandldata[,1])
   This R package uses the Quandl API. For more information
   go to http://www.quandl.com/api. For more help on the
   package itself go to http://www.quandl.com/help/r.
+}
+\seealso{
+  \code{\link{Quandl.auth}}
 }
 

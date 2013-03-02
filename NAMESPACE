@@ -1,3 +1,4 @@
+export(Quandl.auth)
 export(Quandl)
 importFrom(XML,xmlRoot)
 importFrom(XML,xmlSApply)

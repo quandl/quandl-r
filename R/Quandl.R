@@ -1,7 +1,6 @@
-Quandlr <- new.env()
+auth_token <- NULL
 
-
-Quandl <- function(code, type="raw",start_date=NULL,end_date=NULL,transformation="",collapse="",authcode=Quandlr$auth_token)
+Quandl <- function(code, type="raw",start_date=NULL,end_date=NULL,transformation="",collapse="",authcode=auth_token)
 {
     if(is.null(authcode))
     {

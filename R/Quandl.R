@@ -4,9 +4,12 @@ Quandl <- function(code, type="raw",start_date=NULL,end_date=NULL,transformation
 {
 
     frequency2integer <- function(freq) {
-        freq <- pmatch(collapse, c("annual", "quarterly", "monthly"), nomatch = 10)
-        freq <- as.integer(2.5 * freq^2 - 4.5 * freq + 3) # why not switch here?
-
+        switch(freq,
+               'daily'    = 365,
+               'monthly'  = 12,
+               'quaterly' = 4,
+               'yearly'   = 1,
+               1)
     }
 
     ## Check if data is available & grab metadata (although it's one extra API request)

@@ -19,6 +19,9 @@ auth_token <- NULL
 #' quandldata = Quandl("NSE/OIL", collapse="monthly", start_date="2013-01-01", type="ts")
 #' plot(quandldata[,1])
 #' }
+#' @importFrom XML xmlTreeParse  xmlRoot xmlSApply xmlValue
+#' @importFrom zoo zoo
+#' @importFrom xts xts
 #' @export
 Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts'), start_date, end_date, transformation = c('', 'diff', 'rdiff', 'normalize', 'cumul'), collapse = c('', 'weekly', 'monthly', 'quarterly', 'annual'), authcode = auth_token) {
 

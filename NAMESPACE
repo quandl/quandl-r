@@ -1,1 +1,7 @@
 export(Quandl)
+importFrom(XML,xmlRoot)
+importFrom(XML,xmlSApply)
+importFrom(XML,xmlTreeParse)
+importFrom(XML,xmlValue)
+importFrom(xts,xts)
+importFrom(zoo,zoo)

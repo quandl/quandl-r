@@ -7,22 +7,24 @@ Quandl <- function(code, type="raw",start_date=NULL,end_date=NULL,transformation
     if(is.null(authcode))
         warning("It would appear you aren't using an authentication token. Please visit http://www.quandl.com/help/r or your usage may be limited.")
     else
-        string = paste(string, "&auth_token=", authcode, sep = "");
-    xml = try(xmlRoot(xmlTreeParse(string)),silent=TRUE);
+        string = paste(string, "&auth_token=", authcode, sep = "")
+    xml = try(xmlRoot(xmlTreeParse(string)),silent=TRUE)
 
-    #Check if code exists
+    ## Check if code exists
     if(class(xml)[1] == "try-error")
     {
         stop("Code does not exist")
     }
-    #Detect frequency
+
+    ## Detect frequency
     else
     {
-        frequency = xmlSApply(xml[[9]],xmlValue);
+        frequency = xmlSApply(xml[[9]],xmlValue)
     }
     freq = pmatch(frequency,c("annual","quarterly","monthly"),nomatch=10)
     freq = as.integer(2.5*freq^2-4.5*freq+3)
-    #Add auth_token if available
+
+    ## Add auth_token if available
     if(is.null(authcode))
     {
         string = paste("http://www.quandl.com/api/v1/datasets/",code,".csv?&sort_order=asc",sep="")
@@ -31,7 +33,8 @@ Quandl <- function(code, type="raw",start_date=NULL,end_date=NULL,transformation
     {
         string = paste("http://www.quandl.com/api/v1/datasets/",code,".csv?&sort_order=asc&auth_token=",authcode,sep="")
     }
-    #API options
+
+    ## API options
     if(!is.null(start_date))
     {
         string = paste(string,"&trim_start=",as.Date(start_date),sep="")
@@ -52,7 +55,8 @@ Quandl <- function(code, type="raw",start_date=NULL,end_date=NULL,transformation
     }
     data = read.csv(string)
     data[,1] = as.Date(data[,1])
-    #Build data types
+
+    ## Build data types
     if(type == "raw")
     {
         return(data)
@@ -80,7 +84,6 @@ Quandl <- function(code, type="raw",start_date=NULL,end_date=NULL,transformation
         {
             freq = 1
         }
-        #data = ts(rev(t(data[c(-1)])),start=startdate,frequency=freq)
         data = ts(data[c(-1)],start=startdate,frequency=freq)
         return(data)
     }

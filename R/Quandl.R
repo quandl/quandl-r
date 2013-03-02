@@ -25,7 +25,7 @@ Quandl <- function(code, type="raw",start_date=NULL,end_date=NULL,transformation
         stop("Code does not exist")
 
     ## Detect frequency
-    frequency = xmlSApply(xml[[9]],xmlValue)
+    frequency = xmlSApply(xml, xmlValue)$frequency
     freq      = frequency2integer(frequency)
 
     ## Build API URL and add auth_token if available

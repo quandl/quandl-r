@@ -46,13 +46,12 @@ Quandl <- function(code, type="raw",start_date=NULL,end_date=NULL,transformation
     data = read.csv(string)
     data[,1] = as.Date(data[,1])
 
-    ## Build data types
+    ## Returning raw data
     if(type == "raw")
-    {
         return(data)
-    }
-    else if(type == "ts")
-    {
+
+    ## Returning ts object
+    if(type == "ts") {
         date = data[1,1]
         year = 1900+as.POSIXlt(date)$year
         startdate = 1
@@ -77,18 +76,16 @@ Quandl <- function(code, type="raw",start_date=NULL,end_date=NULL,transformation
         data = ts(data[c(-1)],start=startdate,frequency=freq)
         return(data)
     }
-    else if(type == "zoo")
-    {
-        data = zoo(data[c(-1)],data[,1])
-        return(data)
-    }
-    else if(type == "xts")
-    {
-        data = xts(data[c(-1)],data[,1])
-        return(data)
-    }
-    else
-    {
-        stop("Invalid Type")
-    }
+
+    ## Returning zoo object
+    if(type == "zoo")
+        return(zoo(data[c(-1)],data[,1]))
+
+    ## Returning xts object
+    if(type == "xts")
+        return(xts(data[c(-1)],data[,1]))
+
+    ## Just in case
+    stop("Invalid Type")
+
 }

@@ -1,8 +1,13 @@
 auth_token <- NULL
 
-Quandl <- function(code, type="raw",start_date=NULL,end_date=NULL,transformation="",collapse="",authcode=auth_token)
-{
+Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts'), start_date, end_date, transformation = c('', 'diff', 'rdiff', 'normalize', 'cumul'), collapse = c('', 'weekly', 'monthly', 'quarterly', 'annual'), authcode = auth_token) {
 
+    ## Check params
+    type           <- match.arg(type)
+    transformation <- match.arg(transformation)
+    collapse       <- match.arg(collapse)
+
+    ## Helper function
     frequency2integer <- function(freq) {
         switch(freq,
                'daily'    = 365,
@@ -34,9 +39,9 @@ Quandl <- function(code, type="raw",start_date=NULL,end_date=NULL,transformation
         paste(string, "&auth_token=", authcode, sep = "")
 
     ## Add API options
-    if (!is.null(start_date))
+    if (!missing(start_date))
         string = paste(string, "&trim_start=", as.Date(start_date), sep="")
-    if (!is.null(end_date))
+    if (!missing(end_date))
         string = paste(string,"&trim_end=",as.Date(end_date),sep="")
     if (transformation %in% c("diff", "rdiff", "normalize", "cumul"))
         string = paste(string,"&transformation=",transformation,sep="")

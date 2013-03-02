@@ -47,42 +47,19 @@ Quandl <- function(code, type="raw",start_date=NULL,end_date=NULL,transformation
     data[,1] = as.Date(data[,1])
 
     ## Returning raw data
-    if(type == "raw")
+    if (type == "raw")
         return(data)
 
     ## Returning ts object
-    if(type == "ts") {
-        date = data[1,1]
-        year = 1900+as.POSIXlt(date)$year
-        startdate = 1
-        if(freq == 1)
-        {
-            start = year
-        }
-        else if (freq == 4)
-        {
-            quarter = pmatch(quarters(date),c("Q1","Q2","Q3","Q4"))
-            startdate = c(year,quarter)
-        }
-        else if (freq == 12)
-        {
-            month = 1+as.POSIXlt(date)$mon
-            startdate = c(year, month)
-        }
-        else
-        {
-            freq = 1
-        }
-        data = ts(data[c(-1)],start=startdate,frequency=freq)
-        return(data)
-    }
+    if (type == "ts")
+        return(ts(data[, -1], frequency = freq, start = c(as.POSIXlt(data[1,1])$year+1900, as.POSIXlt(data[1,1])$mon + 1, as.POSIXlt(data[1,1])$mday)))
 
     ## Returning zoo object
-    if(type == "zoo")
+    if (type == "zoo")
         return(zoo(data[c(-1)],data[,1]))
 
     ## Returning xts object
-    if(type == "xts")
+    if (type == "xts")
         return(xts(data[c(-1)],data[,1]))
 
     ## Just in case

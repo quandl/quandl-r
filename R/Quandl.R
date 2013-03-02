@@ -38,9 +38,9 @@ Quandl <- function(code, type="raw",start_date=NULL,end_date=NULL,transformation
         string = paste(string, "&trim_start=", as.Date(start_date), sep="")
     if (!is.null(end_date))
         string = paste(string,"&trim_end=",as.Date(end_date),sep="")
-    if (!transformation %in% c("diff", "rdiff", "normalize", "cumul"))
+    if (transformation %in% c("diff", "rdiff", "normalize", "cumul"))
         string = paste(string,"&transformation=",transformation,sep="")
-    if (!collapse %in% c("weekly", "monthly", "quarterly", "annual")) {
+    if (collapse %in% c("weekly", "monthly", "quarterly", "annual")) {
         string = paste(string, "&collapse=", collapse, sep="")
         freq   = frequency2integer(collapse)
     }

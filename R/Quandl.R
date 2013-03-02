@@ -5,7 +5,7 @@ Quandl <- function(code, type="raw",start_date=NULL,end_date=NULL,transformation
     if(is.null(authcode))
     {
         string = paste("http://www.quandl.com/api/v1/datasets/",code,".xml?","&trim_start=1000-01-01&trim_end=1000-01-01",sep="");
-        print("It would appear you aren't using an authentication token. Please visit http://www.quandl.com/help/r or your usage may be limited.")
+        warning("It would appear you aren't using an authentication token. Please visit http://www.quandl.com/help/r or your usage may be limited.")
     }
     else
     {

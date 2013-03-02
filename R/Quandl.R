@@ -1,7 +1,3 @@
-library(zoo)
-library(XML)
-library(xts)
-
 Quandlr <- new.env()
 
 
@@ -36,7 +32,7 @@ Quandl <- function(code, type="raw",start_date=NULL,end_date=NULL,transformation
     }
     else
     {
-        string = paste("http://www.quandl.com/api/v1/datasets/",code,".csv?&sort_order=asc&auth_token=",authcode,sep="")   
+        string = paste("http://www.quandl.com/api/v1/datasets/",code,".csv?&sort_order=asc&auth_token=",authcode,sep="")
     }
     #API options
     if(!is.null(start_date))

@@ -9,9 +9,12 @@ auth_token <- NA
 #' }
 #' @export
 Quandl.auth <- function(auth_token) {
+
     if (!missing(auth_token))
         assignInNamespace('auth_token', auth_token, 'Quandl')
+
     invisible(Quandl:::auth_token)
+
 }
 
 #' Pulls Data from the Quandl API
@@ -56,41 +59,41 @@ Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts'), start_date, end_da
     }
 
     ## Check if data is available & grab metadata (although it's one extra API request)
-    string = paste("http://www.quandl.com/api/v1/datasets/", code, ".xml?", "&rows=0", sep="")
+    string <- paste("http://www.quandl.com/api/v1/datasets/", code, ".xml?", "&rows=0", sep="")
     if (is.na(authcode))
         warning("It would appear you aren't using an authentication token. Please visit http://www.quandl.com/help/r or your usage may be limited.")
     else
-        string = paste(string, "&auth_token=", authcode, sep = "")
-    xml = try(xmlRoot(xmlTreeParse(string)),silent=TRUE)
+        string <- paste(string, "&auth_token=", authcode, sep = "")
+    xml <- try(xmlRoot(xmlTreeParse(string)), silent = TRUE)
 
     ## Check if code exists
     if (inherits(xml, 'try-error'))
         stop("Code does not exist")
 
     ## Detect frequency
-    frequency = xmlSApply(xml, xmlValue)$frequency
-    freq      = frequency2integer(frequency)
+    frequency <- xmlSApply(xml, xmlValue)$frequency
+    freq      <- frequency2integer(frequency)
 
     ## Build API URL and add auth_token if available
-    string = paste("http://www.quandl.com/api/v1/datasets/", code, ".csv?&sort_order=asc", sep="")
+    string <- paste("http://www.quandl.com/api/v1/datasets/", code, ".csv?&sort_order=asc", sep="")
     if (!is.na(authcode))
         string <- paste(string, "&auth_token=", authcode, sep = "")
 
     ## Add API options
     if (!missing(start_date))
-        string = paste(string, "&trim_start=", as.Date(start_date), sep="")
+        string <- paste(string, "&trim_start=", as.Date(start_date), sep = "")
     if (!missing(end_date))
-        string = paste(string,"&trim_end=",as.Date(end_date),sep="")
+        string <- paste(string,"&trim_end=", as.Date(end_date) ,sep = "")
     if (transformation %in% c("diff", "rdiff", "normalize", "cumul"))
-        string = paste(string,"&transformation=",transformation,sep="")
+        string <- paste(string,"&transformation=", transformation, sep = "")
     if (collapse %in% c("weekly", "monthly", "quarterly", "annual")) {
-        string = paste(string, "&collapse=", collapse, sep="")
-        freq   = frequency2integer(collapse)
+        string <- paste(string, "&collapse=", collapse, sep = "")
+        freq   <- frequency2integer(collapse)
     }
 
     ## Fetch data
-    data = read.csv(string)
-    data[,1] = as.Date(data[,1])
+    data     <- read.csv(string)
+    data[,1] <- as.Date(data[, 1])
 
     ## Returning raw data
     if (type == "raw")

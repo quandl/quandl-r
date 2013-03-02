@@ -3,6 +3,12 @@ auth_token <- NULL
 Quandl <- function(code, type="raw",start_date=NULL,end_date=NULL,transformation="",collapse="",authcode=auth_token)
 {
 
+    frequency2integer <- function(freq) {
+        freq <- pmatch(collapse, c("annual", "quarterly", "monthly"), nomatch = 10)
+        freq <- as.integer(2.5 * freq^2 - 4.5 * freq + 3) # why not switch here?
+
+    }
+
     ## Check if data is available & grab metadata (although it's one extra API request)
     string = paste("http://www.quandl.com/api/v1/datasets/", code, ".xml?", "&rows=0", sep="")
     if(is.null(authcode))
@@ -17,8 +23,7 @@ Quandl <- function(code, type="raw",start_date=NULL,end_date=NULL,transformation
 
     ## Detect frequency
     frequency = xmlSApply(xml[[9]],xmlValue)
-    freq      = pmatch(frequency,c("annual","quarterly","monthly"),nomatch=10)
-    freq      = as.integer(2.5*freq^2-4.5*freq+3)
+    freq      = frequency2integer(frequency)
 
     ## Build API URL and add auth_token if available
     string = paste("http://www.quandl.com/api/v1/datasets/", code, ".csv?&sort_order=asc", sep="")
@@ -30,12 +35,11 @@ Quandl <- function(code, type="raw",start_date=NULL,end_date=NULL,transformation
         string = paste(string, "&trim_start=", as.Date(start_date), sep="")
     if (!is.null(end_date))
         string = paste(string,"&trim_end=",as.Date(end_date),sep="")
-    if (!is.na(pmatch(transformation, c("diff", "rdiff", "normalize", "cumul"))))
+    if (!transformation %in% c("diff", "rdiff", "normalize", "cumul"))
         string = paste(string,"&transformation=",transformation,sep="")
-    if (!is.na(pmatch(collapse, c("weekly", "monthly", "quarterly", "annual")))) {
-        string = paste(string,"&collapse=",collapse,sep="")
-        freq = pmatch(collapse,c("annual","quarterly","monthly"),nomatch=10)
-        freq = as.integer(2.5*freq^2-4.5*freq+3)
+    if (!collapse %in% c("weekly", "monthly", "quarterly", "annual")) {
+        string = paste(string, "&collapse=", collapse, sep="")
+        freq   = frequency2integer(collapse)
     }
 
     ## Fetch data

@@ -11,18 +11,13 @@ Quandl <- function(code, type="raw",start_date=NULL,end_date=NULL,transformation
     xml = try(xmlRoot(xmlTreeParse(string)),silent=TRUE)
 
     ## Check if code exists
-    if(class(xml)[1] == "try-error")
-    {
+    if (inherits(xml, 'error'))
         stop("Code does not exist")
-    }
 
     ## Detect frequency
-    else
-    {
-        frequency = xmlSApply(xml[[9]],xmlValue)
-    }
-    freq = pmatch(frequency,c("annual","quarterly","monthly"),nomatch=10)
-    freq = as.integer(2.5*freq^2-4.5*freq+3)
+    frequency = xmlSApply(xml[[9]],xmlValue)
+    freq      = pmatch(frequency,c("annual","quarterly","monthly"),nomatch=10)
+    freq      = as.integer(2.5*freq^2-4.5*freq+3)
 
     ## Add auth_token if available
     if(is.null(authcode))

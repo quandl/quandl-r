@@ -46,7 +46,7 @@ Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts'), start_date, end_da
     xml = try(xmlRoot(xmlTreeParse(string)),silent=TRUE)
 
     ## Check if code exists
-    if (inherits(xml, 'error'))
+    if (inherits(xml, 'try-error'))
         stop("Code does not exist")
 
     ## Detect frequency
@@ -56,7 +56,7 @@ Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts'), start_date, end_da
     ## Build API URL and add auth_token if available
     string = paste("http://www.quandl.com/api/v1/datasets/", code, ".csv?&sort_order=asc", sep="")
     if (!is.null(authcode))
-        paste(string, "&auth_token=", authcode, sep = "")
+        string <- paste(string, "&auth_token=", authcode, sep = "")
 
     ## Add API options
     if (!missing(start_date))

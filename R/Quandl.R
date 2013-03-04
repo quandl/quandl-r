@@ -53,7 +53,7 @@ Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts'), start_date, end_da
         switch(freq,
                'daily'    = 365,
                'monthly'  = 12,
-               'quaterly' = 4,
+               'quarterly' = 4,
                'yearly'   = 1,
                1)
     }
@@ -100,9 +100,25 @@ Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts'), start_date, end_da
         return(data)
 
     ## Returning ts object
-    if (type == "ts")
-        return(ts(data[, -1], frequency = freq, start = c(as.POSIXlt(data[1,1])$year+1900, as.POSIXlt(data[1,1])$mon + 1, as.POSIXlt(data[1,1])$mday)))
-
+    if (type == "ts") {
+        date = data[1,1]
+        year = 1900+as.POSIXlt(date)$year
+        startdate = 1
+        if(freq == 1) {
+            start = year
+        }
+        else if (freq == 4) {
+            quarter = pmatch(quarters(date),c("Q1","Q2","Q3","Q4"))
+            startdate = c(year,quarter)
+        }
+        else if (freq == 12) {
+            month = 1+as.POSIXlt(date)$mon
+            startdate = c(year, month)
+        }
+        else
+            freq = 1
+        return(ts(data[, -1], frequency = freq, start = startdate))
+    }
     ## Returning zoo object
     if (type == "zoo")
         return(zoo(data[c(-1)],data[,1]))

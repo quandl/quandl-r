@@ -1,1 +1,0 @@
-Quandlr <- new.env()

@@ -13,4 +13,3 @@ Imports:
 License: GPL-2
 Collate:
     'Quandl.R'
-    'Quandlr.R'

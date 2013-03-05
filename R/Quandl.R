@@ -37,7 +37,7 @@ Quandl.auth <- function(auth_token) {
 #' quandldata = Quandl("NSE/OIL", collapse="monthly", start_date="2013-01-01", type="ts")
 #' plot(quandldata[,1])
 #' }
-#' @importFrom XML xmlTreeParse  xmlRoot xmlSApply xmlValue
+#' @importFrom RJSONIO fromJSON
 #' @importFrom zoo zoo
 #' @importFrom xts xts
 #' @export
@@ -58,25 +58,11 @@ Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts'), start_date, end_da
                1)
     }
 
-    ## Check if data is available & grab metadata (although it's one extra API request)
-    string <- paste("http://www.quandl.com/api/v1/datasets/", code, ".xml?", "&rows=0", sep="")
+    ## Build API URL and add auth_token if available
+    string <- paste("http://www.quandl.com/api/v1/datasets/", code, ".json?sort_order=asc&", sep="")
     if (is.na(authcode))
         warning("It would appear you aren't using an authentication token. Please visit http://www.quandl.com/help/r or your usage may be limited.")
     else
-        string <- paste(string, "&auth_token=", authcode, sep = "")
-    xml <- try(xmlRoot(xmlTreeParse(string)), silent = TRUE)
-
-    ## Check if code exists
-    if (inherits(xml, 'try-error'))
-        stop("Code does not exist")
-
-    ## Detect frequency
-    frequency <- xmlSApply(xml, xmlValue)$frequency
-    freq      <- frequency2integer(frequency)
-
-    ## Build API URL and add auth_token if available
-    string <- paste("http://www.quandl.com/api/v1/datasets/", code, ".csv?&sort_order=asc", sep="")
-    if (!is.na(authcode))
         string <- paste(string, "&auth_token=", authcode, sep = "")
 
     ## Add API options
@@ -91,9 +77,26 @@ Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts'), start_date, end_da
         freq   <- frequency2integer(collapse)
     }
 
-    ## Fetch data
-    data     <- read.csv(string)
-    data[,1] <- as.Date(data[, 1])
+    ## Download and parse data
+    json <- try(fromJSON(string, nullValue = as.numeric(NA)), silent = TRUE)
+
+    ## Check if code exists
+    if (inherits(json, 'try-error'))
+        stop("Code does not exist")
+
+    ## Detect frequency
+    freq <- frequency2integer(json$frequency)
+
+    ## Shell data from JSON's list
+    data        <- as.data.frame(matrix(unlist(json$data), ncol = length(json$column_names), byrow = TRUE))
+    names(data) <- json$column_names
+    data[,1]    <- as.Date(data[, 1])
+
+    ## Transform values to numeric
+    if (ncol(data) > 2)
+        data[, 2:ncol(data)]  <- apply(data[, 2:ncol(data)], 2, as.numeric)
+    else
+        data[, 2]  <- as.numeric(data[, 2])
 
     ## Returning raw data
     if (type == "raw")

@@ -108,22 +108,22 @@ Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts'), start_date, end_da
 
     ## Returning ts object
     if (type == "ts") {
-        date = data[1,1]
-        year = 1900+as.POSIXlt(date)$year
-        startdate = 1
+        date <- data[1,1]
+        year <- 1900+as.POSIXlt(date)$year
+        startdate <- 1
         if(freq == 1) {
-            start = year
+            start <- year
         }
         else if (freq == 4) {
-            quarter = pmatch(quarters(date),c("Q1","Q2","Q3","Q4"))
-            startdate = c(year,quarter)
+            quarter <- pmatch(quarters(date), c("Q1","Q2","Q3","Q4"))
+            startdate <- c(year, quarter)
         }
         else if (freq == 12) {
-            month = 1+as.POSIXlt(date)$mon
-            startdate = c(year, month)
+            month <- 1+as.POSIXlt(date)$mon
+            startdate <- c(year, month)
         }
         else
-            freq = 1
+            freq <- 1
         return(ts(data[, -1], frequency = freq, start = startdate))
     }
     ## Returning zoo object

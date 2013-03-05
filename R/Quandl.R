@@ -43,6 +43,8 @@ Quandl.auth <- function(auth_token) {
 #' @export
 Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts'), start_date, end_date, transformation = c('', 'diff', 'rdiff', 'normalize', 'cumul'), collapse = c('', 'weekly', 'monthly', 'quarterly', 'annual'), authcode = Quandl.auth()) {
 
+    ## Flag to indicate frequency change due to collapse
+    freqflag = FALSE
     ## Check params
     type           <- match.arg(type)
     transformation <- match.arg(transformation)
@@ -75,6 +77,7 @@ Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts'), start_date, end_da
     if (collapse %in% c("weekly", "monthly", "quarterly", "annual")) {
         string <- paste(string, "&collapse=", collapse, sep = "")
         freq   <- frequency2integer(collapse)
+        freqflag = TRUE
     }
 
     ## Download and parse data
@@ -85,10 +88,11 @@ Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts'), start_date, end_da
         stop("Code does not exist")
 
     ## Detect frequency
-    freq <- frequency2integer(json$frequency)
+    if (!freqflag)
+        freq <- frequency2integer(json$frequency)
 
     ## Shell data from JSON's list
-    data        <- as.data.frame(matrix(unlist(json$data), ncol = length(json$column_names), byrow = TRUE))
+    data        <- as.data.frame(matrix(unlist(json$data), ncol = length(json$column_names), byrow = TRUE),stringsAsFactors=FALSE)
     names(data) <- json$column_names
     data[,1]    <- as.Date(data[, 1])
 

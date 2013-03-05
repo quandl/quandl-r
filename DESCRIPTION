@@ -7,7 +7,7 @@ Maintainer: Raymond McTaggart <raymond@quandl.com>
 Description: This package interacts directly with the Quandl API to offer data
     in a number of formats usable in R.
 Imports:
-    XML,
+    RJSONIO,
     zoo,
     xts
 License: GPL-2

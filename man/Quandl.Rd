@@ -26,6 +26,8 @@
 
   \item{collapse}{Collapse frequency of Data.}
 
+  \item{rows}{Select number of dates returned.}
+
   \item{authcode}{Authentication Token for extended API
   access by default set by \code{\link{Quandl.auth}}.}
 }

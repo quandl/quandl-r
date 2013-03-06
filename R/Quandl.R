@@ -28,6 +28,7 @@ Quandl.auth <- function(auth_token) {
 #' @param end_date Use to truncate data by end date in 'yyyy-mm-dd' format.
 #' @param transformation Apply Quandl API data transformations.
 #' @param collapse Collapse frequency of Data.
+#' @param rows Select number of dates returned.
 #' @param authcode Authentication Token for extended API access by default set by \code{\link{Quandl.auth}}.
 #' @return Depending on the outpug flag the class is either data.frame, time series, xts, or zoo
 #' @references This R package uses the Quandl API. For more information go to http://www.quandl.com/api. For more help on the package itself go to http://www.quandl.com/help/r.
@@ -41,7 +42,7 @@ Quandl.auth <- function(auth_token) {
 #' @importFrom zoo zoo
 #' @importFrom xts xts
 #' @export
-Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts'), start_date, end_date, transformation = c('', 'diff', 'rdiff', 'normalize', 'cumul'), collapse = c('', 'weekly', 'monthly', 'quarterly', 'annual'), authcode = Quandl.auth()) {
+Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts'), start_date, end_date, transformation = c('', 'diff', 'rdiff', 'normalize', 'cumul'), collapse = c('', 'weekly', 'monthly', 'quarterly', 'annual'), rows, authcode = Quandl.auth()) {
 
     ## Flag to indicate frequency change due to collapse
     freqflag = FALSE
@@ -79,6 +80,8 @@ Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts'), start_date, end_da
         freq   <- frequency2integer(collapse)
         freqflag = TRUE
     }
+    if (!missing(rows))
+        string <- paste(string,"&rows=", rows ,sep = "")
 
     ## Download and parse data
     json <- try(fromJSON(string, nullValue = as.numeric(NA)), silent = TRUE)

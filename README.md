@@ -25,6 +25,12 @@ Then move the file into your working direcotry in R and type:
     > install.packages("Quandl_1.1.tar.gz",repos=NULL,type="source")
     > library(Quandl)
 
+A simpler solution is to use the 'devtools' package.
+
+    > install.packages("devtools")
+    > library(devtools)
+    > install_github('R-package','quandl')
+
 # Usage
 
 Once you find the data you'd like to load into R on Quandl, copy the Quandl code from the description box and past it into the function.

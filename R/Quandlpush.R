@@ -35,7 +35,10 @@ Quandlpush <- function(code, name, desc, data, override=FALSE, authcode = Quandl
         desc = ""
     if (is.na(authcode))
         stop("You are not using an authentication token. Please visit http://www.quandl.com/help/r or this function will not work")
-
+    if (override)
+        override = "true"
+    else
+        override = "false"
     if (!class(data)=="data.frame")
         stop("Please pass data as a data frame.")
 
@@ -51,7 +54,7 @@ Quandlpush <- function(code, name, desc, data, override=FALSE, authcode = Quandl
     }
     tempstring <- paste(data[nrow(data),],collapse=",")
     datastring <- paste(datastring,tempstring,sep="")
-    output <- postForm(url, name=name, code=code, data=datastring)
+    output <- postForm(url, name=name, code=code, description=desc, update_or_create=override, data=datastring)
     json <- fromJSON(output,asText=TRUE)
     returnurl <- paste("http://www.quandl.com/",json$source_code,"/",json$code,sep="")
     returnurl

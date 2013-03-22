@@ -6,7 +6,7 @@
     start_date, end_date,
     transformation = c("", "diff", "rdiff", "normalize", "cumul"),
     collapse = c("", "weekly", "monthly", "quarterly", "annual"),
-    authcode = Quandl.auth())
+    rows, authcode = Quandl.auth())
 }
 \arguments{
   \item{code}{Dataset code on Quandl specified as a

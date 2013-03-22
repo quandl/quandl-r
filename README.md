@@ -18,11 +18,11 @@ To install the most recent package on github, download all the files above into 
 
     R CMD build DIRECTORY/
 
-This will create a file named "Quandl_1.1.tar.gz". The current version of Quandl on github is "1.1"
+This will create a file named "Quandl_1.5.tar.gz". The current version of Quandl on github is "1.5"
 
 Then move the file into your working direcotry in R and type:
 
-    > install.packages("Quandl_1.1.tar.gz",repos=NULL,type="source")
+    > install.packages("Quandl_1.5.tar.gz",repos=NULL,type="source")
     > library(Quandl)
 
 A simpler solution is to use the 'devtools' package.

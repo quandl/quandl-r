@@ -25,7 +25,7 @@ A simpler solution is to use the 'devtools' package.
     > library(devtools)
     > install_github('R-package','quandl')
 
-## CKAN
+## CRAN
 
 To install the most recent package from CRAN type:
 

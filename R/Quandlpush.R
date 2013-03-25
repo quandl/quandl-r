@@ -56,6 +56,10 @@ Quandlpush <- function(code, name, desc, data, override=FALSE, authcode = Quandl
     datastring <- paste(datastring,tempstring,sep="")
     output <- postForm(url, name=name, code=code, description=desc, update_or_create=override, data=datastring)
     json <- fromJSON(output,asText=TRUE)
+    if (override == "false") {
+        if (json$errors$code == "has already been taken" & override == "false")
+            stop("You are trying to overwrite a dataset that already exists on Quandl. If this is what you want to do please call the function again with override=TRUE")
+    }
     returnurl <- paste("http://www.quandl.com/",json$source_code,"/",json$code,sep="")
     returnurl
 }

@@ -23,6 +23,7 @@
 
 Quandlpush <- function(code, name, desc, data, override=FALSE, authcode = Quandl.auth()) {
 
+    # Check inputs are proper
     if (missing(code))
         stop("No code indicated")
     if (!nchar(code) == nchar(gsub("[^A-Z0-9_]","",code)))
@@ -42,10 +43,13 @@ Quandlpush <- function(code, name, desc, data, override=FALSE, authcode = Quandl
     if (!inherits(data,"data.frame"))
         stop("Please pass data as a data frame.")
 
+    # Create url to access API
     url <- paste("http://www.quandl.com/api/v1/datasets.json?auth_token=",authcode,sep="")
+    # Make sure dates are formatted correctly.
     data[,1] <- as.Date(data[,1])
     data[,1] <- as.character(data[,1])
 
+    # Build datastring to pass to Quandl
     datastring = paste(paste(names(data),collapse=","),"\n",sep="")
 
     for (i in 1:(nrow(data)-1)) {
@@ -54,7 +58,9 @@ Quandlpush <- function(code, name, desc, data, override=FALSE, authcode = Quandl
     }
     tempstring <- paste(data[nrow(data),],collapse=",")
     datastring <- paste(datastring,tempstring,sep="")
+    # API Call
     output <- postForm(url, name=name, code=code, description=desc, update_or_create=override, data=datastring)
+    # Check if uploaded properly
     json <- fromJSON(output,asText=TRUE)
     if (override == "false") {
         if (try(json$errors$code) == "has already been taken")

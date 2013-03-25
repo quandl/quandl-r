@@ -9,14 +9,8 @@ For more information please contact raymond@quandl.com
 
 # Installation
 
-To install the most recent package on CRAN type:
-
-    > install.packages("Quandl")
-    > library(Quandl)
-
-To install the most recent package on github, download all the files above into some DIRECTORY and type in the terminal or CMD
-
-    R CMD build DIRECTORY/
+    git clone git://github.com/quandl/R-package.git
+    R CMD build R-package/
 
 This will create a file named "Quandl_1.5.tar.gz". The current version of Quandl on github is "1.5"
 
@@ -30,6 +24,15 @@ A simpler solution is to use the 'devtools' package.
     > install.packages("devtools")
     > library(devtools)
     > install_github('R-package','quandl')
+
+## CKAN
+
+To install the most recent package from CRAN type:
+
+    > install.packages("Quandl")
+    > library(Quandl)
+    
+Note that the version on CKAN might not reflect the most recent changes made to this package.
 
 # Usage
 

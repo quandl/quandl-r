@@ -36,10 +36,12 @@ Quandlpush <- function(code, name, desc, data, override=FALSE, authcode = Quandl
         desc = ""
     if (is.na(authcode))
         stop("You are not using an authentication token. Please visit http://www.quandl.com/help/r or this function will not work")
-    if (override)
-        override = "true"
+    truefalse = c("true","false")
+    override = match(tolower(as.character(override)),truefalse)
+    if (is.na(override))
+        stop("override is either TRUE or FALSE")
     else
-        override = "false"
+        override = truefalse[override]
     if (!inherits(data,"data.frame"))
         stop("Please pass data as a data frame.")
 

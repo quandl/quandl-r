@@ -39,7 +39,7 @@ Quandlpush <- function(code, name, desc, data, override=FALSE, authcode = Quandl
         override = "true"
     else
         override = "false"
-    if (!class(data)=="data.frame")
+    if (!inherits(data,"data.frame"))
         stop("Please pass data as a data frame.")
 
     url <- paste("http://www.quandl.com/api/v1/datasets.json?auth_token=",authcode,sep="")

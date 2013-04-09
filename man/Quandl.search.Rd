@@ -3,7 +3,7 @@
 \title{Search the Quandl database}
 \usage{
   Quandl.search(query, page = 1, source = NULL,
-    print = TRUE, authcode = Quandl.auth())
+    silent = FALSE, authcode = Quandl.auth())
 }
 \arguments{
   \item{query}{Search terms}
@@ -13,7 +13,7 @@
   \item{source}{Specifies a specific source to search
   within.}
 
-  \item{print}{Prints the first few results when TRUE.}
+  \item{silent}{Prints the first few results when FALSE.}
 
   \item{authcode}{Authentication Token for extended API
   access by default set by \code{\link{Quandl.auth}}.}

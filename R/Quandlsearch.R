@@ -6,7 +6,7 @@
 #' @param query Search terms
 #' @param page Specifies which page of results to return.
 #' @param source Specifies a specific source to search within.
-#' @param print Prints the first few results when TRUE.
+#' @param silent Prints the first few results when FALSE.
 #' @param authcode Authentication Token for extended API access by default set by \code{\link{Quandl.auth}}.
 #' @return A list of the search results.
 #' @references This R package uses the Quandl API. For more information go to http://www.quandl.com/api. For more help on the package itself go to http://www.quandl.com/help/r.
@@ -17,7 +17,7 @@
 #' }
 #' @importFrom RJSONIO fromJSON
 #' @export
-Quandl.search <- function(query, page=1, source=NULL, print=TRUE, authcode=Quandl.auth()) {
+Quandl.search <- function(query, page=1, source=NULL, silent=FALSE, authcode=Quandl.auth()) {
     parsedquery <- gsub(" ", "+", query)
     url <- paste("http://www.quandl.com/api/v1/datasets.json?query=", parsedquery, sep="")
     if (is.na(authcode))
@@ -39,7 +39,7 @@ Quandl.search <- function(query, page=1, source=NULL, print=TRUE, authcode=Quand
         desc <- json$docs[[i]]$description
         freq <- json$docs[[i]]$frequency
         colname <- json$docs[[i]]$column_names
-        if (i<4 & print) {
+        if (i<4 & !silent) {
             cat(name, "\nCode: ", code, "\nDesc: ", desc, "\nFreq: ", freq, "\nCols: ", paste(colname, collapse="|"), "\n\n", sep="")
         }
         list[[i]]$name <- name

@@ -21,7 +21,7 @@
 #' @importFrom RCurl postForm
 #' @export
 
-Quandlpush <- function(code, name, desc, data, override=FALSE, authcode = Quandl.auth()) {
+Quandl.push <- function(code, name, desc, data, override=FALSE, authcode = Quandl.auth()) {
 
     # Check inputs are proper
     if (missing(code))

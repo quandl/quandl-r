@@ -23,7 +23,7 @@ Quandl.search <- function(query, page=1, source=NULL, silent=FALSE, authcode=Qua
     if (is.na(authcode))
         warning("It would appear you aren't using an authentication token. Please visit http://www.quandl.com/help/r or your usage may be limited.")
     else
-        string <- paste(string, "&auth_token=", authcode, sep = "")
+        url <- paste(url, "&auth_token=", authcode, sep = "")
     if (!is.null(source)) {
         url <- paste(url, "&source_code=", source, sep="")
     }

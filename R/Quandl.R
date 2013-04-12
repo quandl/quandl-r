@@ -89,6 +89,8 @@ Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts'), start_date, end_da
     ## Check if code exists
     if (inherits(json, 'try-error'))
         stop("Code does not exist")
+    if (length(json) == 0)
+        stop("Code does not exist")
 
     ## Detect frequency
     if (!freqflag)

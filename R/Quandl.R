@@ -29,8 +29,9 @@ Quandl.auth <- function(auth_token) {
 #' @param transformation Apply Quandl API data transformations.
 #' @param collapse Collapse frequency of Data.
 #' @param rows Select number of dates returned.
+#' @param meta Returns meta data in list format as well as data.
 #' @param authcode Authentication Token for extended API access by default set by \code{\link{Quandl.auth}}.
-#' @return Depending on the outpug flag the class is either data.frame, time series, xts, or zoo
+#' @return Depending on the outpug flag the class is either data.frame, time series, xts, zoo or a list containing one.
 #' @references This R package uses the Quandl API. For more information go to http://www.quandl.com/api. For more help on the package itself go to http://www.quandl.com/help/r.
 #' @author Raymond McTaggart
 #' @seealso \code{\link{Quandl.auth}}
@@ -42,7 +43,7 @@ Quandl.auth <- function(auth_token) {
 #' @importFrom zoo zoo
 #' @importFrom xts xts
 #' @export
-Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts'), start_date, end_date, transformation = c('', 'diff', 'rdiff', 'normalize', 'cumul'), collapse = c('', 'weekly', 'monthly', 'quarterly', 'annual'), rows, authcode = Quandl.auth()) {
+Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts'), start_date, end_date, transformation = c('', 'diff', 'rdiff', 'normalize', 'cumul'), collapse = c('', 'weekly', 'monthly', 'quarterly', 'annual'), rows, meta = FALSE, authcode = Quandl.auth()) {
 
     ## Flag to indicate frequency change due to collapse
     freqflag = FALSE
@@ -109,7 +110,7 @@ Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts'), start_date, end_da
 
     ## Returning raw data
     if (type == "raw")
-        return(data)
+        data_out <- data
 
     ## Returning ts object
     if (type == "ts") {
@@ -129,16 +130,38 @@ Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts'), start_date, end_da
         }
         else
             freq <- 1
-        return(ts(data[, -1], frequency = freq, start = startdate))
+        data_out <- ts(data[, -1], frequency = freq, start = startdate)
     }
     ## Returning zoo object
     if (type == "zoo")
-        return(zoo(data[c(-1)],data[,1]))
+        data_out <- zoo(data[c(-1)],data[,1])
 
     ## Returning xts object
     if (type == "xts")
-        return(xts(data[c(-1)],data[,1]))
+        data_out <- xts(data[c(-1)],data[,1])
 
+    ## Append Metadata
+    if (meta) {
+        output <- list()
+        output$data <- data_out
+        output$frequency <-json$frequency
+        output$name <- json$name
+        output$description <- json$description
+        output$updated <- json$updated_at
+        source_code <- strsplit(code, "/")
+        source_code <- source_code[[1]][1]
+        source_string <- paste("http://www.quandl.com/api/v1/sources/", source_code, ".json", sep="")
+        if (!is.na(authcode))
+            source_string <- paste(source_string, "&auth_token=", authcode, sep = "")
+        source_json <- fromJSON(source_string, nullValue = as.numeric(NA))
+        output$source_name <- source_json$name
+        output$source_link <- source_json$host
+        output$source_description <- source_json$description
+        return(output)
+    }
+    else {
+        return(data_out)
+    }
     ## Just in case
     stop("Invalid Type")
 

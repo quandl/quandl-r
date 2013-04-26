@@ -6,7 +6,7 @@
     start_date, end_date,
     transformation = c("", "diff", "rdiff", "normalize", "cumul"),
     collapse = c("", "weekly", "monthly", "quarterly", "annual"),
-    rows, authcode = Quandl.auth())
+    rows, meta = FALSE, authcode = Quandl.auth())
 }
 \arguments{
   \item{code}{Dataset code on Quandl specified as a
@@ -28,12 +28,16 @@
 
   \item{rows}{Select number of dates returned.}
 
+  \item{meta}{Returns meta data in list format as well as
+  data.}
+
   \item{authcode}{Authentication Token for extended API
   access by default set by \code{\link{Quandl.auth}}.}
 }
 \value{
   Depending on the outpug flag the class is either
-  data.frame, time series, xts, or zoo
+  data.frame, time series, xts, zoo or a list containing
+  one.
 }
 \description{
   An authentication token is needed for access to the

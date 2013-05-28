@@ -139,7 +139,6 @@ Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts'), start_date, end_da
     ## Returning xts object
     if (type == "xts")
         data_out <- xts(data[c(-1)],data[,1])
-
     ## Append Metadata
     if (meta) {
         output <- list()
@@ -152,7 +151,7 @@ Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts'), start_date, end_da
         source_code <- source_code[[1]][1]
         source_string <- paste("http://www.quandl.com/api/v1/sources/", source_code, ".json", sep="")
         if (!is.na(authcode))
-            source_string <- paste(source_string, "&auth_token=", authcode, sep = "")
+            source_string <- paste(source_string, "?auth_token=", authcode, sep = "")
         source_json <- fromJSON(source_string, nullValue = as.numeric(NA))
         output$source_name <- source_json$name
         output$source_link <- source_json$host

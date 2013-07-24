@@ -29,6 +29,7 @@ Quandl.auth <- function(auth_token) {
 #' @param transformation Apply Quandl API data transformations.
 #' @param collapse Collapse frequency of Data.
 #' @param rows Select number of dates returned.
+#' @param sort Select if data is given to R in ascending or descending formats. Helpful for the rows parameter.
 #' @param meta Returns meta data in list format as well as data.
 #' @param authcode Authentication Token for extended API access by default set by \code{\link{Quandl.auth}}.
 #' @return Depending on the outpug flag the class is either data.frame, time series, xts, zoo or a list containing one.
@@ -43,7 +44,7 @@ Quandl.auth <- function(auth_token) {
 #' @importFrom zoo zoo
 #' @importFrom xts xts
 #' @export
-Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts'), start_date, end_date, transformation = c('', 'diff', 'rdiff', 'normalize', 'cumul'), collapse = c('', 'weekly', 'monthly', 'quarterly', 'annual'), rows, meta = FALSE, authcode = Quandl.auth()) {
+Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts'), start_date, end_date, transformation = c('', 'diff', 'rdiff', 'normalize', 'cumul'), collapse = c('', 'weekly', 'monthly', 'quarterly', 'annual'), rows, sort = c('asc', 'desc'), meta = FALSE, authcode = Quandl.auth()) {
 
     ## Flag to indicate frequency change due to collapse
     freqflag = FALSE
@@ -51,6 +52,7 @@ Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts'), start_date, end_da
     type           <- match.arg(type)
     transformation <- match.arg(transformation)
     collapse       <- match.arg(collapse)
+    sort           <- match.arg(sort)
 
     ## Helper function
     frequency2integer <- function(freq) {
@@ -63,7 +65,7 @@ Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts'), start_date, end_da
     }
 
     ## Build API URL and add auth_token if available
-    string <- paste("http://www.quandl.com/api/v1/datasets/", code, ".json?sort_order=asc&", sep="")
+    string <- paste("http://www.quandl.com/api/v1/datasets/", code, ".json?", sep="")
     if (is.na(authcode))
         warning("It would appear you aren't using an authentication token. Please visit http://www.quandl.com/help/r or your usage may be limited.")
     else
@@ -74,6 +76,8 @@ Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts'), start_date, end_da
         string <- paste(string, "&trim_start=", as.Date(start_date), sep = "")
     if (!missing(end_date))
         string <- paste(string,"&trim_end=", as.Date(end_date) ,sep = "")
+    if (sort %in% c("asc", "desc"))
+        string <- paste(string, "&sort_order=", sort, sep = "")
     if (transformation %in% c("diff", "rdiff", "normalize", "cumul"))
         string <- paste(string,"&transformation=", transformation, sep = "")
     if (collapse %in% c("weekly", "monthly", "quarterly", "annual")) {

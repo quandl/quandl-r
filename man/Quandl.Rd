@@ -6,7 +6,8 @@
     start_date, end_date,
     transformation = c("", "diff", "rdiff", "normalize", "cumul"),
     collapse = c("", "weekly", "monthly", "quarterly", "annual"),
-    rows, meta = FALSE, authcode = Quandl.auth())
+    rows, sort = c("asc", "desc"), meta = FALSE,
+    authcode = Quandl.auth())
 }
 \arguments{
   \item{code}{Dataset code on Quandl specified as a
@@ -27,6 +28,9 @@
   \item{collapse}{Collapse frequency of Data.}
 
   \item{rows}{Select number of dates returned.}
+
+  \item{sort}{Select if data is given to R in ascending or
+  descending formats. Helpful for the rows parameter.}
 
   \item{meta}{Returns meta data in list format as well as
   data.}

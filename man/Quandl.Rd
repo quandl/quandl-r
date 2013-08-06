@@ -6,12 +6,12 @@
     start_date, end_date,
     transformation = c("", "diff", "rdiff", "normalize", "cumul"),
     collapse = c("", "weekly", "monthly", "quarterly", "annual"),
-    rows, sort = c("asc", "desc"), meta = FALSE,
+    rows, sort = c("desc", "asc"), meta = FALSE,
     authcode = Quandl.auth())
 }
 \arguments{
-  \item{code}{Dataset code on Quandl specified as a
-  string.}
+  \item{code}{Dataset code on Quandl specified as a string
+  or an array of strings.}
 
   \item{type}{Type of data returned specified as string.
   Can be 'raw', 'ts', 'zoo' or 'xts'.}

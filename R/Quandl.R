@@ -22,7 +22,7 @@ Quandl.auth <- function(auth_token) {
 #' An authentication token is needed for access to the Quandl API multiple times. Set your \code{access_token} with \code{Quandl.auth} function.
 #'
 #' For instructions on finding your authentication token go to www.quandl.com/API
-#' @param code Dataset code on Quandl specified as a string.
+#' @param code Dataset code on Quandl specified as a string or an array of strings.
 #' @param type Type of data returned specified as string. Can be 'raw', 'ts', 'zoo' or 'xts'.
 #' @param start_date Use to truncate data by start date in 'yyyy-mm-dd' format.
 #' @param end_date Use to truncate data by end date in 'yyyy-mm-dd' format.
@@ -40,14 +40,17 @@ Quandl.auth <- function(auth_token) {
 #' quandldata = Quandl("NSE/OIL", collapse="monthly", start_date="2013-01-01", type="ts")
 #' plot(quandldata[,1])
 #' }
+#' @importFrom RCurl getURL
 #' @importFrom RJSONIO fromJSON
 #' @importFrom zoo zoo
 #' @importFrom xts xts
 #' @export
-Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts'), start_date, end_date, transformation = c('', 'diff', 'rdiff', 'normalize', 'cumul'), collapse = c('', 'weekly', 'monthly', 'quarterly', 'annual'), rows, sort = c('asc', 'desc'), meta = FALSE, authcode = Quandl.auth()) {
+Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts'), start_date, end_date, transformation = c('', 'diff', 'rdiff', 'normalize', 'cumul'), collapse = c('', 'weekly', 'monthly', 'quarterly', 'annual'), rows, sort = c('desc', 'asc'), meta = FALSE, authcode = Quandl.auth()) {
 
     ## Flag to indicate frequency change due to collapse
     freqflag = FALSE
+    ## Default to single dataset
+    multiset = FALSE
     ## Check params
     type           <- match.arg(type)
     transformation <- match.arg(transformation)
@@ -65,7 +68,20 @@ Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts'), start_date, end_da
     }
 
     ## Build API URL and add auth_token if available
-    string <- paste("http://www.quandl.com/api/v1/datasets/", code, ".json?", sep="")
+    if (length(code) == 1)
+        string <- paste("http://www.quandl.com/api/v1/datasets/", code, ".json?sort_order=asc&", sep="")
+    else {
+        multiset = TRUE
+        freqflag = TRUE
+        freq <- 1
+        string <- "http://www.quandl.com/api/v1/multisets.json?columns="
+        string <- paste(string, sub("/",".",code[1]), sep="")
+        for (i in 2:length(code)) {
+            string <- paste(string, sub("/",".",code[i]), sep=",")
+        }
+    }
+
+
     if (is.na(authcode))
         warning("It would appear you aren't using an authentication token. Please visit http://www.quandl.com/help/r or your usage may be limited.")
     else
@@ -77,7 +93,7 @@ Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts'), start_date, end_da
     if (!missing(end_date))
         string <- paste(string,"&trim_end=", as.Date(end_date) ,sep = "")
     if (sort %in% c("asc", "desc"))
-        string <- paste(string, "&sort_order=", sort, sep = "")
+        string <- paste(string, "&sort_order=", sort, sep = "")    
     if (transformation %in% c("diff", "rdiff", "normalize", "cumul"))
         string <- paste(string,"&transformation=", transformation, sep = "")
     if (collapse %in% c("weekly", "monthly", "quarterly", "annual")) {
@@ -86,17 +102,21 @@ Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts'), start_date, end_da
         freqflag = TRUE
     }
     if (!missing(rows))
-        string <- paste(string,"&rows=", rows ,sep = "")
-
+        string <- paste(string,"&limit=", rows ,sep = "")
     ## Download and parse data
-    json <- try(fromJSON(string, nullValue = as.numeric(NA)), silent = TRUE)
-
+    response <- getURL(string)
+    if (length(grep("403 Forbidden", response)))
+        stop("You and/or people on your network have hit the limit for unregistered downloads today, please register here: http://www.quandl.com/users/sign_up to automatically increase your limit to 500 per day. For help contact us at: connect@quandl.com")
+    json <- try(fromJSON(response, nullValue = as.numeric(NA)), silent = TRUE)
     ## Check if code exists
-    if (inherits(json, 'try-error'))
+    if (inherits(json, 'try-error')) {
+        error_str <- paste("Something is wrong, and you got past my error catching. Please copy this output and email to connect@quandl.com:", string, sep="\n")
+        stop(error_str)
+    }
+    if (json["error"] == "Requested entity does not exist.")
         stop("Code does not exist")
-    if (length(json) == 0)
-        stop("Code does not exist")
-
+    if (length(json$data) == 0)
+        stop("Requested Entity does not exist.")
     ## Detect frequency
     if (!freqflag)
         freq <- frequency2integer(json$frequency)
@@ -144,16 +164,16 @@ Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts'), start_date, end_da
     if (type == "xts")
         data_out <- xts(data[c(-1)],data[,1])
     ## Append Metadata
-    if (meta) {
+    if (meta && !multiset) {
         output <- list()
         output$data <- data_out
         output$frequency <-json$frequency
         output$name <- json$name
         output$description <- json$description
         output$updated <- json$updated_at
-        source_code <- strsplit(code, "/")
-        source_code <- source_code[[1]][1]
-        source_string <- paste("http://www.quandl.com/api/v1/sources/", source_code, ".json", sep="")
+        output$source_code <- json$source_code
+        output$code <- paste(output$source_code, json$code, sep="/")
+        source_string <- paste("http://www.quandl.com/api/v1/sources/", output$source_code, ".json", sep="")
         if (!is.na(authcode))
             source_string <- paste(source_string, "?auth_token=", authcode, sep = "")
         source_json <- fromJSON(source_string, nullValue = as.numeric(NA))

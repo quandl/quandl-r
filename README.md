@@ -14,11 +14,11 @@ For more information please contact raymond@quandl.com
     git clone git://github.com/quandl/R-package.git
     R CMD build R-package/
 
-This will create a file named "Quandl_1.5.tar.gz". The current version of Quandl on github is "1.5"
+This will create a file named "Quandl_VERSION.tar.gz". 
 
 Then move the file into your working directory in R and type:
 
-    > install.packages("Quandl_1.5.tar.gz",repos=NULL,type="source")
+    > install.packages("Quandl_VERSION.tar.gz",repos=NULL,type="source")
     > library(Quandl)
 
 A simpler solution is to use the 'devtools' package.
@@ -48,6 +48,12 @@ To extend your access to the Quandl API, use your authentication token. To do th
     > Quandl.auth("authenticationtoken")
 
 This will then extend your usage.
+
+To check how much usage you have left type:
+
+    > Quandl.limit()
+
+This number is updated everytime Quandl is called or when passed force_recheck=TRUE.
 
 ### Example ###
 Create a graph of the Nasdaq, with a monthly frequency

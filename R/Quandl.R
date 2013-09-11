@@ -1,4 +1,5 @@
 auth_token <- NA
+remaining_limit <- NA
 
 #' Query or set Quandl API token
 #' @param auth_token Optionally passed parameter to set Quandl \code{auth_token}.
@@ -14,6 +15,34 @@ Quandl.auth <- function(auth_token) {
         assignInNamespace('auth_token', auth_token, 'Quandl')
 
     invisible(Quandl:::auth_token)
+
+}
+
+#' Query remaining API limit
+#' @param remaining_limit Optionally passed parameter to update Quandl \code{remaining_limit}
+#' @param force_check Forces the function to requery Quandl for the api limit remaining, could be used after an authentication token change.
+#' @return Returns the number of remaining API calls.
+#' @seealso \code{\link{Quandl}}
+#' @examples \dontrun{
+#' Quandl.limit(700)
+#' }
+#' @importFrom RCurl getURL
+#' @importFrom RCurl basicHeaderGatherer
+#' @export
+Quandl.limit <- function(remaining_limit, force_check=FALSE) {
+    if (!missing(remaining_limit)) {
+        assignInNamespace('remaining_limit', remaining_limit, 'Quandl')
+    }
+    else if (is.na(Quandl:::remaining_limit) || force_check) {
+        headers <- basicHeaderGatherer()
+        if (is.na(Quandl.auth()))
+            getURL("http://www.quandl.com/api/v1/datasets/TAMMER/RANDOM.json?exclude_data=true", headerfunction = headers$update)
+        else
+            getURL(paste("http://www.quandl.com/api/v1/datasets/TAMMER/RANDOM.json?auth_token=", Quandl.auth(), "&exclude_data=true", sep=""), headerfunction = headers$update)
+        assignInNamespace('remaining_limit', headers$value()[["X-RateLimit-Remaining"]], 'Quandl')
+    }
+
+    return(Quandl:::remaining_limit)
 
 }
 
@@ -41,11 +70,12 @@ Quandl.auth <- function(auth_token) {
 #' plot(quandldata[,1])
 #' }
 #' @importFrom RCurl getURL
+#' @importFrom RCurl basicHeaderGatherer
 #' @importFrom RJSONIO fromJSON
 #' @importFrom zoo zoo
 #' @importFrom xts xts
 #' @export
-Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts'), start_date, end_date, transformation = c('', 'diff', 'rdiff', 'normalize', 'cumul'), collapse = c('', 'weekly', 'monthly', 'quarterly', 'annual'), rows, sort = c('desc', 'asc'), meta = FALSE, authcode = Quandl.auth()) {
+Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts'), start_date, end_date, transformation = c('', 'diff', 'rdiff', 'normalize', 'cumul', 'rdiff_from'), collapse = c('', 'weekly', 'monthly', 'quarterly', 'annual'), rows, sort = c('desc', 'asc'), meta = FALSE, authcode = Quandl.auth()) {
 
     ## Flag to indicate frequency change due to collapse
     freqflag = FALSE
@@ -57,6 +87,7 @@ Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts'), start_date, end_da
     collapse       <- match.arg(collapse)
     sort           <- match.arg(sort)
 
+
     ## Helper function
     frequency2integer <- function(freq) {
         switch(freq,
@@ -67,12 +98,14 @@ Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts'), start_date, end_da
                1)
     }
 
+    if (!all(gsub("[^A-Z0-9_./]", "", code) == code))
+        stop("Codes are comprised of capital letters, numbers and underscores only.")
     ## Build API URL and add auth_token if available
     if (length(code) == 1)
-        string <- paste("http://www.quandl.com/api/v1/datasets/", code, ".json?sort_order=asc&", sep="")
+        string <- paste("http://www.quandl.com/api/v1/datasets/", code, ".json?", sep="")
     else {
         multiset = TRUE
-        freqflag = TRUE
+        freqflag = TRUE ## Frequency not automatically supported with multisets
         freq <- 1
         string <- "http://www.quandl.com/api/v1/multisets.json?columns="
         string <- paste(string, sub("/",".",code[1]), sep="")
@@ -80,12 +113,11 @@ Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts'), start_date, end_da
             string <- paste(string, sub("/",".",code[i]), sep=",")
         }
     }
-
-
     if (is.na(authcode))
         warning("It would appear you aren't using an authentication token. Please visit http://www.quandl.com/help/r or your usage may be limited.")
     else
         string <- paste(string, "&auth_token=", authcode, sep = "")
+
 
     ## Add API options
     if (!missing(start_date))
@@ -103,20 +135,30 @@ Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts'), start_date, end_da
     }
     if (!missing(rows))
         string <- paste(string,"&limit=", rows ,sep = "")
+
+
     ## Download and parse data
-    response <- getURL(string)
-    if (length(grep("403 Forbidden", response)))
-        stop("You and/or people on your network have hit the limit for unregistered downloads today, please register here: http://www.quandl.com/users/sign_up to automatically increase your limit to 500 per day. For help contact us at: connect@quandl.com")
+    headers <- basicHeaderGatherer()
+    response <- getURL(string, headerfunction = headers$update)
+    Quandl.limit(headers$value()[["X-RateLimit-Remaining"]])
+
+    if (length(grep("403", headers$value()[["status"]]))) {
+        stop(response)
+    }
     json <- try(fromJSON(response, nullValue = as.numeric(NA)), silent = TRUE)
-    ## Check if code exists
+
+
+    ## Error Catching
     if (inherits(json, 'try-error')) {
         error_str <- paste("Something is wrong, and you got past my error catching. Please copy this output and email to connect@quandl.com:", string, sep="\n")
         stop(error_str)
     }
-    if (json["error"] == "Requested entity does not exist.")
+    if (json["error"] == "Requested entity does not exist." || json["error"] == "Unknown api route.")
         stop("Code does not exist")
     if (length(json$data) == 0)
         stop("Requested Entity does not exist.")
+    if (length(json$column_names) > 100 && multiset)
+        stop("Currently we only support multisets with up to 100 columns. Please contact connect@quandl.com if this is a problem.")
     ## Detect frequency
     if (!freqflag)
         freq <- frequency2integer(json$frequency)
@@ -185,7 +227,4 @@ Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts'), start_date, end_da
     else {
         return(data_out)
     }
-    ## Just in case
-    stop("Invalid Type")
-
 }

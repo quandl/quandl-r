@@ -4,7 +4,7 @@
 \usage{
   Quandl(code, type = c("raw", "ts", "zoo", "xts"),
     start_date, end_date,
-    transformation = c("", "diff", "rdiff", "normalize", "cumul"),
+    transformation = c("", "diff", "rdiff", "normalize", "cumul", "rdiff_from"),
     collapse = c("", "weekly", "monthly", "quarterly", "annual"),
     rows, sort = c("desc", "asc"), meta = FALSE,
     authcode = Quandl.auth())

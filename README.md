@@ -53,7 +53,7 @@ To check how much usage you have left type:
 
     > Quandl.limit()
 
-This number is updated everytime Quandl is called or when passed force_recheck=TRUE.
+This number is updated everytime Quandl is called or when passed force_check=TRUE.
 
 ### Example ###
 Create a graph of the Nasdaq, with a monthly frequency

@@ -1,6 +1,6 @@
 Package: Quandl
 Title: Quandl Data Connection
-Version: 2.1.1
+Version: 2.1.2
 Date: 2013-09-11
 Author: Raymond McTaggart, Gergely Daroczi
 Maintainer: Raymond McTaggart <raymond@quandl.com>

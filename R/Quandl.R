@@ -10,9 +10,9 @@ Quandl.remaining_limit <- NA
 #' }
 #' @export
 Quandl.auth <- function(auth_token) {
-
+    # Checks if a new token is being assigned and assigns it.
     if (!missing(auth_token))
-        assignInNamespace('Quandl.auth_token', auth_token, 'Quandl')
+        assignInMyNamespace('Quandl.auth_token', auth_token)
 
     invisible(Quandl.auth_token)
 
@@ -31,7 +31,7 @@ Quandl.auth <- function(auth_token) {
 #' @export
 Quandl.limit <- function(remaining_limit, force_check=FALSE) {
     if (!missing(remaining_limit)) {
-        assignInNamespace('Quandl.remaining_limit', remaining_limit, 'Quandl')
+        assignInMyNamespace('Quandl.remaining_limit', remaining_limit)
     }
     else if (is.na(Quandl.remaining_limit) || force_check) {
         headers <- basicHeaderGatherer()
@@ -39,7 +39,7 @@ Quandl.limit <- function(remaining_limit, force_check=FALSE) {
             getURL("http://www.quandl.com/api/v1/datasets/TAMMER/RANDOM.json?exclude_data=true", headerfunction = headers$update)
         else
             getURL(paste("http://www.quandl.com/api/v1/datasets/TAMMER/RANDOM.json?auth_token=", Quandl.auth(), "&exclude_data=true", sep=""), headerfunction = headers$update)
-        assignInNamespace('Quandl.remaining_limit', headers$value()[["X-RateLimit-Remaining"]], 'Quandl')
+        assignInMyNamespace('Quandl.remaining_limit', headers$value()[["X-RateLimit-Remaining"]])
     }
 
     return(Quandl.remaining_limit)

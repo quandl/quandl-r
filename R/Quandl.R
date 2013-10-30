@@ -164,7 +164,13 @@ Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts'), start_date, end_da
         freq <- frequency2integer(json$frequency)
 
     ## Shell data from JSON's list
-    data        <- as.data.frame(matrix(unlist(json$data), ncol = length(json$column_names), byrow = TRUE),stringsAsFactors=FALSE)
+    data <- tryCatch(as.data.frame(matrix(unlist(json$data), ncol = length(json$column_names), byrow = TRUE),stringsAsFactors=FALSE), 
+        warning=function(w) {
+            warning(w)
+            warning(paste("This warning is most likely the result of a data structure error. If the output of this function does not make sense please email raymond@quandl.com with the Quandl code: ", code), call. = FALSE)
+            return(suppressWarnings(as.data.frame(matrix(unlist(json$data), ncol = length(json$column_names), byrow = TRUE),stringsAsFactors=FALSE)))
+        }
+    )
     names(data) <- json$column_names
     data[,1]    <- as.Date(data[, 1])
 

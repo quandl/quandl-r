@@ -19,8 +19,6 @@
 #' @importFrom RJSONIO fromJSON
 #' @importFrom RJSONIO toJSON
 #' @importFrom RCurl postForm
-#' @importFrom RCurl curlOptions
-#' @importFrom RCurl httpPUT
 #' @export
 
 Quandl.push <- function(code, username=NULL, source_code=NULL, update=FALSE, authcode = Quandl.auth(), ...) {

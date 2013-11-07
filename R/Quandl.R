@@ -78,7 +78,7 @@ Quandl.limit <- function(remaining_limit, force_check=FALSE) {
 #' @importFrom zoo zoo
 #' @importFrom xts xts
 #' @export
-Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts'), start_date, end_date, transformation = c('', 'diff', 'rdiff', 'normalize', 'cumul', 'rdiff_from'), collapse = c('', 'weekly', 'monthly', 'quarterly', 'annual'), rows, sort = c('desc', 'asc'), meta = FALSE, exclude_data=FALSE, authcode = Quandl.auth()) {
+Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts'), start_date, end_date, transformation = c('', 'diff', 'rdiff', 'normalize', 'cumul', 'rdiff_from'), collapse = c('', 'weekly', 'monthly', 'quarterly', 'annual'), rows, sort = c('desc', 'asc'), meta = FALSE, authcode = Quandl.auth()) {
 
     ## Flag to indicate frequency change due to collapse
     freqflag = FALSE

@@ -35,11 +35,14 @@ Quandl.limit <- function(remaining_limit, force_check=FALSE) {
     }
     else if (is.na(Quandl.remaining_limit) || force_check) {
         headers <- basicHeaderGatherer()
-        if (is.na(Quandl.auth()))
+        if (is.na(Quandl.auth())) {
             getURL("http://www.quandl.com/api/v1/datasets/TAMMER/RANDOM.json?exclude_data=true", headerfunction = headers$update)
-        else
-            getURL(paste("http://www.quandl.com/api/v1/datasets/TAMMER/RANDOM.json?auth_token=", Quandl.auth(), "&exclude_data=true", sep=""), headerfunction = headers$update)
-        assignInMyNamespace('Quandl.remaining_limit', headers$value()[["X-RateLimit-Remaining"]])
+            assignInMyNamespace('Quandl.remaining_limit', headers$value()[["X-RateLimit-Remaining"]])
+        }
+        else {
+            # getURL(paste("http://www.quandl.com/api/v1/datasets/TAMMER/RANDOM.json?auth_token=", Quandl.auth(), "&exclude_data=true", sep=""), headerfunction = headers$update)
+            return(NA)
+        }
     }
 
     return(Quandl.remaining_limit)
@@ -75,7 +78,7 @@ Quandl.limit <- function(remaining_limit, force_check=FALSE) {
 #' @importFrom zoo zoo
 #' @importFrom xts xts
 #' @export
-Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts'), start_date, end_date, transformation = c('', 'diff', 'rdiff', 'normalize', 'cumul', 'rdiff_from'), collapse = c('', 'weekly', 'monthly', 'quarterly', 'annual'), rows, sort = c('desc', 'asc'), meta = FALSE, authcode = Quandl.auth()) {
+Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts'), start_date, end_date, transformation = c('', 'diff', 'rdiff', 'normalize', 'cumul', 'rdiff_from'), collapse = c('', 'weekly', 'monthly', 'quarterly', 'annual'), rows, sort = c('desc', 'asc'), meta = FALSE, exclude_data=FALSE, authcode = Quandl.auth()) {
 
     ## Flag to indicate frequency change due to collapse
     freqflag = FALSE
@@ -140,7 +143,8 @@ Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts'), start_date, end_da
     ## Download and parse data
     headers <- basicHeaderGatherer()
     response <- getURL(string, headerfunction = headers$update)
-    Quandl.limit(headers$value()[["X-RateLimit-Remaining"]])
+    if(is.na(authcode))
+        Quandl.limit(headers$value()[["X-RateLimit-Remaining"]])
 
     if (length(grep("403", headers$value()[["status"]]))) {
         stop(response)

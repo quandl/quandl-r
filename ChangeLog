@@ -1,4 +1,12 @@
 ##############################
+####Version 2.1.2 to 2.2.0####
+##############################
+
+- Changed 'AssignInNamespace' to 'AssignInMyNamespace'
+- Quandl.push functionality returned
+- Error Catching improved again
+
+##############################
 ####Version 2.1.1 to 2.1.2####
 ##############################
 

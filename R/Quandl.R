@@ -10,9 +10,9 @@ Quandl.remaining_limit <- NA
 #' }
 #' @export
 Quandl.auth <- function(auth_token) {
-
+    # Checks if a new token is being assigned and assigns it.
     if (!missing(auth_token))
-        assignInNamespace('Quandl.auth_token', auth_token, 'Quandl')
+        assignInMyNamespace('Quandl.auth_token', auth_token)
 
     invisible(Quandl.auth_token)
 
@@ -31,15 +31,18 @@ Quandl.auth <- function(auth_token) {
 #' @export
 Quandl.limit <- function(remaining_limit, force_check=FALSE) {
     if (!missing(remaining_limit)) {
-        assignInNamespace('Quandl.remaining_limit', remaining_limit, 'Quandl')
+        assignInMyNamespace('Quandl.remaining_limit', remaining_limit)
     }
     else if (is.na(Quandl.remaining_limit) || force_check) {
         headers <- basicHeaderGatherer()
-        if (is.na(Quandl.auth()))
+        if (is.na(Quandl.auth())) {
             getURL("http://www.quandl.com/api/v1/datasets/TAMMER/RANDOM.json?exclude_data=true", headerfunction = headers$update)
-        else
-            getURL(paste("http://www.quandl.com/api/v1/datasets/TAMMER/RANDOM.json?auth_token=", Quandl.auth(), "&exclude_data=true", sep=""), headerfunction = headers$update)
-        assignInNamespace('Quandl.remaining_limit', headers$value()[["X-RateLimit-Remaining"]], 'Quandl')
+            assignInMyNamespace('Quandl.remaining_limit', headers$value()[["X-RateLimit-Remaining"]])
+        }
+        else {
+            # getURL(paste("http://www.quandl.com/api/v1/datasets/TAMMER/RANDOM.json?auth_token=", Quandl.auth(), "&exclude_data=true", sep=""), headerfunction = headers$update)
+            return(NA)
+        }
     }
 
     return(Quandl.remaining_limit)
@@ -140,7 +143,8 @@ Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts'), start_date, end_da
     ## Download and parse data
     headers <- basicHeaderGatherer()
     response <- getURL(string, headerfunction = headers$update)
-    Quandl.limit(headers$value()[["X-RateLimit-Remaining"]])
+    if(is.na(authcode))
+        Quandl.limit(headers$value()[["X-RateLimit-Remaining"]])
 
     if (length(grep("403", headers$value()[["status"]]))) {
         stop(response)
@@ -164,7 +168,13 @@ Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts'), start_date, end_da
         freq <- frequency2integer(json$frequency)
 
     ## Shell data from JSON's list
-    data        <- as.data.frame(matrix(unlist(json$data), ncol = length(json$column_names), byrow = TRUE),stringsAsFactors=FALSE)
+    data <- tryCatch(as.data.frame(matrix(unlist(json$data), ncol = length(json$column_names), byrow = TRUE),stringsAsFactors=FALSE), 
+        warning=function(w) {
+            warning(w)
+            warning(paste("This warning is most likely the result of a data structure error. If the output of this function does not make sense please email raymond@quandl.com with the Quandl code: ", code), call. = FALSE)
+            return(suppressWarnings(as.data.frame(matrix(unlist(json$data), ncol = length(json$column_names), byrow = TRUE),stringsAsFactors=FALSE)))
+        }
+    )
     names(data) <- json$column_names
     data[,1]    <- as.Date(data[, 1])
 

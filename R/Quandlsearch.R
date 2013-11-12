@@ -18,6 +18,7 @@
 #' @importFrom RJSONIO fromJSON
 #' @export
 Quandl.search <- function(query, page=1, source=NULL, silent=FALSE, authcode=Quandl.auth()) {
+    
     parsedquery <- gsub(" ", "+", query)
     url <- paste("http://www.quandl.com/api/v1/datasets.json?query=", parsedquery, sep="")
     if (is.na(authcode))
@@ -28,7 +29,13 @@ Quandl.search <- function(query, page=1, source=NULL, silent=FALSE, authcode=Qua
         url <- paste(url, "&source_code=", source, sep="")
     }
     url <- paste(url, "&page=",as.character(page),sep="")
-    json <- try(fromJSON(url),silent=TRUE)
+    headers <- basicHeaderGatherer()
+    response <- getURL(url, headerfunction = headers$update)
+    if (is.na(authcode))
+        Quandl.limit(headers$value()[["X-RateLimit-Remaining"]])
+    if (length(grep("403", headers$value()[["status"]])))
+        stop(response)
+    json <- try(fromJSON(response),silent=TRUE)
     if (inherits(json, 'try-error'))
         stop("No data")
     list <- list()

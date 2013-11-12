@@ -69,13 +69,13 @@ There are a few things you need to do before you can proceed with uploading data
 
 Then call this function 	
 
-	Quandl.push(code="TEST", name="This is a test dataset", desc="This description can include extra information about the time series including units,data=yourdataset)`
+	Quandl.push(code="TEST", username="yourname", name="This is a test dataset", description="This description can include extra information about the time series including units,data=yourdataset)`
 
-The function returns a link to your newly created dataset. The description is optional but all other fields are mandatory.
+The function returns a link to your newly created dataset. When creating a dataset the fields code, name, and data are mandatory. When updating a dataset only the code is mandatory.
 
-If you would like to overwrite the dataset TEST with another dataset, call the function again with the parameter
+If you would like to update your dataset - change the name, add new data - pass this to the function.
 
-    override=TRUE
+    update=TRUE
     
 
 ### Example ###

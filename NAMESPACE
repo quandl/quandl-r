@@ -1,3 +1,4 @@
+export(metaData)
 export(Quandl.auth)
 export(Quandl.limit)
 export(Quandl.push)

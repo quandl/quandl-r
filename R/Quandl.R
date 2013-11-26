@@ -56,6 +56,7 @@ Quandl.limit <- function(remaining_limit, force_check=FALSE) {
 #' @examples \dontrun{
 #' metaData(ts)
 #' }
+#' @export
 
 metaData <- function(x)attr(x, "meta")
 

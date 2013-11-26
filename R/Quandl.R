@@ -86,9 +86,11 @@ metaData <- function(x)attr(x, "meta")
 #' @importFrom RCurl basicHeaderGatherer
 #' @importFrom RJSONIO fromJSON
 #' @importFrom zoo zoo
+#' @importFrom zoo as.zooreg
 #' @importFrom zoo as.yearmon
 #' @importFrom zoo as.yearqtr
 #' @importFrom xts xts
+#' @importFrom xts as.xts
 #' @export
 Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts'), start_date, end_date, transformation = c('', 'diff', 'rdiff', 'normalize', 'cumul', 'rdiff_from'), collapse = c('', 'weekly', 'monthly', 'quarterly', 'annual'), rows, sort = c('desc', 'asc'), meta = FALSE, authcode = Quandl.auth()) {
 

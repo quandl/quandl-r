@@ -178,6 +178,8 @@ Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts'), start_date, end_da
     }
     if (json["error"] == "Requested entity does not exist." || json["error"] == "Unknown api route.")
         stop("Requested entity does not exist. This could mean the code does not exist or the parameters you have passed have returned an empty dataset.")
+    if (length(json$errors) != 0)
+      stop(json$errors)
     if (length(json$data) == 0)
         stop("Requested Entity does not exist.")
     if (length(json$column_names) > 100 && multiset)

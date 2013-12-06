@@ -36,7 +36,7 @@ Quandl.limit <- function(remaining_limit, force_check=FALSE) {
     else if (is.na(Quandl.remaining_limit) || force_check) {
         headers <- basicHeaderGatherer()
         if (is.na(Quandl.auth())) {
-            getURL("http://www.quandl.com/api/v1/datasets/TAMMER/RANDOM.json?exclude_data=true", headerfunction = headers$update)
+            response <- getURL("http://www.quandl.com/api/v1/datasets/TAMMER/RANDOM.json?exclude_data=true", headerfunction = headers$update)
             if (length(grep("403", headers$value()[["status"]])))
                 stop(response)
             assignInMyNamespace('Quandl.remaining_limit', headers$value()[["X-RateLimit-Remaining"]])

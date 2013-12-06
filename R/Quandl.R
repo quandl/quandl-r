@@ -36,7 +36,9 @@ Quandl.limit <- function(remaining_limit, force_check=FALSE) {
     else if (is.na(Quandl.remaining_limit) || force_check) {
         headers <- basicHeaderGatherer()
         if (is.na(Quandl.auth())) {
-            getURL("http://www.quandl.com/api/v1/datasets/TAMMER/RANDOM.json?exclude_data=true", headerfunction = headers$update)
+            response <- getURL("http://www.quandl.com/api/v1/datasets/TAMMER/RANDOM.json?exclude_data=true", headerfunction = headers$update)
+            if (length(grep("403", headers$value()[["status"]])))
+                stop(response)
             assignInMyNamespace('Quandl.remaining_limit', headers$value()[["X-RateLimit-Remaining"]])
         }
         else {
@@ -48,6 +50,17 @@ Quandl.limit <- function(remaining_limit, force_check=FALSE) {
     return(Quandl.remaining_limit)
 
 }
+
+#' Retrieve metadata from a Quandl series
+#' @param x A Quandl time series object with attached meta data.
+#' @return Returns a list of meta data about the series.
+#' @seealso \code{\link{Quandl}}
+#' @examples \dontrun{
+#' metaData(ts)
+#' }
+#' @export
+
+metaData <- function(x)attr(x, "meta")
 
 #' Pulls Data from the Quandl API
 #'
@@ -76,7 +89,11 @@ Quandl.limit <- function(remaining_limit, force_check=FALSE) {
 #' @importFrom RCurl basicHeaderGatherer
 #' @importFrom RJSONIO fromJSON
 #' @importFrom zoo zoo
+#' @importFrom zoo as.zooreg
+#' @importFrom zoo as.yearmon
+#' @importFrom zoo as.yearqtr
 #' @importFrom xts xts
+#' @importFrom xts as.xts
 #' @export
 Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts'), start_date, end_date, transformation = c('', 'diff', 'rdiff', 'normalize', 'cumul', 'rdiff_from'), collapse = c('', 'weekly', 'monthly', 'quarterly', 'annual'), rows, sort = c('desc', 'asc'), meta = FALSE, authcode = Quandl.auth()) {
 
@@ -91,7 +108,7 @@ Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts'), start_date, end_da
     sort           <- match.arg(sort)
 
 
-    ## Helper function
+    ## Helper functions
     frequency2integer <- function(freq) {
         switch(freq,
                'daily'    = 365,
@@ -100,6 +117,7 @@ Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts'), start_date, end_da
                'yearly'   = 1,
                1)
     }
+    as.year <- function(x) floor(as.numeric(as.yearmon(x)))
 
     if (!all(gsub("[^A-Z0-9_./]", "", code) == code))
         stop("Codes are comprised of capital letters, numbers and underscores only.")
@@ -127,6 +145,8 @@ Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts'), start_date, end_da
         string <- paste(string, "&trim_start=", as.Date(start_date), sep = "")
     if (!missing(end_date))
         string <- paste(string,"&trim_end=", as.Date(end_date) ,sep = "")
+    if (type != "raw")
+        sort = "asc"
     if (sort %in% c("asc", "desc"))
         string <- paste(string, "&sort_order=", sort, sep = "")    
     if (transformation %in% c("diff", "rdiff", "normalize", "cumul"))
@@ -143,12 +163,13 @@ Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts'), start_date, end_da
     ## Download and parse data
     headers <- basicHeaderGatherer()
     response <- getURL(string, headerfunction = headers$update)
-    if(is.na(authcode))
-        Quandl.limit(headers$value()[["X-RateLimit-Remaining"]])
-
     if (length(grep("403", headers$value()[["status"]]))) {
         stop(response)
     }
+    if(is.na(authcode))
+        Quandl.limit(headers$value()[["X-RateLimit-Remaining"]])
+
+
     json <- try(fromJSON(response, nullValue = as.numeric(NA)), silent = TRUE)
 
 
@@ -158,7 +179,9 @@ Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts'), start_date, end_da
         stop(error_str)
     }
     if (json["error"] == "Requested entity does not exist." || json["error"] == "Unknown api route.")
-        stop("Code does not exist")
+        stop("Requested entity does not exist. This could mean the code does not exist or the parameters you have passed have returned an empty dataset.")
+    if (length(json$errors) != 0)
+      stop(json$errors)
     if (length(json$data) == 0)
         stop("Requested Entity does not exist.")
     if (length(json$column_names) > 100 && multiset)
@@ -187,54 +210,55 @@ Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts'), start_date, end_da
     ## Returning raw data
     if (type == "raw")
         data_out <- data
+    else {
+        # Deal with regularly spaced time series first
+        if (freq %in% c(1, 4, 12)) {
+            # Build regular zoo with correct frequency
+            if(freq == 1)
+                data_out <- zoo(data[,-1], frequency = freq, as.year(data[,1]))
+            else if (freq == 4)
+                data_out <- zoo(data[,-1], frequency = freq, as.yearqtr(data[,1]))
+            else if (freq == 12)
+                data_out <- zoo(data[,-1], frequency = freq, as.yearmon(data[,1]))
 
-    ## Returning ts object
-    if (type == "ts") {
-        date <- data[1,1]
-        year <- 1900+as.POSIXlt(date)$year
-        startdate <- 1
-        if(freq == 1) {
-            start <- year
+            # Convert to type
+            if (type == "ts")
+                data_out <- as.ts(data_out)
+            else if (type == "zoo")
+                data_out <- as.zooreg(data_out)
+            else if (type == "xts") {
+                data_out <- if(freq==1) xts(data[, -1], frequency = 1, order.by=data[, 1]) else as.xts(data_out)
+                if (freq != frequency(data_out)) 
+                    warning("xts has a non-standard meaning for 'frequency'.")
+            }
+
         }
-        else if (freq == 4) {
-            quarter <- pmatch(quarters(date), c("Q1","Q2","Q3","Q4"))
-            startdate <- c(year, quarter)
+        # Time series is not regularly spaced
+        else if (type=="zoo" || type=="ts") {
+            if (type=="ts") warning("Type 'ts' does not support frequency ", freq, ". Returning zoo.")
+            data_out <- zoo(data[, -1], order.by=data[, 1])
         }
-        else if (freq == 12) {
-            month <- 1+as.POSIXlt(date)$mon
-            startdate <- c(year, month)
-        }
-        else
-            freq <- 1
-        data_out <- ts(data[, -1], frequency = freq, start = startdate)
+        else if (type=="xts")
+            data_out <- xts(data[, -1], order.by=data[, 1])
     }
-    ## Returning zoo object
-    if (type == "zoo")
-        data_out <- zoo(data[c(-1)],data[,1])
-
-    ## Returning xts object
-    if (type == "xts")
-        data_out <- xts(data[c(-1)],data[,1])
-    ## Append Metadata
     if (meta && !multiset) {
-        output <- list()
-        output$data <- data_out
-        output$frequency <-json$frequency
-        output$name <- json$name
-        output$description <- json$description
-        output$updated <- json$updated_at
-        output$source_code <- json$source_code
-        output$code <- paste(output$source_code, json$code, sep="/")
-        source_string <- paste("http://www.quandl.com/api/v1/sources/", output$source_code, ".json", sep="")
-        if (!is.na(authcode))
+        source_string <- paste("http://www.quandl.com/api/v1/sources/", json$source_code, ".json", sep = "")
+        if (!is.na(authcode)) 
             source_string <- paste(source_string, "?auth_token=", authcode, sep = "")
         source_json <- fromJSON(source_string, nullValue = as.numeric(NA))
-        output$source_name <- source_json$name
-        output$source_link <- source_json$host
-        output$source_description <- source_json$description
-        return(output)
+
+        meta <- list(
+            frequency   = json$frequency,
+            name        = json$name,
+            description = json$description,
+            updated     = json$updated_at,
+            source_code = json$source_code,
+            code        = paste(json$source_code, json$code, sep = "/"),
+            source_name = source_json$name,
+            source_link = source_json$host,
+            source_description = source_json$description
+        )
+        attr(data_out, "meta") <- meta
     }
-    else {
-        return(data_out)
-    }
+    return(data_out)
 }

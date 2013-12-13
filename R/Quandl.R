@@ -134,8 +134,9 @@ Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts'), start_date, end_da
             string <- paste(string, sub("/",".",code[i]), sep=",")
         }
     }
-    if (is.na(authcode))
-        warning("It would appear you aren't using an authentication token. Please visit http://www.quandl.com/help/r or your usage may be limited.")
+    if (is.na(authcode)) {
+        if (length(grep('TESTS/', code)) != length(code)) warning("It would appear you aren't using an authentication token. Please visit http://www.quandl.com/help/r or your usage may be limited.")
+    }
     else
         string <- paste(string, "&auth_token=", authcode, sep = "")
 
@@ -158,7 +159,6 @@ Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts'), start_date, end_da
     }
     if (!missing(rows))
         string <- paste(string,"&limit=", rows ,sep = "")
-
 
     ## Download and parse data
     headers <- basicHeaderGatherer()

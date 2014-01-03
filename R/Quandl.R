@@ -201,7 +201,7 @@ Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts'), start_date, end_da
     if (!freqflag)
         freq <- frequency2integer(json$frequency)
     if (!is.null(col) && length(json$column_names) > 2)
-        json$column_names = json$column_names[c(1, col+1)]
+        json$column_names = json$column_names[c(1, as.numeric(col)+1)]
     ## Shell data from JSON's list
     data <- tryCatch(as.data.frame(matrix(unlist(json$data), ncol = length(json$column_names), byrow = TRUE),stringsAsFactors=FALSE), 
         warning=function(w) {

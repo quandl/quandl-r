@@ -1,3 +1,7 @@
+require("zoo")
+require("xts")
+
+
 context("Checking return formats")
 
 

@@ -101,6 +101,8 @@ Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts'), start_date, end_da
     freqflag = FALSE
     ## Default to single dataset
     multiset = FALSE
+    ## Default to entire dataset
+    col = NULL
     ## Check params
     type           <- match.arg(type)
     transformation <- match.arg(transformation)
@@ -112,6 +114,7 @@ Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts'), start_date, end_da
     frequency2integer <- function(freq) {
         switch(freq,
                'daily'    = 365,
+               'weekly'   = 52,
                'monthly'  = 12,
                'quarterly' = 4,
                'yearly'   = 1,
@@ -122,8 +125,16 @@ Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts'), start_date, end_da
     if (!all(gsub("[^A-Z0-9_./]", "", code) == code))
         stop("Codes are comprised of capital letters, numbers and underscores only.")
     ## Build API URL and add auth_token if available
-    if (length(code) == 1)
-        string <- paste("http://www.quandl.com/api/v1/datasets/", code, ".json?", sep="")
+    if (length(code) == 1) {
+        codearray <- strsplit(code, "/")
+        if (length(codearray[[1]]) == 3) {
+            col <- codearray[[1]][3]
+            code <- paste(codearray[[1]][1:2], collapse='/')
+            string <- paste("http://www.quandl.com/api/v1/datasets/", code, ".json?column=", col, sep="")
+        }
+        else
+            string <- paste("http://www.quandl.com/api/v1/datasets/", code, ".json?", sep="")
+    }
     else {
         multiset = TRUE
         freqflag = TRUE ## Frequency not automatically supported with multisets
@@ -134,8 +145,9 @@ Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts'), start_date, end_da
             string <- paste(string, sub("/",".",code[i]), sep=",")
         }
     }
-    if (is.na(authcode))
-        warning("It would appear you aren't using an authentication token. Please visit http://www.quandl.com/help/r or your usage may be limited.")
+    if (is.na(authcode)) {
+        if (length(grep('TESTS/', code)) != length(code)) warning("It would appear you aren't using an authentication token. Please visit http://www.quandl.com/help/r or your usage may be limited.")
+    }
     else
         string <- paste(string, "&auth_token=", authcode, sep = "")
 
@@ -158,7 +170,6 @@ Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts'), start_date, end_da
     }
     if (!missing(rows))
         string <- paste(string,"&limit=", rows ,sep = "")
-
 
     ## Download and parse data
     headers <- basicHeaderGatherer()
@@ -189,7 +200,8 @@ Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts'), start_date, end_da
     ## Detect frequency
     if (!freqflag)
         freq <- frequency2integer(json$frequency)
-
+    if (!is.null(col) && length(json$column_names) > 2)
+        json$column_names = json$column_names[c(1, as.numeric(col)+1)]
     ## Shell data from JSON's list
     data <- tryCatch(as.data.frame(matrix(unlist(json$data), ncol = length(json$column_names), byrow = TRUE),stringsAsFactors=FALSE), 
         warning=function(w) {

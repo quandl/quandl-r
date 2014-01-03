@@ -1,4 +1,13 @@
 ##############################
+####Version 2.1.2 to 2.2.2####
+##############################
+
+- Single column selection for single datasets
+- First batch of tests added
+- Weekly time series bug fixed
+
+
+##############################
 ####Version 2.1.2 to 2.2.1####
 ##############################
 

@@ -174,6 +174,8 @@ Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts'), start_date, end_da
     ## Download and parse data
     headers <- basicHeaderGatherer()
     response <- getURL(string, headerfunction = headers$update)
+    if (inherits(try(headers$value()[["status"]], silent=TRUE), 'try-error'))
+        stop("I am sorry but Quandl is down for maintenance. Please check the main website for status updates.")
     if (length(grep("403", headers$value()[["status"]]))) {
         stop(response)
     }

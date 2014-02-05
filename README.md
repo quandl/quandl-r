@@ -4,7 +4,7 @@ R-package
 
 This is Quandl's R Package
 
-License: GPL-2
+License: MIT
 
 For more information please contact raymond@quandl.com
 

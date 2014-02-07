@@ -36,7 +36,7 @@ Quandl.limit <- function(remaining_limit, force_check=FALSE) {
     else if (is.na(Quandl.remaining_limit) || force_check) {
         headers <- basicHeaderGatherer()
         if (is.na(Quandl.auth())) {
-            response <- getURL("http://www.quandl.com/api/v1/datasets/TAMMER/RANDOM.json?exclude_data=true", headerfunction = headers$update)
+            response <- quandl.api("v2", "datasets/TAMMER/RANDOM", headers = headers$update)
             if (length(grep("403", headers$value()[["status"]])))
                 stop(response)
             assignInMyNamespace('Quandl.remaining_limit', headers$value()[["X-RateLimit-Remaining"]])
@@ -95,8 +95,8 @@ metaData <- function(x)attr(x, "meta")
 #' @importFrom xts xts
 #' @importFrom xts as.xts
 #' @export
-Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts'), start_date, end_date, transformation = c('', 'diff', 'rdiff', 'normalize', 'cumul', 'rdiff_from'), collapse = c('', 'weekly', 'monthly', 'quarterly', 'annual'), rows, sort = c('desc', 'asc'), meta = FALSE, authcode = Quandl.auth()) {
-
+Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts'), start_date, end_date, transformation = c('', 'diff', 'rdiff', 'normalize', 'cumul', 'rdiff_from'), collapse = c('', 'weekly', 'monthly', 'quarterly', 'annual'), sort = c('desc', 'asc'), meta = FALSE, authcode = Quandl.auth(), ...) {
+    params = list()
     ## Flag to indicate frequency change due to collapse
     freqflag = FALSE
     ## Default to single dataset
@@ -104,10 +104,10 @@ Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts'), start_date, end_da
     ## Default to entire dataset
     col = NULL
     ## Check params
-    type           <- match.arg(type)
-    transformation <- match.arg(transformation)
-    collapse       <- match.arg(collapse)
-    sort           <- match.arg(sort)
+    type                    <- match.arg(type)
+    params$transformation   <- match.arg(transformation)
+    params$collapse         <- match.arg(collapse)
+    params$sort_order       <- match.arg(sort)
 
 
     ## Helper functions
@@ -130,50 +130,43 @@ Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts'), start_date, end_da
         if (length(codearray[[1]]) == 3) {
             col <- codearray[[1]][3]
             code <- paste(codearray[[1]][1:2], collapse='/')
-            string <- paste("http://www.quandl.com/api/v1/datasets/", code, ".json?column=", col, sep="")
+            params$column <- col
         }
-        else
-            string <- paste("http://www.quandl.com/api/v1/datasets/", code, ".json?", sep="")
+        path <- paste("datasets/", code, sep="")
     }
     else {
         multiset = TRUE
         freqflag = TRUE ## Frequency not automatically supported with multisets
         freq <- 1
-        string <- "http://www.quandl.com/api/v1/multisets.json?columns="
-        string <- paste(string, sub("/",".",code[1]), sep="")
+        path <- "multisets"
+        params$columns <- sub("/",".",code[1])
         for (i in 2:length(code)) {
-            string <- paste(string, sub("/",".",code[i]), sep=",")
+            params$columns <- paste(params$columns, sub("/",".",code[i]), sep=",")
         }
     }
     if (is.na(authcode)) {
         if (length(grep('TESTS/', code)) != length(code)) warning("It would appear you aren't using an authentication token. Please visit http://www.quandl.com/help/r or your usage may be limited.")
     }
     else
-        string <- paste(string, "&auth_token=", authcode, sep = "")
+        params$auth_token <- authcode
 
 
     ## Add API options
     if (!missing(start_date))
-        string <- paste(string, "&trim_start=", as.Date(start_date), sep = "")
+        params$trim_start <- as.Date(start_date)
     if (!missing(end_date))
-        string <- paste(string,"&trim_end=", as.Date(end_date) ,sep = "")
+        params$trim_start <- as.Date(end_date)
     if (type != "raw")
-        sort = "asc"
-    if (sort %in% c("asc", "desc"))
-        string <- paste(string, "&sort_order=", sort, sep = "")    
-    if (transformation %in% c("diff", "rdiff", "normalize", "cumul"))
-        string <- paste(string,"&transformation=", transformation, sep = "")
-    if (collapse %in% c("weekly", "monthly", "quarterly", "annual")) {
-        string <- paste(string, "&collapse=", collapse, sep = "")
+        params$sort_order <- "asc"  
+    if (params$collapse %in% c("weekly", "monthly", "quarterly", "annual")) {
         freq   <- frequency2integer(collapse)
         freqflag = TRUE
     }
-    if (!missing(rows))
-        string <- paste(string,"&limit=", rows ,sep = "")
+    params <- c(params, list(...))
 
     ## Download and parse data
     headers <- basicHeaderGatherer()
-    response <- getURL(string, headerfunction = headers$update)
+    response <- do.call(quandl.api, c(version="v1", http="GET", path=path, headers = headers$update, params))
     if (inherits(try(headers$value()[["status"]], silent=TRUE), 'try-error'))
         stop("I am sorry but Quandl is down for maintenance. Please check the main website for status updates.")
     if (length(grep("403", headers$value()[["status"]]))) {

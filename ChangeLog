@@ -1,4 +1,12 @@
 ##############################
+####Version 2.2.2 to 2.3.0####
+##############################
+
+- First iteration of REST interface with Quandl api added
+- Quandl and Quandlpush modified to use quandl.api
+
+
+##############################
 ####Version 2.1.2 to 2.2.2####
 ##############################
 

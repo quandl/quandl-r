@@ -6,8 +6,8 @@
     start_date, end_date,
     transformation = c("", "diff", "rdiff", "normalize", "cumul", "rdiff_from"),
     collapse = c("", "weekly", "monthly", "quarterly", "annual"),
-    rows, sort = c("desc", "asc"), meta = FALSE,
-    authcode = Quandl.auth())
+    sort = c("desc", "asc"), meta = FALSE,
+    authcode = Quandl.auth(), ...)
 }
 \arguments{
   \item{code}{Dataset code on Quandl specified as a string

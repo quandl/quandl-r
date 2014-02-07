@@ -2,8 +2,8 @@
 \alias{Quandl.push}
 \title{An authentication token is needed to upload data. Set your \code{access_token} with \code{Quandl.auth} function.}
 \usage{
-  Quandl.push(code, username = NULL, source_code = NULL,
-    update = FALSE, authcode = Quandl.auth(), ...)
+  Quandl.push(code, update = FALSE,
+    authcode = Quandl.auth(), ...)
 }
 \arguments{
   \item{code}{Dataset code you would like to create or

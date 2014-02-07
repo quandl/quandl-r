@@ -19,3 +19,4 @@ Collate:
     'Quandl.R'
     'Quandlpush.R'
     'Quandlsearch.R'
+    'Quandlapi.R'

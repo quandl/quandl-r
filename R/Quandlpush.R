@@ -22,78 +22,82 @@
 #' @importFrom RCurl curlOptions
 #' @export
 
-Quandl.push <- function(code, username=NULL, source_code=NULL, update=FALSE, authcode = Quandl.auth(), ...) {
-    params <- list(...)
+Quandl.push <- function(code, update=FALSE, authcode = Quandl.auth(), ...) {
+    postparams <- list(...)
+    params <- list()
+    source_code <- NULL
+    datastring <- NULL
+    incode <- code
     # Check inputs are proper
     if (is.na(authcode))
       stop("You are not using an authentication token. Please visit http://www.quandl.com/help/r or this function will not work")
-    if (missing(code))
-        stop("No code indicated")
-    if (!nchar(code) == nchar(gsub("[^A-Z0-9_]","",code)))
+    params$auth_token <- authcode
+    if (!nchar(code) == nchar(gsub("[^A-Z0-9_/]","",code)))
         stop("Only uppercase letters, numbers, and underscores are permitted in the code")
+    
+    path <- paste("datasets", code, sep="/")
+    response <- fromJSON(do.call(quandl.api, c(version="v2", http="GET", path=path, params)), asText=TRUE)
+    if (!is.null(response[['error']]))
+      create <- TRUE
+    else {
+      create <- FALSE
+      path <- paste("datasets", response$id, sep="/")
+    }
     splitcode = strsplit(code, "/")
     if (length(splitcode[[1]]) == 2) {
       code = splitcode[[1]][2]
       source_code = splitcode[[1]][1]
     }
-    if (is.null(username) && is.null(source_code))
-      stop("Please enter your username or your user source code.")
-    if(is.null(source_code)) {
-      response <- fromJSON(getURL(paste("http://www.quandl.com/api/v1/sources.json?auth_token=",authcode, "&query=", username, "&code=USER_", sep="")), asText=TRUE)
-      source_code <- response$docs[[1]]$code
-      if(is.null(source_code))
-        stop("You need your user source code. Please email connect@quandl.com for assistance.")
-    }
-    response <- try(Quandl(paste(source_code, "/", code, sep=""), rows=1), silent=TRUE)
-    create = inherits(response, 'try-error')
+
     if (!create && !update) {
       print("This dataset already exists on Quandl. Do you want to overwrite? (y/n)")
       if (readline() != "y")
         return(NULL)
       print("Pass update=TRUE as a parameter to bypass this error message")
     }  
-    if (is.null(params$name) && create)
+    if (is.null(postparams$name) && create)
         stop("Missing parameter 'name'")
-    if (is.null(params$data) && create)
+    if (is.null(postparams$data) && create)
         stop("No data passed as argument")
-    if (!inherits(params$data,"data.frame") && create)
+    if (!inherits(postparams$data,"data.frame") && create)
         stop("Please pass data as a data frame.")
     
-    # Create url to access API
-    url <- paste("http://www.quandl.com/api/v1/datasets.json?auth_token=",authcode,sep="")
-    if(!is.null(params$data)) {
-        data = params$data
-        # Make sure dates are formatted correctly.
-        data[,1] <- as.Date(data[,1])
-        data[,1] <- as.character(data[,1])
+    # Format data to string
+    if(!is.null(postparams$data)) {
+      data = postparams$data
+      # Make sure dates are formatted correctly.
+      data[,1] <- as.Date(data[,1])
+      data[,1] <- as.character(data[,1])
 
-        # Build datastring to pass to Quandl
-        column_names = paste(names(data),collapse=",")
-        datastring = ""
-        if (nrow(data) > 1) {
-          for (i in 1:(nrow(data)-1)) {
-              tempstring <- paste(data[i,],collapse=",")
-              datastring <- paste(datastring,tempstring,"\n",sep="")
-          }
-        }
-        tempstring <- paste(data[nrow(data),],collapse=",")
-        datastring <- paste(datastring,tempstring,sep="")
-        params$data = datastring
-        if (is.null(params$column_names))
-          params$column_names = column_names
+      # Build datastring to pass to Quandl
+      column_names <- paste(names(data),collapse=",")
+      datastring <- paste(capture.output(write.table(data, row.names=FALSE, col.names=FALSE, sep=",")), collapse="\n")
+      postparams[[which(names(postparams)=="data")]] <- NULL
+      if (is.null(postparams$column_names))
+        postparams$column_names = column_names
     }
     
     if (create) {
-        # Must Create Dataset
-        output <- postForm(url, .params=c(code=code, params), .opts=curlOptions(verbose=TRUE))
+      # Must Create Dataset
+      path <- "datasets"
+      postparams$code <- code
+      if (!is.null(source_code)) {postparams$source_code <- source_code}
+      params$postdata <- postparams
+      output <- do.call(quandl.api, c(version="v2", http="POST", path=path, params))
     }
     else {
-         
-        # update Data set
-        postdata = toJSON(params)
-        post_length = nchar(postdata, type="bytes")
-        url <- paste("http://www.quandl.com/api/v1/datasets/", source_code, "/", code, ".json?auth_token=",authcode,sep="")
-        output <- getURL(url, customrequest="PUT", httpheader=c("Content-Length"=post_length, "Content-Type"="application/json"), postfields=postdata, verbose=TRUE)
+      # update Data set
+      postdata = toJSON(postparams)
+      params$postdata <- postdata
+      output <- do.call(quandl.api, c(version="v2", http="PUT", path=path, params))
+    }
+    # Adding Data is an extra call
+    if (!is.null(datastring)) {
+      json <- fromJSON(output,asText=TRUE)
+      postdata <- toJSON(list(data=datastring))
+      params$postdata <- postdata
+      path <- paste("datasets", json$id, "data", sep="/")
+      output <- do.call(quandl.api, c(version="v2", http="PUT", path=path, params))
     }
 
     # Check if uploaded properly

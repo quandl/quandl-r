@@ -4,24 +4,14 @@ R-package
 
 This is Quandl's R Package
 
-License: GPL-2
+License: MIT
 
 For more information please contact raymond@quandl.com
 
 # Installation #
 ---
 
-    git clone git://github.com/quandl/R-package.git
-    R CMD build R-package/
-
-This will create a file named "Quandl_VERSION.tar.gz". 
-
-Then move the file into your working directory in R and type:
-
-    > install.packages("Quandl_VERSION.tar.gz",repos=NULL,type="source")
-    > library(Quandl)
-
-A simpler solution is to use the 'devtools' package.
+Using the 'devtools' package:
 
     > install.packages("devtools")
     > library(devtools)
@@ -43,17 +33,12 @@ Once you find the data you'd like to load into R on Quandl, copy the Quandl code
 
     > data <- Quandl("NSE/OIL")
 
-To extend your access to the Quandl API, use your authentication token. To do this sign into your account (or create one) and go to the API tab under in your account page. Then copy your authentication token and type(with quotes):
+To extend your access to the Quandl API, use your authentication token. To do this sign into your account (or create one) and go to your [account info page](http://www.quandl.com/users/info). Then copy your authentication token and type (with quotes):
 
     > Quandl.auth("authenticationtoken")
 
 This will then extend your usage.
 
-To check how much usage you have left type:
-
-    > Quandl.limit()
-
-This number is updated everytime Quandl is called or when passed force_check=TRUE.
 
 ### Example ###
 Create a graph of the Nasdaq, with a monthly frequency
@@ -64,26 +49,23 @@ Create a graph of the Nasdaq, with a monthly frequency
 ## Uploads ##
 There are a few things you need to do before you can proceed with uploading data.
  * Make an account and set your authentication token within the package with the Quandl.auth() function.
- *   Get your data into a data frame with the dates in the first column.
+ * Get your data into a data frame with the dates in the first column.
  * Pick a code for your dataset - only capital letters, numbers and underscores are acceptable.
 
 Then call this function 	
 
-	Quandl.push(code="TEST", username="yourname", name="This is a test dataset", description="This description can include extra information about the time series including units,data=yourdataset)`
+	Quandl.push(code="TEST", name="This is a test dataset", description="This description can include extra information about the time series including units",data=yourdataset)`
 
 The function returns a link to your newly created dataset. When creating a dataset the fields code, name, and data are mandatory. When updating a dataset only the code is mandatory.
 
-If you would like to update your dataset - change the name, add new data - pass this to the function.
-
-    update=TRUE
-    
+If you would like to update your dataset - change the name, add new data - pass update=TRUE to the function otherwise it will ask if you are sure.
 
 ### Example ###
 Downloading a partial dataset and uploading it with code TEST. 
 
     Quandl.auth("enteryourauthenticationtoken")
     mydata = Quandl("NSE/OIL", rows=5)
-    Quandl.push("TEST","This is a test dataset","This is a 	description",mydata)
+    Quandl.push("TEST",name="This is a test dataset",description="This is a description",data=mydata)
     
 
 Will return a link to your newly uploaded dataset
@@ -131,6 +113,7 @@ prints:
 	Desc: Energy production of Crude Oil in China. Units=Thousand Barrels per Day
 	Freq: annual
 	Cols: Year|Thousand Barrels per Day
+
 
 # Additional Resources #
 ---

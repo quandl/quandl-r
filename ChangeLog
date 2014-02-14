@@ -3,7 +3,7 @@
 ##############################
 
 - First iteration of REST interface with Quandl api added
-- Quandl and Quandlpush modified to use quandl.api
+- Quandl, Quandl.push, Quandl.search modified to use quandl.api
 
 
 ##############################

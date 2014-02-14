@@ -14,7 +14,7 @@
 #' data <- t(c("2013-01-01",200.5,123.4))
 #' data <- data.frame(data)
 #' names(data) <- c("Date","Col1","Col2")
-#' Quandlpush(code="TEST", username="someone", name="MY test data", description="This data is test data", data=data)
+#' Quandlpush(code="TEST", name="MY test data", description="This data is test data", data=data)
 #' }
 #' @importFrom RJSONIO fromJSON
 #' @importFrom RJSONIO toJSON
@@ -36,7 +36,7 @@ Quandl.push <- function(code, update=FALSE, authcode = Quandl.auth(), ...) {
         stop("Only uppercase letters, numbers, and underscores are permitted in the code")
     
     path <- paste("datasets", code, sep="/")
-    response <- fromJSON(do.call(quandl.api, c(version="v2", http="GET", path=path, params)), asText=TRUE)
+    response <- fromJSON(do.call(quandl.api, c(version="v2", path=path, params)), asText=TRUE)
     if (!is.null(response[['error']]))
       create <- TRUE
     else {
@@ -59,47 +59,55 @@ Quandl.push <- function(code, update=FALSE, authcode = Quandl.auth(), ...) {
         stop("Missing parameter 'name'")
     if (is.null(postparams$data) && create)
         stop("No data passed as argument")
-    if (!inherits(postparams$data,"data.frame") && create)
-        stop("Please pass data as a data frame.")
+    # if (!inherits(postparams$data,"data.frame") && create)
+    #     stop("Please pass data as a data frame.")
     
     # Format data to string
     if(!is.null(postparams$data)) {
-      data = postparams$data
-      # Make sure dates are formatted correctly.
-      data[,1] <- as.Date(data[,1])
-      data[,1] <- as.character(data[,1])
-
-      # Build datastring to pass to Quandl
+      data = as.data.frame(postparams$data)
       column_names <- paste(names(data),collapse=",")
-      datastring <- paste(capture.output(write.table(data, row.names=FALSE, col.names=FALSE, sep=",")), collapse="\n")
+      # Make sure dates are formatted correctly and check if they are in row names or column 1.
+      if (inherits(try(as.Date(rownames(data)), silent=TRUE), 'try-error')) {
+        data[,1] <- as.Date(data[,1])
+        data[,1] <- as.character(data[,1])
+        print_rows <- FALSE
+      }
+      else {
+        column_names = c("Date", column_names)
+        print_rows <- TRUE
+      }
+      # Build datastring to pass to Quandl
+      
+      datastring <- paste(capture.output(write.table(data, row.names=print_rows, col.names=FALSE, sep=",")), collapse="\n")
       postparams[[which(names(postparams)=="data")]] <- NULL
       if (is.null(postparams$column_names))
         postparams$column_names = column_names
     }
-    
+    headers <- basicHeaderGatherer()
     if (create) {
       # Must Create Dataset
       path <- "datasets"
       postparams$code <- code
       if (!is.null(source_code)) {postparams$source_code <- source_code}
       params$postdata <- postparams
-      output <- do.call(quandl.api, c(version="v2", http="POST", path=path, params))
+      output <- do.call(quandl.api, c(version="v2", http="POST", headers=headers$update, path=path, params))
     }
     else {
       # update Data set
       postdata = toJSON(postparams)
       params$postdata <- postdata
-      output <- do.call(quandl.api, c(version="v2", http="PUT", path=path, params))
+      output <- do.call(quandl.api, c(version="v2", http="PUT", headers=headers$update, path=path, params))
     }
+    print(headers$value()[["status"]])
     # Adding Data is an extra call
     if (!is.null(datastring)) {
       json <- fromJSON(output,asText=TRUE)
       postdata <- toJSON(list(data=datastring))
       params$postdata <- postdata
       path <- paste("datasets", json$id, "data", sep="/")
-      output <- do.call(quandl.api, c(version="v2", http="PUT", path=path, params))
+      
+      output <- do.call(quandl.api, c(version="v2", http="PUT", headers=headers$update, path=path, params))
     }
-
     # Check if uploaded properly
     json <- fromJSON(output,asText=TRUE)
     

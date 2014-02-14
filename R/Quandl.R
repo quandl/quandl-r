@@ -1,5 +1,6 @@
 Quandl.auth_token <- NA
 Quandl.remaining_limit <- NA
+Quandl.version <- '2.3.0'
 
 #' Query or set Quandl API token
 #' @param auth_token Optionally passed parameter to set Quandl \code{auth_token}.
@@ -155,7 +156,7 @@ Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts'), start_date, end_da
     if (!missing(start_date))
         params$trim_start <- as.Date(start_date)
     if (!missing(end_date))
-        params$trim_start <- as.Date(end_date)
+        params$trim_end <- as.Date(end_date)
     if (type != "raw")
         params$sort_order <- "asc"  
     if (params$collapse %in% c("weekly", "monthly", "quarterly", "annual")) {
@@ -166,7 +167,7 @@ Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts'), start_date, end_da
 
     ## Download and parse data
     headers <- basicHeaderGatherer()
-    response <- do.call(quandl.api, c(version="v1", http="GET", path=path, headers = headers$update, params))
+    response <- do.call(quandl.api, c(path=path, headers = headers$update, params))
     if (inherits(try(headers$value()[["status"]], silent=TRUE), 'try-error'))
         stop("I am sorry but Quandl is down for maintenance. Please check the main website for status updates.")
     if (length(grep("403", headers$value()[["status"]]))) {
@@ -181,8 +182,9 @@ Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts'), start_date, end_da
 
     ## Error Catching
     if (inherits(json, 'try-error')) {
-        error_str <- paste("Something is wrong, and you got past my error catching. Please copy this output and email to connect@quandl.com:", string, sep="\n")
-        stop(error_str)
+        print(params)
+        print(Quandl.version)
+        stop("Something is wrong, and you got past my error catching. Please copy the above output and email to connect@quandl.com")
     }
     if (json["error"] == "Requested entity does not exist." || json["error"] == "Unknown api route.")
         stop("Requested entity does not exist. This could mean the code does not exist or the parameters you have passed have returned an empty dataset.")
@@ -201,7 +203,7 @@ Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts'), start_date, end_da
     data <- tryCatch(as.data.frame(matrix(unlist(json$data), ncol = length(json$column_names), byrow = TRUE),stringsAsFactors=FALSE), 
         warning=function(w) {
             warning(w)
-            warning(paste("This warning is most likely the result of a data structure error. If the output of this function does not make sense please email raymond@quandl.com with the Quandl code: ", code), call. = FALSE)
+            warning(paste("This warning is most likely the result of a data structure error. If the output of this function does not make sense please email connect@quandl.com with the Quandl code: ", code), call. = FALSE)
             return(suppressWarnings(as.data.frame(matrix(unlist(json$data), ncol = length(json$column_names), byrow = TRUE),stringsAsFactors=FALSE)))
         }
     )
@@ -249,11 +251,7 @@ Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts'), start_date, end_da
             data_out <- xts(data[, -1], order.by=data[, 1])
     }
     if (meta && !multiset) {
-        source_string <- paste("http://www.quandl.com/api/v1/sources/", json$source_code, ".json", sep = "")
-        if (!is.na(authcode)) 
-            source_string <- paste(source_string, "?auth_token=", authcode, sep = "")
-        source_json <- fromJSON(source_string, nullValue = as.numeric(NA))
-
+        source_json <- fromJSON(quandl.api(paste("sources",json$source_code,sep="/"), auth_token=authcode), nullValue = as.numeric(NA))
         meta <- list(
             frequency   = json$frequency,
             name        = json$name,

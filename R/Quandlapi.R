@@ -20,32 +20,34 @@
 #' @importFrom RCurl httpDELETE
 #' @export
 
-quandl.api <- function(version, path, headers=NULL, http = c('GET', 'PUT', 'POST', 'DELETE'), ...) {
+quandl.api <- function(version="v1", path, headers=NULL, http = c('GET', 'PUT', 'POST', 'DELETE'), ...) {
   params <- list(...)
   if(http == 'PUT' || http == 'POST') {
     postdata <- params$postdata
     if (length(which(names(params)=="postdata")) == 0) stop("No post data entered")
     params[[which(names(params)=="postdata")]] <- NULL
   }
+  params$request_source <- 'R'
+  params$request_version <- Quandl.version
+
   http <- match.arg(http)
   request_url <- paste(paste("http://www.quandl.com/api", version, path, sep="/"), "?", sep="")
   param_names <- names(params)
 
-  if(length(params) >0) {for(i in 1:length(params)) {if(params[[i]] != "") {request_url <- paste(request_url, "&", param_names[i], "=", params[[i]], sep="")}}}
+  if(length(params) >0) {for(i in 1:length(params)) {request_url <- paste(request_url, "&", param_names[i], "=", params[[i]], sep="")}}
 
   switch(http,
     GET={
       response <- ifelse(is.null(headers), getURL(request_url), getURL(request_url, headerfunction=headers))
       },
     PUT={
-      response <- getURL(request_url, customRequest = "PUT", httpheader=c("Content-Length"=nchar(postdata, type="bytes"), "Content-Type"="application/json"), postfields=postdata)
+      response <- ifelse(is.null(headers), getURL(request_url, customRequest = "PUT", httpheader=c("Content-Length"=nchar(postdata, type="bytes"), "Content-Type"="application/json"), postfields=postdata), getURL(request_url, customRequest = "PUT", headerfunction=headers, httpheader=c("Content-Length"=nchar(postdata, type="bytes"), "Content-Type"="application/json"), postfields=postdata))
       },
     POST={
       response <- postForm(request_url, .params=postdata)
-      
       },
     DELETE={
-      response <- httpDELETE(request_url)
+      response <- ifelse(is.null(headers), httpDELETE(request_url), httpDELETE(request_url, headerfunction=headers))
     }
     )
   return(response)

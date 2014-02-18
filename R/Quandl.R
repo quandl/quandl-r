@@ -38,12 +38,13 @@ Quandl.limit <- function(remaining_limit, force_check=FALSE) {
         headers <- basicHeaderGatherer()
         if (is.na(Quandl.auth())) {
             response <- quandl.api("v2", "datasets/TAMMER/RANDOM", headers = headers$update)
-            if (length(grep("403", headers$value()[["status"]])))
+            status <- try(headers$value()[["status"]], silent=TRUE)
+            if (length(grep("403", status)) || length(grep("429", status))) {
                 stop(response)
+            }
             assignInMyNamespace('Quandl.remaining_limit', headers$value()[["X-RateLimit-Remaining"]])
         }
         else {
-            # getURL(paste("http://www.quandl.com/api/v1/datasets/TAMMER/RANDOM.json?auth_token=", Quandl.auth(), "&exclude_data=true", sep=""), headerfunction = headers$update)
             return(NA)
         }
     }

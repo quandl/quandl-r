@@ -1,7 +1,7 @@
 Package: Quandl
 Title: Quandl Data Connection
-Version: 2.3.0
-Date: 2013-09-11
+Version: 2.3.1
+Date: 2014-02-18
 Author: Raymond McTaggart, Gergely Daroczi
 Maintainer: Raymond McTaggart <raymond@quandl.com>
 Description: This package interacts directly with the Quandl API to offer data

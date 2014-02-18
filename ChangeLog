@@ -1,4 +1,19 @@
 ##############################
+####Version 2.3.0 to 2.3.1####
+##############################
+
+- Test suite passes
+
+
+##############################
+####Version 2.2.2 to 2.3.0####
+##############################
+
+- First iteration of REST interface with Quandl api added
+- Quandl, Quandl.push, Quandl.search modified to use quandl.api
+
+
+##############################
 ####Version 2.1.2 to 2.2.2####
 ##############################
 

@@ -19,18 +19,21 @@
 #' @export
 Quandl.search <- function(query, page=1, source=NULL, silent=FALSE, authcode=Quandl.auth()) {
     
+    params <- list()
     parsedquery <- gsub(" ", "+", query)
-    url <- paste("http://www.quandl.com/api/v1/datasets.json?query=", parsedquery, sep="")
+    params$query <- parsedquery
+    # url <- paste("http://www.quandl.com/api/v1/datasets.json?query=", parsedquery, sep="")
     if (is.na(authcode))
         warning("It would appear you aren't using an authentication token. Please visit http://www.quandl.com/help/r or your usage may be limited.")
     else
-        url <- paste(url, "&auth_token=", authcode, sep = "")
+        params$auth_token <- authcode
     if (!is.null(source)) {
-        url <- paste(url, "&source_code=", source, sep="")
+        params$source_code <- source
     }
-    url <- paste(url, "&page=",as.character(page),sep="")
+    params$page <- as.character(page)
     headers <- basicHeaderGatherer()
-    response <- getURL(url, headerfunction = headers$update)
+    path = "datasets"
+    response <- do.call(quandl.api, c(path=path, headers = headers$update, params))
     if (is.na(authcode))
         Quandl.limit(headers$value()[["X-RateLimit-Remaining"]])
     if (length(grep("403", headers$value()[["status"]])))

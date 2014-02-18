@@ -6,8 +6,8 @@
     start_date, end_date,
     transformation = c("", "diff", "rdiff", "normalize", "cumul", "rdiff_from"),
     collapse = c("", "weekly", "monthly", "quarterly", "annual"),
-    rows, sort = c("desc", "asc"), meta = FALSE,
-    authcode = Quandl.auth())
+    sort = c("desc", "asc"), meta = FALSE,
+    authcode = Quandl.auth(), ...)
 }
 \arguments{
   \item{code}{Dataset code on Quandl specified as a string
@@ -27,8 +27,6 @@
 
   \item{collapse}{Collapse frequency of Data.}
 
-  \item{rows}{Select number of dates returned.}
-
   \item{sort}{Select if data is given to R in ascending or
   descending formats. Helpful for the rows parameter.}
 
@@ -37,6 +35,9 @@
 
   \item{authcode}{Authentication Token for extended API
   access by default set by \code{\link{Quandl.auth}}.}
+
+  \item{...}{Additional named values that are interpretted
+  as api parameters.}
 }
 \value{
   Depending on the outpug flag the class is either

@@ -2,10 +2,9 @@
 #' 
 #' For instructions on finding your authentication token go to www.quandl.com/API.
 #' @param code Dataset code you would like to create or update, specified as string.
-#' @param username Used to identify user source.
-#' @param source_code Source code to upload dataset under.
 #' @param update Defaults to false, when true overwrites existing datasets on Quandl.
 #' @param authcode Authentiation Token to identify user by dfault set by \code{\link{Quandl.auth}}.
+#' @param ... Additional named values that are interpretted as api parameters.
 #' @return Returns a string url to the newly loaded dataset.
 #' @references This R package uses the Quandl API. For more information go to http://www.quandl.com/api.
 #' @author Raymond McTaggart

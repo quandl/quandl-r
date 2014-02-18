@@ -7,6 +7,7 @@
 #' @param path Path to api resource.
 #' @param headers Header function to collect header info.
 #' @param http Type of http request sent.
+#' @param ... Named values that are interpretted as api parameters.
 #' @return Website response.
 #' @references This R package uses the Quandl API. For more information go to http://www.quandl.com/api. For more help on the package itself go to http://www.quandl.com/help/r.
 #' @author Raymond McTaggart

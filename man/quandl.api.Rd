@@ -2,7 +2,7 @@
 \alias{quandl.api}
 \title{Pulls Data from the Quandl API}
 \usage{
-  quandl.api(version, path, headers = NULL,
+  quandl.api(version = "v1", path, headers = NULL,
     http = c("GET", "PUT", "POST", "DELETE"), ...)
 }
 \arguments{
@@ -14,6 +14,9 @@
   \item{headers}{Header function to collect header info.}
 
   \item{http}{Type of http request sent.}
+
+  \item{...}{Named values that are interpretted as api
+  parameters.}
 }
 \value{
   Website response.

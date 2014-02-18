@@ -14,7 +14,7 @@ Imports:
     xts
 Suggests:
     testthat
-License: MIT
+License: MIT + file LICENSE
 Collate:
     'Quandl.R'
     'Quandlpush.R'

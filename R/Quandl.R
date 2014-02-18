@@ -74,10 +74,10 @@ metaData <- function(x)attr(x, "meta")
 #' @param end_date Use to truncate data by end date in 'yyyy-mm-dd' format.
 #' @param transformation Apply Quandl API data transformations.
 #' @param collapse Collapse frequency of Data.
-#' @param rows Select number of dates returned.
 #' @param sort Select if data is given to R in ascending or descending formats. Helpful for the rows parameter.
 #' @param meta Returns meta data in list format as well as data.
 #' @param authcode Authentication Token for extended API access by default set by \code{\link{Quandl.auth}}.
+#' @param ... Additional named values that are interpretted as api parameters.
 #' @return Depending on the outpug flag the class is either data.frame, time series, xts, zoo or a list containing one.
 #' @references This R package uses the Quandl API. For more information go to http://www.quandl.com/api. For more help on the package itself go to http://www.quandl.com/help/r.
 #' @author Raymond McTaggart
@@ -168,9 +168,10 @@ Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts'), start_date, end_da
     ## Download and parse data
     headers <- basicHeaderGatherer()
     response <- do.call(quandl.api, c(path=path, headers = headers$update, params))
-    if (inherits(try(headers$value()[["status"]], silent=TRUE), 'try-error'))
+    status <- try(headers$value()[["status"]], silent=TRUE)
+    if (inherits(status, 'try-error'))
         stop("I am sorry but Quandl is down for maintenance. Please check the main website for status updates.")
-    if (length(grep("403", headers$value()[["status"]]))) {
+    if (length(grep("403", status)) || length(grep("429", status))) {
         stop(response)
     }
     if(is.na(authcode))
@@ -251,7 +252,7 @@ Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts'), start_date, end_da
             data_out <- xts(data[, -1], order.by=data[, 1])
     }
     if (meta && !multiset) {
-        source_json <- fromJSON(quandl.api(paste("sources",json$source_code,sep="/"), auth_token=authcode), nullValue = as.numeric(NA))
+        source_json <- fromJSON(quandl.api(path=paste("sources",json$source_code,sep="/"), auth_token=authcode), nullValue = as.numeric(NA))
         meta <- list(
             frequency   = json$frequency,
             name        = json$name,

@@ -9,15 +9,14 @@
   \item{code}{Dataset code you would like to create or
   update, specified as string.}
 
-  \item{username}{Used to identify user source.}
-
-  \item{source_code}{Source code to upload dataset under.}
-
   \item{update}{Defaults to false, when true overwrites
   existing datasets on Quandl.}
 
   \item{authcode}{Authentiation Token to identify user by
   dfault set by \code{\link{Quandl.auth}}.}
+
+  \item{...}{Additional named values that are interpretted
+  as api parameters.}
 }
 \value{
   Returns a string url to the newly loaded dataset.
@@ -31,7 +30,7 @@
 data <- t(c("2013-01-01",200.5,123.4))
 data <- data.frame(data)
 names(data) <- c("Date","Col1","Col2")
-Quandlpush(code="TEST", username="someone", name="MY test data", description="This data is test data", data=data)
+Quandlpush(code="TEST", name="MY test data", description="This data is test data", data=data)
 }
 }
 \author{

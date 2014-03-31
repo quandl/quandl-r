@@ -1,6 +1,7 @@
 Quandl.auth_token <- NA
 Quandl.remaining_limit <- NA
 Quandl.version <- '2.3.1'
+Quandl.curl <- NA
 
 #' Query or set Quandl API token
 #' @param auth_token Optionally passed parameter to set Quandl \code{auth_token}.
@@ -53,6 +54,14 @@ Quandl.limit <- function(remaining_limit, force_check=FALSE) {
 
 }
 
+Quandl.curlopts <- function(curl) {
+    if (!missing(curl))
+        assignInMyNamespace('Quandl.curlvar', curl)
+    else if is.na(Quandl.curl)
+        assignInMyNamespace('Quandl.curlvar', getCurlHandle())
+    invisible(Quandl.curl)
+
+}
 #' Retrieve metadata from a Quandl series
 #' @param x A Quandl time series object with attached meta data.
 #' @return Returns a list of meta data about the series.
@@ -139,7 +148,7 @@ Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts'), start_date, end_da
     else {
         multiset = TRUE
         freqflag = TRUE ## Frequency not automatically supported with multisets
-        freq <- 1
+        freq <- 365
         path <- "multisets"
         params$columns <- sub("/",".",code[1])
         for (i in 2:length(code)) {

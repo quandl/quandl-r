@@ -1,0 +1,25 @@
+\name{Quandl.curlopts}
+\alias{Quandl.curlopts}
+\title{Set curl options on all Quandl api calls. e.g. for use with a proxy}
+\usage{
+  Quandl.curlopts(curl)
+}
+\arguments{
+  \item{curl}{A curl handle object}
+}
+\value{
+  Returns invisibly the currently set \code{curl}
+}
+\description{
+  Set curl options on all Quandl api calls. e.g. for use
+  with a proxy
+}
+\examples{
+\dontrun{
+Quandl.curlopts(getCurlHandle())
+}
+}
+\seealso{
+  \code{\link{Quandl}}
+}
+

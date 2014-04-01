@@ -1,6 +1,7 @@
 export(metaData)
 export(quandl.api)
 export(Quandl.auth)
+export(Quandl.curlopts)
 export(Quandl.limit)
 export(Quandl.push)
 export(Quandl.search)

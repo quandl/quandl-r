@@ -39,16 +39,16 @@ quandl.api <- function(version="v1", path, headers=NULL, http = c('GET', 'PUT', 
 
   switch(http,
     GET={
-      response <- ifelse(is.null(headers), getURL(request_url), getURL(request_url, headerfunction=headers))
+      response <- ifelse(is.null(headers), getURL(request_url, curl = Quandl.curlopts()), getURL(request_url, headerfunction=headers, curl = Quandl.curlopts()))
       },
     PUT={
-      response <- ifelse(is.null(headers), getURL(request_url, customRequest = "PUT", httpheader=c("Content-Length"=nchar(postdata, type="bytes"), "Content-Type"="application/json"), postfields=postdata), getURL(request_url, customRequest = "PUT", headerfunction=headers, httpheader=c("Content-Length"=nchar(postdata, type="bytes"), "Content-Type"="application/json"), postfields=postdata))
+      response <- ifelse(is.null(headers), getURL(request_url, customRequest = "PUT", httpheader=c("Content-Length"=nchar(postdata, type="bytes"), "Content-Type"="application/json"), postfields=postdata, curl = Quandl.curlopts()), getURL(request_url, customRequest = "PUT", headerfunction=headers, httpheader=c("Content-Length"=nchar(postdata, type="bytes"), "Content-Type"="application/json"), postfields=postdata, curl = Quandl.curlopts()))
       },
     POST={
-      response <- postForm(request_url, .params=postdata)
+      response <- postForm(request_url, .params=postdata, curl = Quandl.curlopts())
       },
     DELETE={
-      response <- ifelse(is.null(headers), httpDELETE(request_url), httpDELETE(request_url, headerfunction=headers))
+      response <- ifelse(is.null(headers), httpDELETE(request_url, curl = Quandl.curlopts()), httpDELETE(request_url, headerfunction=headers, curl = Quandl.curlopts()))
     }
     )
   return(response)

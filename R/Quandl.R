@@ -53,12 +53,20 @@ Quandl.limit <- function(remaining_limit, force_check=FALSE) {
     return(Quandl.remaining_limit)
 
 }
+#' Set curl options on all Quandl api calls. e.g. for use with a proxy
+#' @param curl A curl handle object
+#' @return Returns invisibly the currently set \code{curl}
+#' @seealso \code{\link{Quandl}}
+#' @examples \dontrun{
+#' Quandl.curlopts(getCurlHandle())
+#' }
+#' @export
 
 Quandl.curlopts <- function(curl) {
     if (!missing(curl))
-        assignInMyNamespace('Quandl.curlvar', curl)
-    else if is.na(Quandl.curl)
-        assignInMyNamespace('Quandl.curlvar', getCurlHandle())
+        assignInMyNamespace('Quandl.curl', curl)
+    else if (is.na(Quandl.curl))
+        assignInMyNamespace('Quandl.curl', getCurlHandle())
     invisible(Quandl.curl)
 
 }
@@ -174,7 +182,12 @@ Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts'), start_date, end_da
         freqflag = TRUE
     }
     params <- c(params, list(...))
-
+    if(!is.null(params$force_irregular)) {
+        force_irregular <- TRUE
+        params[[which(names(params)=="force_irregular")]] <- NULL
+    }
+    else
+        force_irregular <- FALSE
     ## Download and parse data
     headers <- basicHeaderGatherer()
     response <- do.call(quandl.api, c(path=path, headers = headers$update, params))
@@ -232,7 +245,7 @@ Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts'), start_date, end_da
         data_out <- data
     else {
         # Deal with regularly spaced time series first
-        if (freq %in% c(1, 4, 12)) {
+        if (freq %in% c(1, 4, 12) && !force_irregular) {
             # Build regular zoo with correct frequency
             if(freq == 1)
                 data_out <- zoo(data[,-1], frequency = freq, as.year(data[,1]))

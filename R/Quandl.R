@@ -139,7 +139,7 @@ Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts'), start_date, end_da
     else {
         multiset = TRUE
         freqflag = TRUE ## Frequency not automatically supported with multisets
-        freq <- 1
+        freq <- 365
         path <- "multisets"
         params$columns <- sub("/",".",code[1])
         for (i in 2:length(code)) {

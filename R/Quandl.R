@@ -1,6 +1,6 @@
 Quandl.auth_token <- NA
 Quandl.remaining_limit <- NA
-Quandl.version <- '2.3.1'
+Quandl.version <- '2.3.2'
 
 #' Query or set Quandl API token
 #' @param auth_token Optionally passed parameter to set Quandl \code{auth_token}.

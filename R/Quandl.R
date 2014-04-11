@@ -99,7 +99,7 @@ metaData <- function(x)attr(x, "meta")
 #' @param meta Returns meta data in list format as well as data.
 #' @param authcode Authentication Token for extended API access by default set by \code{\link{Quandl.auth}}.
 #' @param ... Additional named values that are interpretted as api parameters.
-#' @return Depending on the outpug flag the class is either data.frame, time series, xts, zoo or a list containing one.
+#' @return Depending on the type the class is either data.frame, time series, xts, zoo.
 #' @references This R package uses the Quandl API. For more information go to http://www.quandl.com/api. For more help on the package itself go to http://www.quandl.com/help/r.
 #' @author Raymond McTaggart
 #' @seealso \code{\link{Quandl.auth}}

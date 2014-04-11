@@ -38,8 +38,8 @@ Quandl(code, type = c("raw", "ts", "zoo", "xts"), start_date, end_date,
   as api parameters.}
 }
 \value{
-Depending on the outpug flag the class is either
-data.frame, time series, xts, zoo or a list containing one.
+Depending on the type the class is either data.frame, time
+series, xts, zoo.
 }
 \description{
 An authentication token is needed for access to the Quandl

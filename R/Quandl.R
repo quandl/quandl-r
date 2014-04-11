@@ -1,6 +1,6 @@
 Quandl.auth_token <- NA
 Quandl.remaining_limit <- NA
-Quandl.version <- '2.3.2'
+Quandl.version <- '2.3.5'
 Quandl.curl <- NA
 
 
@@ -61,11 +61,13 @@ Quandl.limit <- function(remaining_limit, force_check=FALSE) {
 #' @examples \dontrun{
 #' Quandl.curlopts(getCurlHandle())
 #' }
+#' @importFrom RCurl getCurlHandle
 #' @export
 
 Quandl.curlopts <- function(curl) {
     if (!missing(curl))
         assignInMyNamespace('Quandl.curl', curl)
+    else if (class(Quandl.curl)[1] == "CURLHandle") {}
     else if (is.na(Quandl.curl))
         assignInMyNamespace('Quandl.curl', getCurlHandle())
     invisible(Quandl.curl)
@@ -151,6 +153,10 @@ Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts'), start_date, end_da
             col <- codearray[[1]][3]
             code <- paste(codearray[[1]][1:2], collapse='/')
             params$column <- col
+        }
+        else if (length(strsplit(code, "\\.")[[1]]) == 2) {
+            params$column <- strsplit(code, "\\.")[[1]][2]
+            code <- strsplit(code, "\\.")[[1]][1]
         }
         path <- paste("datasets/", code, sep="")
     }

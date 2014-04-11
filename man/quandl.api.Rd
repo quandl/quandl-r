@@ -2,8 +2,8 @@
 \alias{quandl.api}
 \title{Pulls Data from the Quandl API}
 \usage{
-  quandl.api(version = "v1", path, headers = NULL,
-    http = c("GET", "PUT", "POST", "DELETE"), ...)
+quandl.api(version = "v1", path, headers = NULL, http = c("GET", "PUT",
+  "POST", "DELETE"), ...)
 }
 \arguments{
   \item{version}{Set to the version of the Quandl API you
@@ -19,16 +19,16 @@
   parameters.}
 }
 \value{
-  Website response.
+Website response.
 }
 \description{
-  An authentication token is needed for access to the
-  Quandl API multiple times. Set your \code{access_token}
-  with \code{Quandl.auth} function.
+An authentication token is needed for access to the Quandl
+API multiple times. Set your \code{access_token} with
+\code{Quandl.auth} function.
 }
 \details{
-  For instructions on finding your authentication token go
-  to www.quandl.com/API
+For instructions on finding your authentication token go to
+www.quandl.com/API
 }
 \examples{
 \dontrun{
@@ -37,14 +37,14 @@ plot(quandldata[,1])
 }
 }
 \author{
-  Raymond McTaggart
+Raymond McTaggart
 }
 \references{
-  This R package uses the Quandl API. For more information
-  go to http://www.quandl.com/api. For more help on the
-  package itself go to http://www.quandl.com/help/r.
+This R package uses the Quandl API. For more information go
+to http://www.quandl.com/api. For more help on the package
+itself go to http://www.quandl.com/help/r.
 }
 \seealso{
-  \code{\link{Quandl.auth}}
+\code{\link{Quandl.auth}}
 }
 

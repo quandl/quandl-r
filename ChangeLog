@@ -1,4 +1,12 @@
 ##############################
+####Version 2.3.2 to 2.3.5####
+##############################
+
+- Quandl.curlopts allows a curl handle to be added to api calls
+- Package now depends on xts to fix errors with zooreg
+- Package documentation built with new version of roxygen2 so it has changed as well
+
+##############################
 ####Version 2.3.1 to 2.3.2####
 ##############################
 

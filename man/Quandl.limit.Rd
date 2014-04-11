@@ -2,7 +2,7 @@
 \alias{Quandl.limit}
 \title{Query remaining API limit}
 \usage{
-  Quandl.limit(remaining_limit, force_check = FALSE)
+Quandl.limit(remaining_limit, force_check = FALSE)
 }
 \arguments{
   \item{remaining_limit}{Optionally passed parameter to
@@ -13,10 +13,10 @@
   authentication token change.}
 }
 \value{
-  Returns the number of remaining API calls.
+Returns the number of remaining API calls.
 }
 \description{
-  Query remaining API limit
+Query remaining API limit
 }
 \examples{
 \dontrun{
@@ -24,6 +24,6 @@ Quandl.limit(700)
 }
 }
 \seealso{
-  \code{\link{Quandl}}
+\code{\link{Quandl}}
 }
 

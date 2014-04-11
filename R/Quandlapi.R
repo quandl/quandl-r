@@ -7,6 +7,7 @@
 #' @param path Path to api resource.
 #' @param headers Header function to collect header info.
 #' @param http Type of http request sent.
+#' @param curl Curl handle from RCurl
 #' @param ... Named values that are interpretted as api parameters.
 #' @return Website response.
 #' @references This R package uses the Quandl API. For more information go to http://www.quandl.com/api. For more help on the package itself go to http://www.quandl.com/help/r.
@@ -19,9 +20,10 @@
 #' @importFrom RCurl getURL
 #' @importFrom RCurl postForm
 #' @importFrom RCurl httpDELETE
+#' @importFrom RCurl getCurlHandle
 #' @export
 
-quandl.api <- function(version="v1", path, headers=NULL, http = c('GET', 'PUT', 'POST', 'DELETE'), ...) {
+quandl.api <- function(version="v1", path, headers=NULL, http = c('GET', 'PUT', 'POST', 'DELETE'), curl = getCurlHandle(), ...) {
   params <- list(...)
   if(http == 'PUT' || http == 'POST') {
     postdata <- params$postdata
@@ -39,16 +41,16 @@ quandl.api <- function(version="v1", path, headers=NULL, http = c('GET', 'PUT', 
 
   switch(http,
     GET={
-      response <- ifelse(is.null(headers), getURL(request_url), getURL(request_url, headerfunction=headers))
+      response <- ifelse(is.null(headers), getURL(request_url, curl = curl), getURL(request_url, headerfunction=headers, curl = curl))
       },
     PUT={
-      response <- ifelse(is.null(headers), getURL(request_url, customRequest = "PUT", httpheader=c("Content-Length"=nchar(postdata, type="bytes"), "Content-Type"="application/json"), postfields=postdata), getURL(request_url, customRequest = "PUT", headerfunction=headers, httpheader=c("Content-Length"=nchar(postdata, type="bytes"), "Content-Type"="application/json"), postfields=postdata))
+      response <- ifelse(is.null(headers), getURL(request_url, curl = curl, customRequest = "PUT", httpheader=c("Content-Length"=nchar(postdata, type="bytes"), "Content-Type"="application/json"), postfields=postdata), getURL(request_url, curl = curl, customRequest = "PUT", headerfunction=headers, httpheader=c("Content-Length"=nchar(postdata, type="bytes"), "Content-Type"="application/json"), postfields=postdata))
       },
     POST={
-      response <- postForm(request_url, .params=postdata)
+      response <- postForm(request_url, curl = curl, .params=postdata)
       },
     DELETE={
-      response <- ifelse(is.null(headers), httpDELETE(request_url), httpDELETE(request_url, headerfunction=headers))
+      response <- ifelse(is.null(headers), httpDELETE(request_url, curl = curl), httpDELETE(request_url, headerfunction=headers, curl = curl))
     }
     )
   return(response)

@@ -22,6 +22,7 @@ Quandl.auth <- function(auth_token) {
 #' Query remaining API limit
 #' @param remaining_limit Optionally passed parameter to update Quandl \code{remaining_limit}
 #' @param force_check Forces the function to requery Quandl for the api limit remaining, could be used after an authentication token change.
+#' @param curl Curl handle from RCurl
 #' @return Returns the number of remaining API calls.
 #' @seealso \code{\link{Quandl}}
 #' @examples \dontrun{
@@ -29,15 +30,16 @@ Quandl.auth <- function(auth_token) {
 #' }
 #' @importFrom RCurl getURL
 #' @importFrom RCurl basicHeaderGatherer
+#' @importFrom RCurl getCurlHandle
 #' @export
-Quandl.limit <- function(remaining_limit, force_check=FALSE) {
+Quandl.limit <- function(remaining_limit, force_check=FALSE, curl = getCurlHandle()) {
     if (!missing(remaining_limit)) {
         assignInMyNamespace('Quandl.remaining_limit', remaining_limit)
     }
     else if (is.na(Quandl.remaining_limit) || force_check) {
         headers <- basicHeaderGatherer()
         if (is.na(Quandl.auth())) {
-            response <- quandl.api("v2", "datasets/TAMMER/RANDOM", headers = headers$update)
+            response <- quandl.api("v2", "datasets/TAMMER/RANDOM", headers = headers$update, curl = curl)
             status <- try(headers$value()[["status"]], silent=TRUE)
             if (length(grep("403", status)) || length(grep("429", status))) {
                 stop(response)
@@ -78,6 +80,7 @@ metaData <- function(x)attr(x, "meta")
 #' @param sort Select if data is given to R in ascending or descending formats. Helpful for the rows parameter.
 #' @param meta Returns meta data in list format as well as data.
 #' @param authcode Authentication Token for extended API access by default set by \code{\link{Quandl.auth}}.
+#' @param curl Curl handle from RCurl
 #' @param ... Additional named values that are interpretted as api parameters.
 #' @return Depending on the outpug flag the class is either data.frame, time series, xts, zoo or a list containing one.
 #' @references This R package uses the Quandl API. For more information go to http://www.quandl.com/api. For more help on the package itself go to http://www.quandl.com/help/r.
@@ -89,6 +92,7 @@ metaData <- function(x)attr(x, "meta")
 #' }
 #' @importFrom RCurl getURL
 #' @importFrom RCurl basicHeaderGatherer
+#' @importFrom RCurl getCurlHandle
 #' @importFrom RJSONIO fromJSON
 #' @importFrom zoo zoo
 #' @importFrom zoo as.zooreg
@@ -97,7 +101,7 @@ metaData <- function(x)attr(x, "meta")
 #' @importFrom xts xts
 #' @importFrom xts as.xts
 #' @export
-Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts'), start_date, end_date, transformation = c('', 'diff', 'rdiff', 'normalize', 'cumul', 'rdiff_from'), collapse = c('', 'weekly', 'monthly', 'quarterly', 'annual'), sort = c('desc', 'asc'), meta = FALSE, authcode = Quandl.auth(), ...) {
+Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts'), start_date, end_date, transformation = c('', 'diff', 'rdiff', 'normalize', 'cumul', 'rdiff_from'), collapse = c('', 'weekly', 'monthly', 'quarterly', 'annual'), sort = c('desc', 'asc'), meta = FALSE, authcode = Quandl.auth(), curl = getCurlHandle(), ...) {
     params = list()
     ## Flag to indicate frequency change due to collapse
     freqflag = FALSE
@@ -168,7 +172,7 @@ Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts'), start_date, end_da
 
     ## Download and parse data
     headers <- basicHeaderGatherer()
-    response <- do.call(quandl.api, c(path=path, headers = headers$update, params))
+    response <- do.call(quandl.api, c(path=path, headers = headers$update, params, curl = curl))
     status <- try(headers$value()[["status"]], silent=TRUE)
     if (inherits(status, 'try-error'))
         stop("I am sorry but Quandl is down for maintenance. Please check the main website for status updates.")
@@ -176,7 +180,7 @@ Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts'), start_date, end_da
         stop(response)
     }
     if(is.na(authcode))
-        Quandl.limit(headers$value()[["X-RateLimit-Remaining"]])
+        Quandl.limit(headers$value()[["X-Ratelimit-Remaining"]], curl = curl)
 
 
     json <- try(fromJSON(response, nullValue = as.numeric(NA)), silent = TRUE)
@@ -253,7 +257,7 @@ Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts'), start_date, end_da
             data_out <- xts(data[, -1], order.by=data[, 1])
     }
     if (meta && !multiset) {
-        source_json <- fromJSON(quandl.api(path=paste("sources",json$source_code,sep="/"), auth_token=authcode), nullValue = as.numeric(NA))
+        source_json <- fromJSON(quandl.api(path=paste("sources",json$source_code,sep="/"), auth_token=authcode, curl=curl), nullValue = as.numeric(NA))
         meta <- list(
             frequency   = json$frequency,
             name        = json$name,

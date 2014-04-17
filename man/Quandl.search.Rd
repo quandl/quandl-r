@@ -32,7 +32,7 @@ www.quandl.com/API
 }
 \examples{
 \dontrun{
-output = Quandlsearch("oil")
+search.results <- Quandl.search("oil")
 }
 }
 \author{

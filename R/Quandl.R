@@ -223,8 +223,8 @@ Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts'), start_date, end_da
       stop(json$errors)
     if (length(json$data) == 0)
         stop("Requested Entity does not exist.")
-    if (length(json$column_names) > 100 && multiset)
-        stop("Currently we only support multisets with up to 100 columns. Please contact connect@quandl.com if this is a problem.")
+    if (length(json$column_names) > 1000 && multiset)
+        stop("Currently we only support multisets with up to 1000 columns. Please contact connect@quandl.com if this is a problem.")
     ## Detect frequency
     if (!freqflag)
         freq <- frequency2integer(json$frequency)

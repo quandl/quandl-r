@@ -14,5 +14,6 @@ Imports:
 Suggests:
     testthat
 Depends:
+    R (>= 2.15.0),
     xts
 License: MIT + file LICENSE

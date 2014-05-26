@@ -2,17 +2,17 @@
 \alias{Quandl.auth}
 \title{Query or set Quandl API token}
 \usage{
-  Quandl.auth(auth_token)
+Quandl.auth(auth_token)
 }
 \arguments{
   \item{auth_token}{Optionally passed parameter to set
   Quandl \code{auth_token}.}
 }
 \value{
-  Returns invisibly the currently set \code{auth_token}.
+Returns invisibly the currently set \code{auth_token}.
 }
 \description{
-  Query or set Quandl API token
+Query or set Quandl API token
 }
 \examples{
 \dontrun{
@@ -20,6 +20,6 @@ Quandl.auth('foobar')
 }
 }
 \seealso{
-  \code{\link{Quandl}}
+\code{\link{Quandl}}
 }
 

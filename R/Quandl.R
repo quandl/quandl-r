@@ -1,6 +1,8 @@
 Quandl.auth_token <- NA
 Quandl.remaining_limit <- NA
-Quandl.version <- '2.3.2'
+Quandl.version <- '2.3.5'
+Quandl.curl <- NA
+
 
 #' Query or set Quandl API token
 #' @param auth_token Optionally passed parameter to set Quandl \code{auth_token}.
@@ -52,7 +54,25 @@ Quandl.limit <- function(remaining_limit, force_check=FALSE) {
     return(Quandl.remaining_limit)
 
 }
+#' Set curl options on all Quandl api calls. e.g. for use with a proxy
+#' @param curl A curl handle object
+#' @return Returns invisibly the currently set \code{curl}
+#' @seealso \code{\link{Quandl}}
+#' @examples \dontrun{
+#' Quandl.curlopts(getCurlHandle())
+#' }
+#' @importFrom RCurl getCurlHandle
+#' @export
 
+Quandl.curlopts <- function(curl) {
+    if (!missing(curl))
+        assignInMyNamespace('Quandl.curl', curl)
+    else if (class(Quandl.curl)[1] == "CURLHandle") {}
+    else if (is.na(Quandl.curl))
+        assignInMyNamespace('Quandl.curl', getCurlHandle())
+    invisible(Quandl.curl)
+
+}
 #' Retrieve metadata from a Quandl series
 #' @param x A Quandl time series object with attached meta data.
 #' @return Returns a list of meta data about the series.
@@ -79,7 +99,7 @@ metaData <- function(x)attr(x, "meta")
 #' @param meta Returns meta data in list format as well as data.
 #' @param authcode Authentication Token for extended API access by default set by \code{\link{Quandl.auth}}.
 #' @param ... Additional named values that are interpretted as api parameters.
-#' @return Depending on the outpug flag the class is either data.frame, time series, xts, zoo or a list containing one.
+#' @return Depending on the type the class is either data.frame, time series, xts, zoo.
 #' @references This R package uses the Quandl API. For more information go to http://www.quandl.com/api. For more help on the package itself go to http://www.quandl.com/help/r.
 #' @author Raymond McTaggart
 #' @seealso \code{\link{Quandl.auth}}
@@ -134,6 +154,10 @@ Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts'), start_date, end_da
             code <- paste(codearray[[1]][1:2], collapse='/')
             params$column <- col
         }
+        else if (length(strsplit(code, "\\.")[[1]]) == 2) {
+            params$column <- strsplit(code, "\\.")[[1]][2]
+            code <- strsplit(code, "\\.")[[1]][1]
+        }
         path <- paste("datasets/", code, sep="")
     }
     else {
@@ -165,7 +189,12 @@ Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts'), start_date, end_da
         freqflag = TRUE
     }
     params <- c(params, list(...))
-
+    if(!is.null(params$force_irregular)) {
+        force_irregular <- TRUE
+        params[[which(names(params)=="force_irregular")]] <- NULL
+    }
+    else
+        force_irregular <- FALSE
     ## Download and parse data
     headers <- basicHeaderGatherer()
     response <- do.call(quandl.api, c(path=path, headers = headers$update, params))
@@ -194,8 +223,8 @@ Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts'), start_date, end_da
       stop(json$errors)
     if (length(json$data) == 0)
         stop("Requested Entity does not exist.")
-    if (length(json$column_names) > 100 && multiset)
-        stop("Currently we only support multisets with up to 100 columns. Please contact connect@quandl.com if this is a problem.")
+    if (length(json$column_names) > 1000 && multiset)
+        stop("Currently we only support multisets with up to 1000 columns. Please contact connect@quandl.com if this is a problem.")
     ## Detect frequency
     if (!freqflag)
         freq <- frequency2integer(json$frequency)
@@ -223,7 +252,7 @@ Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts'), start_date, end_da
         data_out <- data
     else {
         # Deal with regularly spaced time series first
-        if (freq %in% c(1, 4, 12)) {
+        if (freq %in% c(1, 4, 12) && !force_irregular) {
             # Build regular zoo with correct frequency
             if(freq == 1)
                 data_out <- zoo(data[,-1], frequency = freq, as.year(data[,1]))

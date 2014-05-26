@@ -13,7 +13,7 @@
 #' @author Raymond McTaggart
 #' @seealso \code{\link{Quandl.auth}}
 #' @examples \dontrun{
-#' output = Quandlsearch("oil")
+#' search.results <- Quandl.search("oil")
 #' }
 #' @importFrom RJSONIO fromJSON
 #' @export

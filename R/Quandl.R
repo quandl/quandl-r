@@ -1,6 +1,6 @@
 Quandl.auth_token <- NA
 Quandl.remaining_limit <- NA
-Quandl.version <- '2.3.5'
+Quandl.version <- '2.3.6'
 Quandl.curl <- NA
 
 
@@ -213,6 +213,7 @@ Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts'), start_date, end_da
 
     ## Error Catching
     if (inherits(json, 'try-error')) {
+        print(response)
         print(params)
         print(Quandl.version)
         stop("Something is wrong, and you got past my error catching. Please copy the above output and email to connect@quandl.com")

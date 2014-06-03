@@ -213,6 +213,7 @@ Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts'), start_date, end_da
 
     ## Error Catching
     if (inherits(json, 'try-error')) {
+        print(status)
         print(response)
         print(params)
         print(Quandl.version)

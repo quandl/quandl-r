@@ -33,11 +33,7 @@ Quandl.search <- function(query, page=1, source=NULL, silent=FALSE, authcode=Qua
     params$page <- as.character(page)
     headers <- basicHeaderGatherer()
     path = "datasets"
-    response <- do.call(quandl.api, c(path=path, headers = headers$update, params))
-    if (is.na(authcode))
-        Quandl.limit(headers$value()[["X-RateLimit-Remaining"]])
-    if (length(grep("403", headers$value()[["status"]])))
-        stop(response)
+    response <- do.call(quandl.api, c(path=path, params))
     json <- try(fromJSON(response),silent=TRUE)
     if (inherits(json, 'try-error'))
         stop("No data")

@@ -19,9 +19,11 @@
 #' @importFrom RCurl getURL
 #' @importFrom RCurl postForm
 #' @importFrom RCurl httpDELETE
+#' @importFrom RCurl basicHeaderGatherer
 #' @export
 
-quandl.api <- function(version="v1", path, headers=NULL, http = c('GET', 'PUT', 'POST', 'DELETE'), ...) {
+quandl.api <- function(version="v1", path, http = c('GET', 'PUT', 'POST', 'DELETE'), ...) {
+  headers <- basicHeaderGatherer()
   params <- list(...)
   if(http == 'PUT' || http == 'POST') {
     postdata <- params$postdata
@@ -32,24 +34,43 @@ quandl.api <- function(version="v1", path, headers=NULL, http = c('GET', 'PUT', 
   params$request_version <- Quandl.version
 
   http <- match.arg(http)
-  request_url <- paste(paste("http://www.quandl.com/api", version, path, sep="/"), "?", sep="")
+  request_url <- paste(paste("https://www.quandl.com/api", version, path, sep="/"), "?", sep="")
   param_names <- names(params)
 
   if(length(params) >0) {for(i in 1:length(params)) {request_url <- paste(request_url, "&", param_names[i], "=", params[[i]], sep="")}}
-
+  #print(request_url)
   switch(http,
     GET={
-      response <- ifelse(is.null(headers), getURL(request_url, curl = Quandl.curlopts()), getURL(request_url, headerfunction=headers, curl = Quandl.curlopts()))
+      response <- getURL(request_url, headerfunction=headers$update, curl = Quandl.curlopts())
       },
     PUT={
-      response <- ifelse(is.null(headers), getURL(request_url, customRequest = "PUT", httpheader=c("Content-Length"=nchar(postdata, type="bytes"), "Content-Type"="application/json"), postfields=postdata, curl = Quandl.curlopts()), getURL(request_url, customRequest = "PUT", headerfunction=headers, httpheader=c("Content-Length"=nchar(postdata, type="bytes"), "Content-Type"="application/json"), postfields=postdata, curl = Quandl.curlopts()))
+      response <- getURL(request_url, customRequest = "PUT", headerfunction=headers$update, httpheader=c("Content-Length"=nchar(postdata, type="bytes"), "Content-Type"="application/json"), postfields=postdata, curl = Quandl.curlopts())
       },
     POST={
       response <- postForm(request_url, .params=postdata, curl = Quandl.curlopts())
       },
     DELETE={
-      response <- ifelse(is.null(headers), httpDELETE(request_url, curl = Quandl.curlopts()), httpDELETE(request_url, headerfunction=headers, curl = Quandl.curlopts()))
+      response <- httpDELETE(request_url, headerfunction=headers$update, curl = Quandl.curlopts())
     }
     )
+  if(http %in% c('GET', 'PUT', 'DELETE')) {
+    status <- try(headers$value()[["status"]], silent=TRUE)
+    if (inherits(status, 'try-error'))
+       stop("I am sorry but Quandl is down for maintenance. Please check the main website for status updates.")  
+    if (length(grep("200", status))) {}
+    else {
+      json = try(fromJSON(response, nullValue = as.numeric(NA)), silent = TRUE)
+      if (!inherits(json, 'try-error')) {
+
+        if (json["error"])
+          stop(json["error"])
+        if (length(json$errors) != 0)
+          stop(json$errors)
+      }
+      stop(response)
+    }
+  }
+    
+
   return(response)
 }

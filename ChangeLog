@@ -1,4 +1,12 @@
 ##############################
+####Version 2.3.6 to 2.3.9####
+##############################
+
+- Duplicate functionality moved away from individual functions into quandl.api
+- Quandl limit removed as it is deprecated
+- Package now uses https
+
+##############################
 ####Version 2.3.5 to 2.3.6####
 ##############################
 

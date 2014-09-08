@@ -34,7 +34,7 @@ quandl.api <- function(version="v1", path, http = c('GET', 'PUT', 'POST', 'DELET
   params$request_version <- Quandl.version
 
   http <- match.arg(http)
-  request_url <- paste(paste("https://www.quandl.com/api", version, path, sep="/"), "?", sep="")
+  request_url <- paste(paste("http://www.quandl.com/api", version, path, sep="/"), "?", sep="")
   param_names <- names(params)
 
   if(length(params) >0) {for(i in 1:length(params)) {request_url <- paste(request_url, "&", param_names[i], "=", params[[i]], sep="")}}

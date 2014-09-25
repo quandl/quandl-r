@@ -62,7 +62,7 @@ quandl.api <- function(version="v1", path, http = c('GET', 'PUT', 'POST', 'DELET
       json = try(fromJSON(response, nullValue = as.numeric(NA)), silent = TRUE)
       if (!inherits(json, 'try-error')) {
 
-        if (json["error"])
+        if (!is.null(json["error"]))
           stop(json["error"])
         if (length(json$errors) != 0)
           stop(json$errors)

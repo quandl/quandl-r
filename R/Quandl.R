@@ -1,5 +1,5 @@
 Quandl.auth_token <- NA
-Quandl.version <- '2.3.6'
+Quandl.version <- '2.3.9'
 Quandl.curl <- NA
 
 

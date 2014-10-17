@@ -82,22 +82,20 @@ Quandl.push <- function(code, update=FALSE, authcode = Quandl.auth(), ...) {
       if (is.null(postparams$column_names))
         postparams$column_names = column_names
     }
-    headers <- basicHeaderGatherer()
     if (create) {
       # Must Create Dataset
       path <- "datasets"
       postparams$code <- code
       if (!is.null(source_code)) {postparams$source_code <- source_code}
       params$postdata <- postparams
-      output <- do.call(quandl.api, c(version="v2", http="POST", headers=headers$update, path=path, params))
+      output <- do.call(quandl.api, c(version="v2", http="POST", path=path, params))
     }
     else {
       # update Data set
       postdata = toJSON(postparams)
       params$postdata <- postdata
-      output <- do.call(quandl.api, c(version="v2", http="PUT", headers=headers$update, path=path, params))
+      output <- do.call(quandl.api, c(version="v2", http="PUT", path=path, params))
     }
-    print(headers$value()[["status"]])
     # Adding Data is an extra call
     if (!is.null(datastring)) {
       json <- fromJSON(output,asText=TRUE)
@@ -105,7 +103,7 @@ Quandl.push <- function(code, update=FALSE, authcode = Quandl.auth(), ...) {
       params$postdata <- postdata
       path <- paste("datasets", json$id, "data", sep="/")
       
-      output <- do.call(quandl.api, c(version="v2", http="PUT", headers=headers$update, path=path, params))
+      output <- do.call(quandl.api, c(version="v2", http="PUT", path=path, params))
     }
     # Check if uploaded properly
     json <- fromJSON(output,asText=TRUE)

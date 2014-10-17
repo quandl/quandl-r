@@ -31,7 +31,6 @@ Quandl.search <- function(query, page=1, source=NULL, silent=FALSE, authcode=Qua
         params$source_code <- source
     }
     params$page <- as.character(page)
-    headers <- basicHeaderGatherer()
     path = "datasets"
     response <- do.call(quandl.api, c(path=path, params))
     json <- try(fromJSON(response),silent=TRUE)

@@ -162,20 +162,20 @@ Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts'), start_date, end_da
     else
         force_irregular <- FALSE
     ## Download and parse data
-    response <- do.call(quandl.api, c(path=path, params))
+    json <- do.call(quandl.api, c(path=path, params))
     
 
 
-    json <- try(fromJSON(response, nullValue = as.numeric(NA)), silent = TRUE)
+    # json <- try(fromJSON(response, nullValue = as.numeric(NA)), silent = TRUE)
 
 
     ## Error Catching
-    if (inherits(json, 'try-error')) {
-        print(response)
-        print(params)
-        print(Quandl.version)
-        stop("Something is wrong, and you got past my error catching. Please copy the above output and email to connect@quandl.com")
-    }
+    # if (inherits(json, 'try-error')) {
+    #     print(response)
+    #     print(params)
+    #     print(Quandl.version)
+    #     stop("Something is wrong, and you got past my error catching. Please copy the above output and email to connect@quandl.com")
+    # }
 
     if (length(json$data) == 0)
         stop("Requested Entity does not exist.")
@@ -238,7 +238,7 @@ Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts'), start_date, end_da
             data_out <- xts(data[, -1], order.by=data[, 1])
     }
     if (meta && !multiset) {
-        source_json <- fromJSON(quandl.api(path=paste("sources",json$source_code,sep="/"), auth_token=authcode), nullValue = as.numeric(NA))
+        source_json <- quandl.api(path=paste("sources",json$source_code,sep="/"), auth_token=authcode)
         meta <- list(
             frequency   = json$frequency,
             name        = json$name,

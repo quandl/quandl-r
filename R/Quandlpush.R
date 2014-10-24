@@ -1,3 +1,5 @@
+#' THIS FUNCTION IS CURRENTLY DISABLED. SEE http://www.quandl.com/help/toolbelt TO UPLOAD DATA
+#'
 #' An authentication token is needed to upload data. Set your \code{access_token} with \code{Quandl.auth} function.
 #' 
 #' For instructions on finding your authentication token go to www.quandl.com/API.
@@ -22,6 +24,7 @@
 #' @export
 
 Quandl.push <- function(code, update=FALSE, authcode = Quandl.auth(), ...) {
+    stop("This function is currently disabled. If you would like to upload data to Quandl please use Quandl Toolbelt at http://www.quandl.com/help/toolbelt")
     postparams <- list(...)
     params <- list()
     source_code <- NULL
@@ -35,8 +38,9 @@ Quandl.push <- function(code, update=FALSE, authcode = Quandl.auth(), ...) {
         stop("Only uppercase letters, numbers, and underscores are permitted in the code")
     
     path <- paste("datasets", code, sep="/")
-    response <- fromJSON(do.call(quandl.api, c(version="v2", path=path, params)), asText=TRUE)
-    if (!is.null(response[['error']]))
+    # response <- try(fromJSON(do.call(quandl.api, c(version="v2", path=path, params))), silent = TRUE)
+    response <- try(do.call(quandl.api, c(version="v2", path=path, params)), silent = TRUE)
+    if (inherits(response, 'try-error'))
       create <- TRUE
     else {
       create <- FALSE
@@ -98,7 +102,7 @@ Quandl.push <- function(code, update=FALSE, authcode = Quandl.auth(), ...) {
     }
     # Adding Data is an extra call
     if (!is.null(datastring)) {
-      json <- fromJSON(output,asText=TRUE)
+      json <- output
       postdata <- toJSON(list(data=datastring))
       params$postdata <- postdata
       path <- paste("datasets", json$id, "data", sep="/")
@@ -106,8 +110,8 @@ Quandl.push <- function(code, update=FALSE, authcode = Quandl.auth(), ...) {
       output <- do.call(quandl.api, c(version="v2", http="PUT", path=path, params))
     }
     # Check if uploaded properly
-    json <- fromJSON(output,asText=TRUE)
+    # json <- fromJSON(output,asText=TRUE)
     
-    returnurl <- paste("http://www.quandl.com/",json$source_code,"/",json$code,sep="")
+    returnurl <- paste("http://www.quandl.com/",output$source_code,"/",output$code,sep="")
     returnurl
 }

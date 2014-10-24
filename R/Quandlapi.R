@@ -38,10 +38,10 @@ quandl.api <- function(version="v1", path, http = c('GET', 'PUT', 'POST', 'DELET
   param_names <- names(params)
 
   if(length(params) >0) {for(i in 1:length(params)) {request_url <- paste(request_url, "&", param_names[i], "=", params[[i]], sep="")}}
-  #print(request_url)
+  # print(request_url)
   switch(http,
     GET={
-      response <- getURL(request_url, headerfunction=headers$update, curl = Quandl.curlopts())
+      response <- getURL(request_url, customRequest = "GET", headerfunction=headers$update, curl = Quandl.curlopts())
       },
     PUT={
       response <- getURL(request_url, customRequest = "PUT", headerfunction=headers$update, httpheader=c("Content-Length"=nchar(postdata, type="bytes"), "Content-Type"="application/json"), postfields=postdata, curl = Quandl.curlopts())
@@ -53,24 +53,29 @@ quandl.api <- function(version="v1", path, http = c('GET', 'PUT', 'POST', 'DELET
       response <- httpDELETE(request_url, headerfunction=headers$update, curl = Quandl.curlopts())
     }
     )
+  is.error = FALSE
   if(http %in% c('GET', 'PUT', 'DELETE')) {
     status <- try(headers$value()[["status"]], silent=TRUE)
     if (inherits(status, 'try-error'))
-       stop("I am sorry but Quandl is down for maintenance. Please check the main website for status updates.")  
+       stop("I am sorry but Quandl is down for maintenance. Please check the main website for status updates.", call. = FALSE) 
     if (length(grep("200", status))) {}
     else {
-      json = try(fromJSON(response, nullValue = as.numeric(NA)), silent = TRUE)
-      if (!inherits(json, 'try-error')) {
-
-        if (!is.null(json["error"]))
-          stop(json["error"])
-        if (length(json$errors) != 0)
-          stop(json$errors)
-      }
-      stop(response)
+      is.error = TRUE
     }
   }
-    
+  json = try(fromJSON(response, nullValue = as.numeric(NA)), silent = TRUE)
+  if (inherits(json, 'try-error')) {
+    if(is.error)
+      stop(response, call. = FALSE)
+    else {
+      print(response)
+      print(request_url)
+      stop("Malformed JSON")
+    }
+  }
+  if (is.error)
+    stop(json, call. = FALSE)
+  else
+    return(json)
 
-  return(response)
 }

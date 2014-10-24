@@ -32,8 +32,8 @@ Quandl.search <- function(query, page=1, source=NULL, silent=FALSE, authcode=Qua
     }
     params$page <- as.character(page)
     path = "datasets"
-    response <- do.call(quandl.api, c(path=path, params))
-    json <- try(fromJSON(response),silent=TRUE)
+    json <- do.call(quandl.api, c(path=path, params))
+    # json <- try(fromJSON(response),silent=TRUE)
     if (inherits(json, 'try-error'))
         stop("No data")
     list <- list()

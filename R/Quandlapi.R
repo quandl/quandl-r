@@ -5,7 +5,6 @@
 #' For instructions on finding your authentication token go to www.quandl.com/API
 #' @param version Set to the version of the Quandl API you want to access.
 #' @param path Path to api resource.
-#' @param headers Header function to collect header info.
 #' @param http Type of http request sent.
 #' @param ... Named values that are interpretted as api parameters.
 #' @return Website response.

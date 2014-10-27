@@ -1,4 +1,11 @@
 ##############################
+####Version 2.3.9 to 2.4.0####
+##############################
+
+- Quandl.push disabled temporarily
+- Error catching simplified. Just uses api response
+
+##############################
 ####Version 2.3.6 to 2.3.9####
 ##############################
 

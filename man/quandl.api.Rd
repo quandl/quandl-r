@@ -14,8 +14,6 @@ quandl.api(version = "v1", path, http = c("GET", "PUT", "POST", "DELETE"),
 \item{http}{Type of http request sent.}
 
 \item{...}{Named values that are interpretted as api parameters.}
-
-\item{headers}{Header function to collect header info.}
 }
 \value{
 Website response.

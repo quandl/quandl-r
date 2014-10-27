@@ -15,7 +15,7 @@ Using the 'devtools' package:
 
     > install.packages("devtools")
     > library(devtools)
-    > install_github('R-package','quandl')
+    > install_github('quandl/R-package')
 
 ## CRAN ##
 
@@ -47,6 +47,9 @@ Create a graph of the Nasdaq, with a monthly frequency
 
 
 ## Uploads ##
+
+### This functionality is currently disabled ###
+### Uploading can be done using Quandl Toolbelt ###
 There are a few things you need to do before you can proceed with uploading data.
  * Make an account and set your authentication token within the package with the Quandl.auth() function.
  * Get your data into a data frame with the dates in the first column.

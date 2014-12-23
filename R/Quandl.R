@@ -50,7 +50,7 @@ Quandl.curlopts <- function(curl) {
 
 metaData <- function(x)attr(x, "meta")
 
-#' Pulls Data from the Quandl API
+#' Pulls Data from the Quandl Dataset endpoint and formats
 #'
 #' An authentication token is needed for access to the Quandl API multiple times. Set your \code{access_token} with \code{Quandl.auth} function.
 #'
@@ -110,36 +110,26 @@ Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts'), start_date, end_da
     }
     as.year <- function(x) floor(as.numeric(as.yearmon(x)))
 
-    if (!all(gsub("[^A-Z0-9_./]", "", code) == code))
-        stop("Codes are comprised of capital letters, numbers and underscores only.")
-    ## Build API URL and add auth_token if available
-    if (length(code) == 1) {
+    format.code <- function(code) {
+        col <- NULL
+        if (!all(gsub("[^A-Z0-9_./]", "", code) == code))
+            stop("Codes are comprised of capital letters, numbers and underscores only.")
         codearray <- strsplit(code, "/")
         if (length(codearray[[1]]) == 3) {
             col <- codearray[[1]][3]
             code <- paste(codearray[[1]][1:2], collapse='/')
-            params$column <- col
         }
         else if (length(strsplit(code, "\\.")[[1]]) == 2) {
-            params$column <- strsplit(code, "\\.")[[1]][2]
+            col <- strsplit(code, "\\.")[[1]][2]
             code <- strsplit(code, "\\.")[[1]][1]
         }
-        path <- paste("datasets/", code, sep="")
-    }
-    else {
-        multiset = TRUE
-        freqflag = TRUE ## Frequency not automatically supported with multisets
-        freq <- 365
-        path <- "multisets"
-        params$columns <- sub("/",".",code[1])
-        for (i in 2:length(code)) {
-            params$columns <- paste(params$columns, sub("/",".",code[i]), sep=",")
+        else if (length(strsplit(code, "\\.")[[1]]) == 3) {
+            col <- strsplit(code, "\\.")[[1]][2]
+            code <- paste(strsplit(code, "\\.")[[1]][1:2], collapse='/')
         }
+        return(c(code, col))
     }
-    if (is.na(authcode)) {
-        if (length(grep('TESTS/', code)) != length(code)) warning("It would appear you aren't using an authentication token. Please visit http://www.quandl.com/help/r or your usage may be limited.")
-    }
-    else
+    if (!is.na(authcode))  
         params$auth_token <- authcode
 
 
@@ -148,8 +138,8 @@ Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts'), start_date, end_da
         params$trim_start <- as.Date(start_date)
     if (!missing(end_date))
         params$trim_end <- as.Date(end_date)
-    if (type != "raw")
-        params$sort_order <- "asc"  
+    # if (type != "raw")
+    #     params$sort_order <- "asc"  
     if (params$collapse %in% c("weekly", "monthly", "quarterly", "annual")) {
         freq   <- frequency2integer(collapse)
         freqflag = TRUE
@@ -162,46 +152,60 @@ Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts'), start_date, end_da
     else
         force_irregular <- FALSE
     ## Download and parse data
-    json <- do.call(quandl.api, c(path=path, params))
-    
 
+    errors <- list()
+    if(length(code) == 1) {
+        code_col <- format.code(code)
+        code <- code_col[1]
+        col <- code_col[2]
+        if(!is.null(col) && !is.na(col)) {params$column <- col}
+        if(meta) {params$meta <- meta}
+        data <- Quandl.dataset.get(code, params)
+        if(params$collapse != '')
+            freq <- frequency2integer(params$collapse)
+        else
+            freq <- frequency2integer(attr(data, "freq"))
+    }
+    else {
+        data <- NULL
+        
+        for(c in code) {
+            tmp.params <- params
+            code_col <- format.code(c)
+            c <- code_col[1]
+            col <- code_col[2]
+            if(!is.null(col)) {tmp.params$column <- col}
+            merge_data <- tryCatch(Quandl.dataset.get(c, tmp.params), 
+                error=function(e) {
+                    d <- data.frame(Date=character(0), ERROR=numeric(0))
+                    attr(d, "errors") <- e
+                    return(d)
+                })
+            if(is.null(col))
+                suppressWarnings(errors[c] <- attr(merge_data, "errors"))
+            else
+                suppressWarnings(errors[paste(c,col,sep=".")] <- attr(merge_data, "errors"))
 
-    # json <- try(fromJSON(response, nullValue = as.numeric(NA)), silent = TRUE)
-
-
-    ## Error Catching
-    # if (inherits(json, 'try-error')) {
-    #     print(response)
-    #     print(params)
-    #     print(Quandl.version)
-    #     stop("Something is wrong, and you got past my error catching. Please copy the above output and email to connect@quandl.com")
-    # }
-
-    if (length(json$data) == 0)
-        stop("Requested Entity does not exist.")
-    if (length(json$column_names) > 1000 && multiset)
-        stop("Currently we only support multisets with up to 1000 columns. Please contact connect@quandl.com if this is a problem.")
-    ## Detect frequency
-    if (!freqflag)
-        freq <- frequency2integer(json$frequency)
-    if (!is.null(col) && length(json$column_names) > 2)
-        json$column_names = json$column_names[c(1, as.numeric(col)+1)]
-    ## Shell data from JSON's list
-    data <- tryCatch(as.data.frame(matrix(unlist(json$data), ncol = length(json$column_names), byrow = TRUE),stringsAsFactors=FALSE), 
-        warning=function(w) {
-            warning(w)
-            warning(paste("This warning is most likely the result of a data structure error. If the output of this function does not make sense please email connect@quandl.com with the Quandl code: ", code), call. = FALSE)
-            return(suppressWarnings(as.data.frame(matrix(unlist(json$data), ncol = length(json$column_names), byrow = TRUE),stringsAsFactors=FALSE)))
+            for(i in 2:length(names(merge_data))) {
+                names(merge_data)[i] <- paste(sub('/','.',c), names(merge_data)[i], sep=' - ')
+            }
+            if(is.null(data))
+                data <- merge_data
+            else
+                data <- merge(data, merge_data, by=1, all=TRUE)
         }
-    )
-    names(data) <- json$column_names
-    data[,1]    <- as.Date(data[, 1])
+        multiset = TRUE
+        freqflag = TRUE ## Frequency not automatically supported with multisets
+        if(params$collapse != '')
+            freq <- frequency2integer(params$collapse)
+        else
+            freq <- 365
+        if(type == "raw" && params$sort_order == "desc")
+            data <- data[order(data[,1], decreasing=TRUE),]
 
-    ## Transform values to numeric
-    if (ncol(data) > 2)
-        data[, 2:ncol(data)]  <- apply(data[, 2:ncol(data)], 2, as.numeric)
-    else
-        data[, 2]  <- as.numeric(data[, 2])
+    }
+    
+    meta <- attr(data, "meta")
 
     ## Returning raw data
     if (type == "raw")
@@ -237,7 +241,67 @@ Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts'), start_date, end_da
         else if (type=="xts")
             data_out <- xts(data[, -1], order.by=data[, 1])
     }
-    if (meta && !multiset) {
+    if(length(errors) > 0)
+        attr(data_out, "errors") <- errors
+    if(!is.null(meta))
+        attr(data_out, "meta") <- meta
+    return(data_out)
+}
+
+#' Pulls Data from the Quandl Dataset endpoint
+#'
+#' An authentication token is needed for access to the Quandl API multiple times. Set your \code{access_token} with \code{Quandl.auth} function.
+#'
+#' For instructions on finding your authentication token go to www.quandl.com/API
+#' @param code Dataset code on Quandl specified as a string or an array of strings.
+#' @param params A list of parameters to be passed to the Quandl api.
+#' @return Returns a data.frame of the requested data
+#' @references This R package uses the Quandl API. For more information go to http://www.quandl.com/api. For more help on the package itself go to http://www.quandl.com/help/r.
+#' @author Raymond McTaggart
+#' @seealso \code{\link{Quandl.auth}}
+#' @examples \dontrun{
+#' quandldata = Quandl.dataset.get("NSE/OIL", list(rows=5))
+#' plot(quandldata[,1])
+#' }
+#' @export
+
+Quandl.dataset.get <- function(code, params) {
+    if(!is.null(params$meta) && params$meta) {
+        meta <- params$meta
+        params[[which(names(params)=="meta")]] <- NULL
+    }
+    else
+        meta <- FALSE
+    if(!is.null(params$auth_token))
+        authcode <- params$auth_token
+    else
+        authcode <- ""
+    path <- path <- paste("datasets/", code, sep="")
+    json <- do.call(quandl.api, c(path=path, params))
+    
+    if (length(json$data) == 0)
+        stop("Requested Entity does not exist.")
+    ## Detect frequency
+    # freq <- frequency2integer(json$frequency)
+    if (!is.null(params$column) && length(json$column_names) > 2)
+        json$column_names = json$column_names[c(1, as.numeric(params$column)+1)]
+    ## Shell data from JSON's list
+    data <- tryCatch(as.data.frame(matrix(unlist(json$data), ncol = length(json$column_names), byrow = TRUE),stringsAsFactors=FALSE), 
+        warning=function(w) {
+            warning(w)
+            warning(paste("This warning is most likely the result of a data structure error. If the output of this function does not make sense please email connect@quandl.com with the Quandl code: ", code), call. = FALSE)
+            return(suppressWarnings(as.data.frame(matrix(unlist(json$data), ncol = length(json$column_names), byrow = TRUE),stringsAsFactors=FALSE)))
+        }
+    )
+    names(data) <- json$column_names
+    data[,1]    <- as.Date(data[, 1])
+
+    ## Transform values to numeric
+    if (ncol(data) > 2)
+        data[, 2:ncol(data)]  <- apply(data[, 2:ncol(data)], 2, as.numeric)
+    else
+        data[, 2]  <- as.numeric(data[, 2])
+    if (meta) {
         source_json <- quandl.api(path=paste("sources",json$source_code,sep="/"), auth_token=authcode)
         meta <- list(
             frequency   = json$frequency,
@@ -250,7 +314,8 @@ Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts'), start_date, end_da
             source_link = source_json$host,
             source_description = source_json$description
         )
-        attr(data_out, "meta") <- meta
+        attr(data, "meta") <- meta
     }
-    return(data_out)
+    attr(data, "freq") <- json$frequency
+    return(data)
 }

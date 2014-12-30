@@ -1,5 +1,5 @@
 Quandl.auth_token <- NA
-Quandl.version <- '2.5.0'
+Quandl.version <- '2.5.1'
 Quandl.curl <- NA
 
 
@@ -65,7 +65,7 @@ metaData <- function(x)attr(x, "meta")
 #' @param meta Returns meta data in list format as well as data.
 #' @param authcode Authentication Token for extended API access by default set by \code{\link{Quandl.auth}}.
 #' @param ... Additional named values that are interpretted as api parameters.
-#' @return Depending on the type the class is either data.frame, time series, xts, zoo.
+#' @return Depending on the type the class is either data.frame, time series, xts or zoo.
 #' @references This R package uses the Quandl API. For more information go to http://www.quandl.com/api. For more help on the package itself go to http://www.quandl.com/help/r.
 #' @author Raymond McTaggart
 #' @seealso \code{\link{Quandl.auth}}
@@ -75,7 +75,7 @@ metaData <- function(x)attr(x, "meta")
 #' }
 #' @importFrom RCurl getURL
 #' @importFrom RCurl basicHeaderGatherer
-#' @importFrom RJSONIO fromJSON
+#' @importFrom jsonlite fromJSON
 #' @importFrom zoo zoo
 #' @importFrom zoo as.zooreg
 #' @importFrom zoo as.yearmon
@@ -160,6 +160,7 @@ Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts'), start_date, end_da
         col <- code_col[2]
         if(!is.null(col) && !is.na(col)) {params$column <- col}
         if(meta) {params$meta <- meta}
+        # download data
         data <- Quandl.dataset.get(code, params)
         if(params$collapse != '')
             freq <- frequency2integer(params$collapse)
@@ -175,8 +176,7 @@ Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts'), start_date, end_da
             c <- code_col[1]
             col <- code_col[2]
             if(!is.null(col)) {tmp.params$column <- col}
-            merge_data <- tryCatch(Quandl.dataset.get(c, tmp.params), 
-                error=function(e) {
+            merge_data <- tryCatch(Quandl.dataset.get(c, tmp.params), error=function(e) {
                     d <- data.frame(Date=character(0), ERROR=numeric(0))
                     attr(d, "errors") <- e
                     return(d)
@@ -279,18 +279,21 @@ Quandl.dataset.get <- function(code, params) {
     path <- path <- paste("datasets/", code, sep="")
     json <- do.call(quandl.api, c(path=path, params))
     
+    #print(json)
     if (length(json$data) == 0)
         stop("Requested Entity does not exist.")
+    
     ## Detect frequency
     # freq <- frequency2integer(json$frequency)
     if (!is.null(params$column) && length(json$column_names) > 2)
         json$column_names = json$column_names[c(1, as.numeric(params$column)+1)]
+    
     ## Shell data from JSON's list
-    data <- tryCatch(as.data.frame(matrix(unlist(json$data), ncol = length(json$column_names), byrow = TRUE),stringsAsFactors=FALSE), 
+    data <- tryCatch(as.data.frame(unlist(json$data),ncol = length(json$column_names),stringsAsFactors=FALSE), 
         warning=function(w) {
             warning(w)
             warning(paste("This warning is most likely the result of a data structure error. If the output of this function does not make sense please email connect@quandl.com with the Quandl code: ", code), call. = FALSE)
-            return(suppressWarnings(as.data.frame(matrix(unlist(json$data), ncol = length(json$column_names), byrow = TRUE),stringsAsFactors=FALSE)))
+            return(suppressWarnings(as.data.frame(unlist(json$data), ncol = length(json$column_names),stringsAsFactors=FALSE)))
         }
     )
     names(data) <- json$column_names

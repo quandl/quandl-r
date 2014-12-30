@@ -1,26 +1,24 @@
-require("zoo")
-require("xts")
-require("Quandl")
+require(zoo)
+require(xts)
+require(testthat)
 
+Quandl.auth("authenticationtoken")
 
 context("Checking return formats")
-
 
 test_that("Data is parsed correctly", {
   daily <- Quandl("TESTS/1")
   expect_that(names(daily),
-    equals(c("Date","Open","High" ,"Low" , "Last", "Close", 
-     "Total Trade Quantity", "Turnover (Lacs)")))
+              equals(c("Date","Open","High" ,"Low" , "Last", "Close",
+                       "Total Trade Quantity", "Turnover (Lacs)")))
   expect_that(dim(daily), equals(c(258,8)))
-  })
+})
 
 test_that("Metadata is correct", {
   daily <- Quandl("TESTS/1", type="zoo", meta=TRUE)
   expect_that(is.null(attr(daily,"meta")), is_false())
-  expect_that(metaData(daily)$source_code,
-    equals("TESTS"))
-  expect_that(metaData(daily)$name,
-    equals("Daily Dataset Test"))
+  expect_that(metaData(daily)$source_code, equals("TESTS"))
+  expect_that(metaData(daily)$name, equals("Daily Dataset Test"))
 })
 
 test_that("Stop and start dates are correct (zoo)", {
@@ -58,4 +56,10 @@ test_that("Data is the same across formats", {
   monthlyxts <- Quandl("TESTS/2", type="xts")
   expect_that(max(abs(monthlyts - coredata(monthlyzoo))), equals(0))
   expect_that(max(abs(coredata(monthlyzoo) - coredata(monthlyxts))) , equals(0))
+})
+
+# not good test. TODO
+test_that("Leaker_ZRH returns 404 Error", {
+  search.results <- Quandl.search("gas")
+  expect_that(count(search.results), equals(16))
 })

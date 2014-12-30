@@ -19,6 +19,7 @@
 #' @importFrom RCurl postForm
 #' @importFrom RCurl httpDELETE
 #' @importFrom RCurl basicHeaderGatherer
+#' @importFrom jsonlite fromJSON
 #' @export
 
 quandl.api <- function(version="v1", path, http = c('GET', 'PUT', 'POST', 'DELETE'), ...) {
@@ -36,33 +37,38 @@ quandl.api <- function(version="v1", path, http = c('GET', 'PUT', 'POST', 'DELET
   request_url <- paste(paste("http://www.quandl.com/api", version, path, sep="/"), "?", sep="")
   param_names <- names(params)
 
-  if(length(params) >0) {for(i in 1:length(params)) {request_url <- paste(request_url, "&", param_names[i], "=", params[[i]], sep="")}}
-  # print(request_url)
-  switch(http,
-    GET={
-      response <- getURL(request_url, customRequest = "GET", headerfunction=headers$update, curl = Quandl.curlopts())
-      },
-    PUT={
-      response <- getURL(request_url, customRequest = "PUT", headerfunction=headers$update, httpheader=c("Content-Length"=nchar(postdata, type="bytes"), "Content-Type"="application/json"), postfields=postdata, curl = Quandl.curlopts())
-      },
-    POST={
-      response <- postForm(request_url, .params=postdata, curl = Quandl.curlopts())
-      },
-    DELETE={
-      response <- httpDELETE(request_url, headerfunction=headers$update, curl = Quandl.curlopts())
+  if(length(params) > 0) {
+    for(i in 1:length(params)) {
+      request_url <- paste(request_url, "&", param_names[i], "=", params[[i]], sep="")
     }
-    )
+  }
+  #print(request_url)
+  switch(http,
+         GET={
+           response <- getURL(request_url, customRequest = "GET", headerfunction=headers$update, curl = Quandl.curlopts())
+         },
+         PUT={
+           response <- getURL(request_url, customRequest = "PUT", headerfunction=headers$update, httpheader=c("Content-Length"=nchar(postdata, type="bytes"), "Content-Type"="application/json"), postfields=postdata, curl = Quandl.curlopts())
+         },
+         POST={
+           response <- postForm(request_url, .params=postdata, curl = Quandl.curlopts())
+         },
+         DELETE={
+           response <- httpDELETE(request_url, headerfunction=headers$update, curl = Quandl.curlopts())
+         }
+  )
   is.error = FALSE
+
   if(http %in% c('GET', 'PUT', 'DELETE')) {
     status <- try(headers$value()[["status"]], silent=TRUE)
     if (inherits(status, 'try-error'))
-       stop("I am sorry but Quandl is down for maintenance. Please check the main website for status updates.", call. = FALSE) 
+      stop("I am sorry but Quandl is down for maintenance. Please check the main website for status updates.", call. = FALSE)
     if (length(grep("200", status))) {}
     else {
       is.error = TRUE
     }
   }
-  json = try(fromJSON(response, nullValue = as.numeric(NA)), silent = TRUE)
+  json = try(fromJSON(response, simplifyDataFrame=TRUE), silent = TRUE)
   if (inherits(json, 'try-error')) {
     if(is.error)
       stop(response, call. = FALSE)

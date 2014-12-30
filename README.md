@@ -33,7 +33,7 @@ Once you find the data you'd like to load into R on Quandl, copy the Quandl code
 
     > data <- Quandl("NSE/OIL")
 
-To extend your access to the Quandl API, use your authentication token. To do this sign into your account (or create one) and go to your [account info page](http://www.quandl.com/users/info). Then copy your authentication token and type (with quotes):
+To extend your access to the Quandl API, use your authentication token. To do this sign into your account (or create one) and go to your [account info page](https://www.quandl.com/account). Then copy your authentication token and type (with quotes):
 
     > Quandl.auth("authenticationtoken")
 
@@ -55,7 +55,7 @@ There are a few things you need to do before you can proceed with uploading data
  * Get your data into a data frame with the dates in the first column.
  * Pick a code for your dataset - only capital letters, numbers and underscores are acceptable.
 
-Then call this function 	
+Then call this function
 
 	Quandl.push(code="TEST", name="This is a test dataset", description="This description can include extra information about the time series including units",data=yourdataset)`
 
@@ -66,7 +66,7 @@ If you would like to update your dataset - change the name, add new data - pass 
 ### Example ###
 Downloading a partial dataset and uploading it with code TEST. 
 
-    Quandl.auth("enteryourauthenticationtoken")
+    Quandl.auth("authenticationtoken")
     mydata = Quandl("NSE/OIL", rows=5)
     Quandl.push("TEST",name="This is a test dataset",description="This is a description",data=mydata)
     
@@ -89,7 +89,7 @@ Which returns a list containing the following information for every item returne
 * Quandl code
 * Description
 * Frequency
-* Column names  
+* Column names
 
 
 ###Example###

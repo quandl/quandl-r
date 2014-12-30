@@ -17,8 +17,8 @@
 #' names(data) <- c("Date","Col1","Col2")
 #' Quandlpush(code="TEST", name="MY test data", description="This data is test data", data=data)
 #' }
-#' @importFrom RJSONIO fromJSON
-#' @importFrom RJSONIO toJSON
+#' @importFrom jsonlite fromJSON
+#' @importFrom jsonlite toJSON
 #' @importFrom RCurl postForm
 #' @importFrom RCurl curlOptions
 #' @export

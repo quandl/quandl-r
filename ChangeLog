@@ -3,7 +3,8 @@
 ##############################
 
 - Moved from RJSONIO to jsonlite
-- Add roxygen2 dependency for developing package
+- Add roxygen2 dependency for developing this package
+- Clean up the code a bit (e.g. consistent formatting)
 
 ##############################
 ####Version 2.4.0 to 2.5.0####

@@ -1,4 +1,3 @@
-library(testthat)
-library(Quandl)
+library("testthat")
 
-test_package("Quandl")
+# test_package("Quandl")

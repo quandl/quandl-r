@@ -22,11 +22,15 @@ Quandl.search <- function(query, page=1, source=NULL, silent=FALSE, authcode=Qua
   params <- list()
   parsedQuery <- gsub(" ", "+", query)
   params$query <- parsedQuery
+
   # url <- paste("http://www.quandl.com/api/v1/datasets.json?query=", parsedQuery, sep="")
-  if (is.na(authcode))
-    warning("It would appear you aren't using an authentication token. Please visit http://www.quandl.com/help/r or your usage may be limited.")
-  else
+  if (is.na(authcode)) {
+    warning("It would appear you aren't using an authentication token.
+            Please visit http://www.quandl.com/help/r or your usage may be limited.")
+  } else {
     params$auth_token <- authcode
+  }
+
   if (!is.null(source)) {
     params$source_code <- source
   }
@@ -37,23 +41,25 @@ Quandl.search <- function(query, page=1, source=NULL, silent=FALSE, authcode=Qua
   # if there are zero returns than inform the user about it
   params$total_count <- json$total_count
   if(params$total_count == 0){
-    message("It seems as we haven't found anything.")
+    warning("It seems as we haven't found anything.")
   }
 
   # print(params$total_count)
   # json <- try(fromJSON(response),silent=FALSE)
   # print(json)
-  if (inherits(json, 'try-error'))
+  if (inherits(json, 'try-error')) {
     stop("No data")
+  }
+
   list <- list()
   length(list) <- length(json$docs)
   for (i in 1:length(json$docs)) {
     name <- json$docs[[i,'name']]
-    code <- paste(json$docs[[i, 'source_code']],"/",json$docs[[i,'code']], sep="")
+    code <- paste(json$docs[[i, 'source_code']], "/", json$docs[[i,'code']], sep="")
     desc <- json$docs[[i,'description']]
     freq <- json$docs[[i,'frequency']]
     colname <- json$docs[[i,'column_names']]
-    if (i<4 & !silent) {
+    if (i < 4 & !silent) {
       cat(name, "\nCode: ", code, "\nDesc: ", desc, "\nFreq: ", freq, "\nCols: ", paste(colname, collapse="|"), "\n\n", sep="")
     }
     list[[i]]$name <- name
@@ -63,7 +69,7 @@ Quandl.search <- function(query, page=1, source=NULL, silent=FALSE, authcode=Qua
     list[[i]]$column_names <- colname
     list[[i]]$from_date <- json$docs[[i,'from_date']]
     list[[i]]$to_date <- json$docs[[i,'to_date']]
-
   }
+
   invisible(list)
 }

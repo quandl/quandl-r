@@ -21,15 +21,18 @@
 #' @importFrom RCurl basicHeaderGatherer
 #' @importFrom jsonlite fromJSON
 #' @export
-
 quandl.api <- function(version="v1", path, http = c('GET', 'PUT', 'POST', 'DELETE'), ...) {
   headers <- basicHeaderGatherer()
   params <- list(...)
+
   if(http == 'PUT' || http == 'POST') {
     postdata <- params$postdata
-    if (length(which(names(params)=="postdata")) == 0) stop("No post data entered")
-    params[[which(names(params)=="postdata")]] <- NULL
+    if (length(which(names(params) == "postdata")) == 0) {
+      stop("No post data entered")
+    }
+    params[[which(names(params) == "postdata")]] <- NULL
   }
+
   params$request_source <- 'R'
   params$request_version <- Quandl.version
 
@@ -42,13 +45,15 @@ quandl.api <- function(version="v1", path, http = c('GET', 'PUT', 'POST', 'DELET
       request_url <- paste(request_url, "&", param_names[i], "=", params[[i]], sep="")
     }
   }
+
   #print(request_url)
   switch(http,
          GET={
            response <- getURL(request_url, customRequest = "GET", headerfunction=headers$update, curl = Quandl.curlopts())
          },
          PUT={
-           response <- getURL(request_url, customRequest = "PUT", headerfunction=headers$update, httpheader=c("Content-Length"=nchar(postdata, type="bytes"), "Content-Type"="application/json"), postfields=postdata, curl = Quandl.curlopts())
+           response <- getURL(request_url, customRequest = "PUT", headerfunction=headers$update,
+                              httpheader=c("Content-Length"=nchar(postdata, type="bytes"), "Content-Type"="application/json"), postfields=postdata, curl = Quandl.curlopts())
          },
          POST={
            response <- postForm(request_url, .params=postdata, curl = Quandl.curlopts())
@@ -60,27 +65,33 @@ quandl.api <- function(version="v1", path, http = c('GET', 'PUT', 'POST', 'DELET
   is.error = FALSE
 
   if(http %in% c('GET', 'PUT', 'DELETE')) {
-    status <- try(headers$value()[["status"]], silent=TRUE)
-    if (inherits(status, 'try-error'))
+    status <- try(headers$value()[["status"]], silent = TRUE)
+    if (inherits(status, 'try-error')) {
       stop("I am sorry but Quandl is down for maintenance. Please check the main website for status updates.", call. = FALSE)
-    if (length(grep("200", status))) {}
-    else {
+    }
+
+    if (length(grep("200", status))) {
+    } else {
       is.error = TRUE
     }
   }
-  json = try(fromJSON(response, simplifyDataFrame=TRUE), silent = TRUE)
+
+  # simplifyDataFrame = FALSE => do not coerce JSON arrays for spead improvements
+  json = try(fromJSON(response, simplifyDataFrame = FALSE), silent = TRUE)
   if (inherits(json, 'try-error')) {
-    if(is.error)
+    if(is.error) {
       stop(response, call. = FALSE)
-    else {
+    } else {
       print(response)
       print(request_url)
       stop("Malformed JSON")
     }
   }
-  if (is.error)
+
+  if (is.error) {
     stop(json, call. = FALSE)
-  else
+  } else {
     return(json)
+  }
 
 }

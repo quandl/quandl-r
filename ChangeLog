@@ -1,4 +1,11 @@
 ##############################
+####Version 2.5.0 to 2.5.1####
+##############################
+
+- Add roxygen2 dependency for developing this package
+- Clean up the code a bit (e.g. consistent formatting)
+
+##############################
 ####Version 2.4.0 to 2.5.0####
 ##############################
 

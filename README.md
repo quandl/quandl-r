@@ -1,6 +1,5 @@
 R-package
 =========
----
 
 This is Quandl's R Package
 
@@ -9,7 +8,6 @@ License: MIT
 For more information please contact raymond@quandl.com
 
 # Installation #
----
 
 Using the 'devtools' package:
 
@@ -27,13 +25,12 @@ To install the most recent package from CRAN type:
 Note that the version on CRAN might not reflect the most recent changes made to this package.
 
 # Usage #
----
 
 Once you find the data you'd like to load into R on Quandl, copy the Quandl code from the description box and past it into the function.
 
     > data <- Quandl("NSE/OIL")
 
-To extend your access to the Quandl API, use your authentication token. To do this sign into your account (or create one) and go to your [account info page](http://www.quandl.com/users/info). Then copy your authentication token and type (with quotes):
+To extend your access to the Quandl API, use your authentication token. To do this sign into your account (or create one) and go to your [account info page](https://www.quandl.com/account). Then copy your authentication token and type (with quotes):
 
     > Quandl.auth("authenticationtoken")
 
@@ -66,7 +63,7 @@ If you would like to update your dataset - change the name, add new data - pass 
 ### Example ###
 Downloading a partial dataset and uploading it with code TEST. 
 
-    Quandl.auth("enteryourauthenticationtoken")
+    Quandl.auth("authenticationtoken")
     mydata = Quandl("NSE/OIL", rows=5)
     Quandl.push("TEST",name="This is a test dataset",description="This is a description",data=mydata)
     
@@ -119,6 +116,5 @@ prints:
 
 
 # Additional Resources #
----
     
 More help can be found at [Quandl](http://www.quandl.com) in our [R](http://www.quandl.com/help/r) and [API](http://www.quandl.com/api) help pages.

@@ -193,7 +193,7 @@ Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts'), start_date, end_da
       c <- code_col[1]
       col <- code_col[2]
 
-      if(!is.null(col)) {
+      if(!is.null(col) && !is.na(col)) {
         tmp.params$column <- col
       }
 

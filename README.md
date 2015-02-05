@@ -1,6 +1,5 @@
 R-package
 =========
----
 
 This is Quandl's R Package
 
@@ -9,33 +8,31 @@ License: MIT
 For more information please contact raymond@quandl.com
 
 # Installation #
----
 
 Using the 'devtools' package:
 
-    > install.packages("devtools")
-    > library(devtools)
-    > install_github('R-package','quandl')
+    install.packages("devtools")
+    library(devtools)
+    install_github('quandl/R-package')
 
 ## CRAN ##
 
 To install the most recent package from CRAN type:
 
-    > install.packages("Quandl")
-    > library(Quandl)
+    install.packages("Quandl")
+    library(Quandl)
     
 Note that the version on CRAN might not reflect the most recent changes made to this package.
 
 # Usage #
----
 
 Once you find the data you'd like to load into R on Quandl, copy the Quandl code from the description box and past it into the function.
 
-    > data <- Quandl("NSE/OIL")
+    data <- Quandl("NSE/OIL")
 
-To extend your access to the Quandl API, use your authentication token. To do this sign into your account (or create one) and go to your [account info page](http://www.quandl.com/users/info). Then copy your authentication token and type (with quotes):
+To extend your access to the Quandl API, use your authentication token. To do this sign into your account (or create one) and go to your [account info page](https://www.quandl.com/account). Then copy your authentication token and type (with quotes):
 
-    > Quandl.auth("authenticationtoken")
+    Quandl.auth("authenticationtoken")
 
 This will then extend your usage.
 
@@ -43,10 +40,13 @@ This will then extend your usage.
 ### Example ###
 Create a graph of the Nasdaq, with a monthly frequency
 	 
-	 plot(stl(Quandl("GOOG/NASDAQ_GOOG",type="ts",collapse="monthly")[,1],s.window="per"))
+    plot(stl(Quandl("GOOG/NASDAQ_GOOG",type="ts",collapse="monthly")[,1],s.window="per"))
 
 
 ## Uploads ##
+
+### This functionality is currently disabled ###
+### Uploading can be done using Quandl Toolbelt ###
 There are a few things you need to do before you can proceed with uploading data.
  * Make an account and set your authentication token within the package with the Quandl.auth() function.
  * Get your data into a data frame with the dates in the first column.
@@ -63,7 +63,7 @@ If you would like to update your dataset - change the name, add new data - pass 
 ### Example ###
 Downloading a partial dataset and uploading it with code TEST. 
 
-    Quandl.auth("enteryourauthenticationtoken")
+    Quandl.auth("authenticationtoken")
     mydata = Quandl("NSE/OIL", rows=5)
     Quandl.push("TEST",name="This is a test dataset",description="This is a description",data=mydata)
     
@@ -73,7 +73,7 @@ Will return a link to your newly uploaded dataset
 ## Search ##
 Searching Quandl from within the R console is now supported. An authorization token is not required, but for extended use specify your token using `Quandl.auth()`.  The search function is:
 
-	Quandl.search(query = "Search Term", page = n, source = "Specific source to search", silent = TRUE|FALSE)
+    Quandl.search(query = "Search Term", page = n, source = "Specific source to search", silent = TRUE|FALSE)
 
 * **Query**: Required; Your search term, as a string
 * **Page**: Optional; page number of search you wish returned, defaults to 1.
@@ -116,6 +116,5 @@ prints:
 
 
 # Additional Resources #
----
     
-More help can be found at [Quandl](http://www.quandl.com) in our [R](http://www.quandl.com/help/r) and [API](http://www.quandl.com/api) help pages.
+More help can be found at [Quandl](http://www.quandl.com) in our [R](http://www.quandl.com/help/r) and [API](http://www.quandl.com/help/api) help pages.

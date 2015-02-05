@@ -1,4 +1,45 @@
 ##############################
+####Version 2.5.1 to 2.5.2####
+##############################
+
+- Move to https
+
+##############################
+####Version 2.5.0 to 2.5.1####
+##############################
+
+- Add roxygen2 dependency for developing this package
+- Clean up the code a bit (e.g. consistent formatting)
+
+##############################
+####Version 2.4.0 to 2.5.0####
+##############################
+
+- Multiset api route removed, functionality retained
+
+##############################
+####Version 2.3.9 to 2.4.0####
+##############################
+
+- Quandl.push disabled temporarily
+- Error catching simplified. Just uses api response
+
+##############################
+####Version 2.3.6 to 2.3.9####
+##############################
+
+- Duplicate functionality moved away from individual functions into quandl.api
+- Quandl limit removed as it is deprecated
+- Package now uses https
+
+##############################
+####Version 2.3.5 to 2.3.6####
+##############################
+
+- Package in failure more verbose
+
+
+##############################
 ####Version 2.3.2 to 2.3.5####
 ##############################
 

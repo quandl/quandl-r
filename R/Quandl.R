@@ -1,4 +1,5 @@
 Quandl.auth_token <- NA
+Quandl.host <- 'https://www.quandl.com/api'
 Quandl.version <- '2.5.2'
 Quandl.curl <- NA
 

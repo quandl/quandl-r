@@ -76,7 +76,5 @@ test_that("Output message lists 3 codes", {
 })
 
 test_that("Doesn't find anything", {
-  search.nothing <- Quandl.search("asfdsgfrg")
-  #   doesn't pass it, because there is an error: incorrect number of subscripts
-  expect_warning(search.nothing, "we haven't found anything")
+  expect_warning(Quandl.search("asfdsgfrg"), "we haven't found anything")
 })

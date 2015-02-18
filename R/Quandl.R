@@ -57,7 +57,7 @@ metaData <- function(x){
 #'
 #' For instructions on finding your authentication token go to www.quandl.com/API
 #' @param code Dataset code on Quandl specified as a string or an array of strings.
-#' @param type Type of data returned specified as string. Can be 'raw', 'ts', 'zoo' or 'xts'.
+#' @param type Type of data returned specified as string. Can be 'raw', 'ts', 'zoo', 'xts' or 'timeSeries'.
 #' @param start_date Use to truncate data by start date in 'yyyy-mm-dd' format.
 #' @param end_date Use to truncate data by end date in 'yyyy-mm-dd' format.
 #' @param transformation Apply Quandl API data transformations.
@@ -66,7 +66,7 @@ metaData <- function(x){
 #' @param meta Returns meta data in list format as well as data.
 #' @param authcode Authentication Token for extended API access by default set by \code{\link{Quandl.auth}}.
 #' @param ... Additional named values that are interpretted as api parameters.
-#' @return Depending on the type the class is either data.frame, time series, xts or zoo.
+#' @return Depending on the type the class is either data.frame, time series, xts, zoo or timeSeries.
 #' @references This R package uses the Quandl API. For more information go to http://www.quandl.com/api. For more help on the package itself go to http://www.quandl.com/help/r.
 #' @author Raymond McTaggart
 #' @seealso \code{\link{Quandl.auth}}
@@ -83,8 +83,10 @@ metaData <- function(x){
 #' @importFrom zoo as.yearqtr
 #' @importFrom xts xts
 #' @importFrom xts as.xts
+#' @importFrom timeSeries timeSeries
+#' @importFrom timeSeries as.timeSeries
 #' @export
-Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts'), start_date, end_date, transformation = c('', 'diff', 'rdiff', 'normalize', 'cumul', 'rdiff_from'), collapse = c('', 'daily', 'weekly', 'monthly', 'quarterly', 'annual'), sort = c('desc', 'asc'), meta = FALSE, authcode = Quandl.auth(), ...) {
+Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts', 'timeSeries'), start_date, end_date, transformation = c('', 'diff', 'rdiff', 'normalize', 'cumul', 'rdiff_from'), collapse = c('', 'daily', 'weekly', 'monthly', 'quarterly', 'annual'), sort = c('desc', 'asc'), meta = FALSE, authcode = Quandl.auth(), ...) {
   params = list()
   ## Flag to indicate frequency change due to collapse
   freqflag = FALSE
@@ -265,6 +267,8 @@ Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts'), start_date, end_da
         if (freq != frequency(data_out)) {
           warning("xts has a non-standard meaning for 'frequency'.")
         }
+      } else if (type == "timeSeries") {
+        data_out <- timeSeries(data=data[, -1], charvec=data[, 1])
       }
 
     } else if (type=="zoo" || type=="ts") {
@@ -275,6 +279,8 @@ Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts'), start_date, end_da
       data_out <- zoo(data[, -1], order.by=data[, 1])
     } else if (type == "xts") {
       data_out <- xts(data[, -1], order.by=data[, 1])
+    } else if (type == "timeSeries") {
+      data_out <- timeSeries(data = data[, -1], charvec=data[, 1])
     }
   }
 

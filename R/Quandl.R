@@ -1,4 +1,5 @@
 Quandl.auth_token <- NA
+Quandl.host <- 'https://www.quandl.com/api'
 Quandl.version <- '2.5.2'
 Quandl.curl <- NA
 
@@ -100,13 +101,17 @@ Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts'), start_date, end_da
 
   ## Helper functions
   frequency2integer <- function(freq) {
-    switch(freq,
+    if (is.null(freq)) {
+      return(365)
+    } else {
+      switch(freq,
            'daily'    = 365,
            'weekly'   = 52,
            'monthly'  = 12,
            'quarterly' = 4,
            'yearly'   = 1,
            1)
+    }
   }
 
   as.year <- function(x) {
@@ -320,7 +325,7 @@ Quandl.dataset.get <- function(code, params) {
 
   path <- path <- paste("datasets/", code, sep="")
   json <- do.call(quandl.api, c(path=path, params))
-
+  #return(json)
   #print(json)
   if (length(json$data) == 0) {
     stop("Requested Entity does not exist.")
@@ -339,7 +344,8 @@ Quandl.dataset.get <- function(code, params) {
                      warning(paste("This warning is most likely the result of a data structure error. If the output of this function does not make sense please email connect@quandl.com with the Quandl code: ", code), call. = FALSE)
                      return(suppressWarnings(as.data.frame(matrix(unlist(json$data), ncol = length(json$column_names), byrow = TRUE),stringsAsFactors=FALSE)))
                    })
-
+  data <- do.call(rbind, lapply(json$data, rbind))
+  data[apply(data, 1:2,is.null)] <- NA
   names(data) <- json$column_names
   data[,1]    <- as.Date(data[, 1])
 

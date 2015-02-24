@@ -21,76 +21,131 @@
 #' @importFrom RCurl basicHeaderGatherer
 #' @importFrom RJSONIO fromJSON
 #' @export
-quandl.api <- function(version="v1", path, http = c('GET', 'PUT', 'POST', 'DELETE'), ...) {
-  headers <- basicHeaderGatherer()
+quandl.api <- function(version="v1", path, http = c('GET', 'PUT', 'POST', 'DELETE'), postdata = NULL, ...) {
+  # headers <- basicHeaderGatherer()
   params <- list(...)
 
-  if(http == 'PUT' || http == 'POST') {
-    postdata <- params$postdata
-    if (length(which(names(params) == "postdata")) == 0) {
-      stop("No post data entered")
-    }
-    params[[which(names(params) == "postdata")]] <- NULL
-  }
+  # if(http == 'PUT' || http == 'POST') {
+  #   postdata <- params$postdata
+  #   if (length(which(names(params) == "postdata")) == 0) {
+  #     stop("No post data entered")
+  #   }
+  #   params[[which(names(params) == "postdata")]] <- NULL
+  # }
 
   params$request_source <- 'R'
   params$request_version <- Quandl.version
 
   http <- match.arg(http)
-  request_url <- paste(paste("https://www.quandl.com/api", version, path, sep="/"), "?", sep="")
+  request_url <- paste(paste(Quandl.host, version, path, sep="/"), "?", sep="")
   param_names <- names(params)
-
   if(length(params) > 0) {
     for(i in 1:length(params)) {
       request_url <- paste(request_url, "&", param_names[i], "=", params[[i]], sep="")
     }
   }
 
-  #print(request_url)
+  print(request_url)
   switch(http,
          GET={
-           response <- getURL(request_url, customRequest = "GET", headerfunction=headers$update, curl = Quandl.curlopts())
+           response <- GET(request_url, nullValue=as.numeric(NA))
          },
+         # PUT={
+         #   response <- PUT(request_url, customRequest = "PUT", headerfunction=headers$update,
+         #                      httpheader=c("Content-Length"=nchar(postdata, type="bytes"), "Content-Type"="application/json"), postfields=postdata, curl = Quandl.curlopts())
          PUT={
-           response <- getURL(request_url, customRequest = "PUT", headerfunction=headers$update,
-                              httpheader=c("Content-Length"=nchar(postdata, type="bytes"), "Content-Type"="application/json"), postfields=postdata, curl = Quandl.curlopts())
+           response <- PUT(request_url, body=postdata)
          },
          POST={
-           response <- postForm(request_url, .params=postdata, curl = Quandl.curlopts())
+           response <- POST(request_url, body=postdata)
          },
          DELETE={
-           response <- httpDELETE(request_url, headerfunction=headers$update, curl = Quandl.curlopts())
+           response <- DELETE(request_url)
          }
   )
-  is.error = FALSE
+  # is.error = FALSE
 
-  if(http %in% c('GET', 'PUT', 'DELETE')) {
-    status <- try(headers$value()[["status"]], silent = TRUE)
-    if (inherits(status, 'try-error')) {
-      stop("I am sorry but Quandl is down for maintenance. Please check the main website for status updates.", call. = FALSE)
-    }
-
-    if (length(grep("200", status))) {
-    } else {
-      is.error = TRUE
-    }
-  }
-
-  json = try(fromJSON(response, nullValue = as.numeric(NA)), silent = TRUE)
-  if (inherits(json, 'try-error')) {
-    if(is.error) {
-      stop(response, call. = FALSE)
-    } else {
-      print(response)
-      print(request_url)
-      stop("Malformed JSON")
-    }
-  }
-
-  if (is.error) {
-    stop(json, call. = FALSE)
+  if(status_code(response) == 500) {
+    stop("Sorry but Quandl is currently down. Please visit our twitter (@quandl) for more information.", call. = FALSE)
+  } else if (status_code(response) != 200) {
+    stop(content(response), call. = FALSE)
   } else {
-    return(json)
+    return(content(response))
   }
+
+  # if(http %in% c('GET', 'PUT', 'DELETE')) {
+  #   status <- try(headers$value()[["status"]], silent = TRUE)
+  #   if (inherits(status, 'try-error')) {
+  #     stop("I am sorry but Quandl is down for maintenance. Please check the main website for status updates.", call. = FALSE)
+  #   }
+
+  #   if (length(grep("200", status))) {
+  #   } else {
+  #     is.error = TRUE
+  #   }
+  # }
+
+  # json = try(fromJSON(response, nullValue = as.numeric(NA)), silent = TRUE)
+  # if (inherits(json, 'try-error')) {
+  #   if(is.error) {
+  #     stop(response, call. = FALSE)
+  #   } else {
+  #     print(response)
+  #     print(request_url)
+  #     stop("Malformed JSON")
+  #   }
+  # }
+
+  # if (is.error) {
+  #   stop(json, call. = FALSE)
+  # } else {
+  #   return(json)
+  # }
 
 }
+
+
+
+# > httr:::parsers[['application/json'']]
+# + 
+# > 
+# > 
+# > httr:::parsers[['application/json']]
+# function (x, simplifyVector = FALSE, ...) 
+# {
+#     jsonlite::fromJSON(parse_text(x, encoding = "UTF-8"), simplifyVector = simplifyVector, 
+#         ...)
+# }
+# <environment: namespace:httr>
+# > httr:::parsers[['application/xml']]
+# function (x, ...) 
+# {
+#     need_package("XML")
+#     XML::xmlParse(parse_text(x, encoding = "UTF-8"), ...)
+# }
+# <environment: namespace:httr>
+# > need_package
+# Error: object 'need_package' not found
+# > httr:::need_package
+# function (pkg) 
+# {
+#     if (is_installed(pkg)) 
+#         return(invisible())
+#     stop("Please install ", pkg, " package", call. = FALSE)
+# }
+# <environment: namespace:httr>
+# > class(httr:::parsers)
+# [1] "environment"
+# > bah <- function(x, ...)
+# + {
+# + jsonlite::fromJSON(parse_text(x, encoding = 'UTF-8'), nullValue = as.numeric(NA), ...)
+# + }
+# > httr:::parsers[['application/quandl']] = bah
+# Error in httr:::parsers[["application/quandl"]] = bah : 
+#   object 'httr' not found
+# > assign('application/quandl', bah, envir = httr:::parsers)
+# > httr:::parsers[['application/quandl']]
+# function(x, ...)
+# {
+# jsonlite::fromJSON(parse_text(x, encoding = 'UTF-8'), nullValue = as.numeric(NA), ...)
+# }

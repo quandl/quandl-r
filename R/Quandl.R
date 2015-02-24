@@ -101,13 +101,17 @@ Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts'), start_date, end_da
 
   ## Helper functions
   frequency2integer <- function(freq) {
-    switch(freq,
+    if (is.null(freq)) {
+      return(365)
+    } else {
+      switch(freq,
            'daily'    = 365,
            'weekly'   = 52,
            'monthly'  = 12,
            'quarterly' = 4,
            'yearly'   = 1,
            1)
+    }
   }
 
   as.year <- function(x) {

@@ -1,5 +1,6 @@
 library("zoo")
 library("xts")
+library("timeSeries")
 library("testthat")
 
 context("Checking return formats")
@@ -30,6 +31,12 @@ test_that("Stop and start dates are correct (xts)", {
   expect_that(end(annual), is_equivalent_to(as.Date("2005-12-31")))
 })
 
+test_that("Stop and start dates are correct (timeSeries)", {
+  annual <- Quandl("TESTS/4", type="timeSeries", start_date="1995-01-01", end_date=as.Date("2006-01-01"))
+  expect_that(start(annual), is_equivalent_to(as.timeDate("1995-12-31")))
+  expect_that(end(annual), is_equivalent_to(as.timeDate("2005-12-31")))
+})
+
 test_that("Collapsed data frequency", {
   dailytoquart <- Quandl("TESTS/1", type="ts", collapse="quarterly")
   expect_that(frequency(dailytoquart), equals(4))
@@ -39,17 +46,26 @@ test_that("Frequencies are correct across output formats", {
   monthlyts <- Quandl("TESTS/2", type="ts")
   monthlyzoo <- Quandl("TESTS/2", type="zoo")
   monthlyxts <- Quandl("TESTS/2", type="xts")
+  monthlytimeSeries <- Quandl("TESTS/2", type="timeSeries")
   expect_that(frequency(monthlyts), equals(12))
   expect_that(frequency(monthlyzoo), equals(12))
   expect_that(frequency(monthlyxts), equals(12))
+  # timeSeries allows time index in reverse order but regularity checks won't work then
+  # So we check reversed series also
+  expect_true((frequency(monthlytimeSeries)==12)||(frequency(rev(monthlytimeSeries))==12))
 })
 
 test_that("Data is the same across formats", {
+  monthlyraw <- Quandl("TESTS/2", type="raw")
   monthlyts <- Quandl("TESTS/2", type="ts")
   monthlyzoo <- Quandl("TESTS/2", type="zoo")
   monthlyxts <- Quandl("TESTS/2", type="xts")
+  monthlytimeSeries <- Quandl("TESTS/2", type="timeSeries")
   expect_that(max(abs(monthlyts - coredata(monthlyzoo))), equals(0))
   expect_that(max(abs(coredata(monthlyzoo) - coredata(monthlyxts))) , equals(0))
+  # timeSeries keeps data in same order as passed in, not chronological
+  # Have to compare against raw as zoo and xts are sorted chronologically
+  expect_that(max(abs(monthlyraw[,-1] - getDataPart(monthlytimeSeries))), equals(0))
 })
 
 test_that("Output message lists 3 codes", {
@@ -60,7 +76,5 @@ test_that("Output message lists 3 codes", {
 })
 
 test_that("Doesn't find anything", {
-  search.nothing <- Quandl.search("asfdsgfrg")
-  #   doesn't pass it, because there is an error: incorrect number of subscripts
-  expect_warning(search.nothing, "we haven't found anything")
+  expect_warning(Quandl.search("asfdsgfrg"), "we haven't found anything")
 })

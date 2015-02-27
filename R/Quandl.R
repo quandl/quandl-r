@@ -20,24 +20,24 @@ Quandl.auth <- function(auth_token) {
   invisible(Quandl.auth_token)
 }
 
-#' Set curl options on all Quandl api calls. e.g. for use with a proxy
-#' @param curl A curl handle object
-#' @return Returns invisibly the currently set \code{curl}
-#' @seealso \code{\link{Quandl}}
-#' @examples \dontrun{
-#' Quandl.curlopts(getCurlHandle())
-#' }
-#' @importFrom RCurl getCurlHandle
-#' @export
-Quandl.curlopts <- function(curl) {
-  if (!missing(curl)) {
-    assignInMyNamespace('Quandl.curl', curl)
-  } else if (class(Quandl.curl)[1] == "CURLHandle") {
-  } else if (is.na(Quandl.curl)) {
-    assignInMyNamespace('Quandl.curl', getCurlHandle())
-  }
-  invisible(Quandl.curl)
-}
+# #' Set curl options on all Quandl api calls. e.g. for use with a proxy
+# #' @param curl A curl handle object
+# #' @return Returns invisibly the currently set \code{curl}
+# #' @seealso \code{\link{Quandl}}
+# #' @examples \dontrun{
+# #' Quandl.curlopts(getCurlHandle())
+# #' }
+# #' @importFrom RCurl getCurlHandle
+# #' @export
+# Quandl.curlopts <- function(curl) {
+#   if (!missing(curl)) {
+#     assignInMyNamespace('Quandl.curl', curl)
+#   } else if (class(Quandl.curl)[1] == "CURLHandle") {
+#   } else if (is.na(Quandl.curl)) {
+#     assignInMyNamespace('Quandl.curl', getCurlHandle())
+#   }
+#   invisible(Quandl.curl)
+# }
 
 #' Retrieve metadata from a Quandl series
 #' @param x A Quandl time series object with attached meta data.
@@ -74,17 +74,12 @@ metaData <- function(x){
 #' quandldata = Quandl("NSE/OIL", collapse="monthly", start_date="2013-01-01", type="ts")
 #' plot(quandldata[,1])
 #' }
-#' @importFrom RCurl getURL
-#' @importFrom RCurl basicHeaderGatherer
-#' @importFrom RJSONIO fromJSON
 #' @importFrom zoo zoo
 #' @importFrom zoo as.zooreg
 #' @importFrom zoo as.yearmon
 #' @importFrom zoo as.yearqtr
 #' @importFrom xts xts
 #' @importFrom xts as.xts
-#' @importFrom timeSeries timeSeries
-#' @importFrom timeSeries as.timeSeries
 #' @export
 Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts', 'timeSeries'), start_date, end_date, transformation = c('', 'diff', 'rdiff', 'normalize', 'cumul', 'rdiff_from'), collapse = c('', 'daily', 'weekly', 'monthly', 'quarterly', 'annual'), sort = c('desc', 'asc'), meta = FALSE, authcode = Quandl.auth(), ...) {
   params = list()
@@ -100,6 +95,9 @@ Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts', 'timeSeries'), star
   params$collapse         <- match.arg(collapse)
   params$sort_order       <- match.arg(sort)
 
+  if (type == 'timeSeries' && system.file(package = type) == "") {
+    stop("Package ", type, " needed to use this type", call. = FALSE)
+  }
 
   ## Helper functions
   frequency2integer <- function(freq) {
@@ -272,7 +270,7 @@ Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts', 'timeSeries'), star
           warning("xts has a non-standard meaning for 'frequency'.")
         }
       } else if (type == "timeSeries") {
-        data_out <- timeSeries(data=data[, -1], charvec=data[, 1])
+        data_out <- timeSeries::timeSeries(data=data[, -1], charvec=data[, 1])
       }
 
     } else if (type=="zoo" || type=="ts") {
@@ -284,7 +282,7 @@ Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts', 'timeSeries'), star
     } else if (type == "xts") {
       data_out <- xts(data[, -1], order.by=data[, 1])
     } else if (type == "timeSeries") {
-      data_out <- timeSeries(data = data[, -1], charvec=data[, 1])
+      data_out <- timeSeries::timeSeries(data = data[, -1], charvec=data[, 1])
     }
   }
 
@@ -344,14 +342,15 @@ Quandl.dataset.get <- function(code, params) {
   }
 
   ## Shell data from JSON's list
-  data <- tryCatch(as.data.frame(matrix(unlist(json$data), ncol = length(json$column_names), byrow = TRUE), stringsAsFactors=FALSE),
-                   warning=function(w) {
-                     warning(w)
-                     warning(paste("This warning is most likely the result of a data structure error. If the output of this function does not make sense please email connect@quandl.com with the Quandl code: ", code), call. = FALSE)
-                     return(suppressWarnings(as.data.frame(matrix(unlist(json$data), ncol = length(json$column_names), byrow = TRUE),stringsAsFactors=FALSE)))
-                   })
-  data <- do.call(rbind, lapply(json$data, rbind))
-  data[apply(data, 1:2,is.null)] <- NA
+  # data <- tryCatch(as.data.frame(matrix(unlist(json$data), ncol = length(json$column_names), byrow = TRUE), stringsAsFactors=FALSE),
+  #                  warning=function(w) {
+  #                    warning(w)
+  #                    warning(paste("This warning is most likely the result of a data structure error. If the output of this function does not make sense please email connect@quandl.com with the Quandl code: ", code), call. = FALSE)
+  #                    return(suppressWarnings(as.data.frame(matrix(unlist(json$data), ncol = length(json$column_names), byrow = TRUE),stringsAsFactors=FALSE)))
+  #                  })
+  data <- as.data.frame(json$data)
+  # data <- do.call(rbind, lapply(json$data, rbind))
+  # data[apply(data, 1:2,is.null)] <- NA
   names(data) <- json$column_names
   data[,1]    <- as.Date(data[, 1])
 

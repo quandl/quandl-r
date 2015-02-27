@@ -15,11 +15,6 @@
 #' quandldata = quandl.api(version="v1", path="datasets/NSE/OIL", http="GET")
 #' plot(quandldata[,1])
 #' }
-#' @importFrom RCurl getURL
-#' @importFrom RCurl postForm
-#' @importFrom RCurl httpDELETE
-#' @importFrom RCurl basicHeaderGatherer
-#' @importFrom RJSONIO fromJSON
 #' @export
 quandl.api <- function(version="v1", path, http = c('GET', 'PUT', 'POST', 'DELETE'), postdata = NULL, ...) {
   # headers <- basicHeaderGatherer()
@@ -48,29 +43,30 @@ quandl.api <- function(version="v1", path, http = c('GET', 'PUT', 'POST', 'DELET
   print(request_url)
   switch(http,
          GET={
-           response <- GET(request_url, nullValue=as.numeric(NA))
+           response <- httr::GET(request_url, nullValue=as.numeric(NA))
          },
          # PUT={
          #   response <- PUT(request_url, customRequest = "PUT", headerfunction=headers$update,
          #                      httpheader=c("Content-Length"=nchar(postdata, type="bytes"), "Content-Type"="application/json"), postfields=postdata, curl = Quandl.curlopts())
          PUT={
-           response <- PUT(request_url, body=postdata)
+           response <- httr::PUT(request_url, body=postdata)
          },
          POST={
-           response <- POST(request_url, body=postdata)
+           response <- httr::POST(request_url, body=postdata)
          },
          DELETE={
-           response <- DELETE(request_url)
+           response <- httr::DELETE(request_url)
          }
   )
   # is.error = FALSE
 
-  if(status_code(response) == 500) {
+  if(httr::status_code(response) == 500) {
     stop("Sorry but Quandl is currently down. Please visit our twitter (@quandl) for more information.", call. = FALSE)
-  } else if (status_code(response) != 200) {
-    stop(content(response), call. = FALSE)
+  } else if (httr::status_code(response) != 200) {
+    stop(httr::content(response), call. = FALSE)
   } else {
-    return(content(response))
+    # return(RJSONIO::fromJSON(httr::content(response, 'text'), nullValue = as.numeric(NA)))
+    return(httr::content(response, simplifyVector = TRUE))
   }
 
   # if(http %in% c('GET', 'PUT', 'DELETE')) {

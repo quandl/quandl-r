@@ -20,25 +20,6 @@ Quandl.auth <- function(auth_token) {
   invisible(Quandl.auth_token)
 }
 
-# #' Set curl options on all Quandl api calls. e.g. for use with a proxy
-# #' @param curl A curl handle object
-# #' @return Returns invisibly the currently set \code{curl}
-# #' @seealso \code{\link{Quandl}}
-# #' @examples \dontrun{
-# #' Quandl.curlopts(getCurlHandle())
-# #' }
-# #' @importFrom RCurl getCurlHandle
-# #' @export
-# Quandl.curlopts <- function(curl) {
-#   if (!missing(curl)) {
-#     assignInMyNamespace('Quandl.curl', curl)
-#   } else if (class(Quandl.curl)[1] == "CURLHandle") {
-#   } else if (is.na(Quandl.curl)) {
-#     assignInMyNamespace('Quandl.curl', getCurlHandle())
-#   }
-#   invisible(Quandl.curl)
-# }
-
 #' Retrieve metadata from a Quandl series
 #' @param x A Quandl time series object with attached meta data.
 #' @return Returns a list of meta data about the series.

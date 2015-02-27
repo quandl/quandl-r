@@ -5,7 +5,7 @@
 \title{Pulls Data from the Quandl API}
 \usage{
 quandl.api(version = "v1", path, http = c("GET", "PUT", "POST", "DELETE"),
-  ...)
+  postdata = NULL, ...)
 }
 \arguments{
 \item{version}{Set to the version of the Quandl API you want to access.}

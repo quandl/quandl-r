@@ -15,7 +15,6 @@
 #' @examples \dontrun{
 #' search.results <- Quandl.search("oil")
 #' }
-#' @importFrom RJSONIO fromJSON
 #' @export
 Quandl.search <- function(query, page=1, source=NULL, silent=FALSE, authcode=Quandl.auth()) {
 

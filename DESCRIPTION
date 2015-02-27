@@ -16,11 +16,11 @@ Imports:
     zoo
 Suggests:
     testthat,
-    roxygen2
+    roxygen2,
+    timeSeries
 Depends:
     R (>= 2.15.0),
-    xts,
-    timeSeries
+    xts
 License: MIT + file LICENSE
 URL: https://github.com/quandl/R-package
 BugReports: https://github.com/quandl/R-package/issues

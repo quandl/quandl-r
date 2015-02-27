@@ -101,7 +101,8 @@ Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts', 'timeSeries'), star
 
   ## Helper functions
   frequency2integer <- function(freq) {
-    if (is.null(freq)) {
+
+    if (is.null(freq) || is.na(freq)) {
       return(365)
     } else {
       switch(freq,

@@ -15,7 +15,6 @@
 #' @examples \dontrun{
 #' search.results <- Quandl.search("oil")
 #' }
-#' @importFrom RJSONIO fromJSON
 #' @export
 Quandl.search <- function(query, page=1, source=NULL, silent=FALSE, authcode=Quandl.auth()) {
 
@@ -53,22 +52,24 @@ Quandl.search <- function(query, page=1, source=NULL, silent=FALSE, authcode=Qua
 
   list <- list()
   length(list) <- length(json$docs)
-  for (i in 1:length(json$docs)) {
-    name <- json$docs[[i]]$name
-    code <- paste(json$docs[[i]]$source_code, "/", json$docs[[i]]$code, sep="")
-    desc <- json$docs[[i]]$description
-    freq <- json$docs[[i]]$frequency
-    colname <- json$docs[[i]]$column_names
-    if (i < 4 & !silent) {
-      cat(name, "\nCode: ", code, "\nDesc: ", desc, "\nFreq: ", freq, "\nCols: ", paste(colname, collapse="|"), "\n\n", sep="")
+  if (length(json$docs)>0) {
+    for (i in 1:length(json$docs)) {
+      name <- json$docs[[i]]$name
+      code <- paste(json$docs[[i]]$source_code, "/", json$docs[[i]]$code, sep="")
+      desc <- json$docs[[i]]$description
+      freq <- json$docs[[i]]$frequency
+      colname <- json$docs[[i]]$column_names
+      if (i < 4 & !silent) {
+        cat(name, "\nCode: ", code, "\nDesc: ", desc, "\nFreq: ", freq, "\nCols: ", paste(colname, collapse="|"), "\n\n", sep="")
+      }
+      list[[i]]$name <- name
+      list[[i]]$code <- code
+      list[[i]]$description <- desc
+      list[[i]]$frequency <- freq
+      list[[i]]$column_names <- colname
+      list[[i]]$from_date <- json$docs[[i]]$from_date
+      list[[i]]$to_date <- json$docs[[i]]$to_date
     }
-    list[[i]]$name <- name
-    list[[i]]$code <- code
-    list[[i]]$description <- desc
-    list[[i]]$frequency <- freq
-    list[[i]]$column_names <- colname
-    list[[i]]$from_date <- json$docs[[i]]$from_date
-    list[[i]]$to_date <- json$docs[[i]]$to_date
   }
 
   invisible(list)

@@ -11,12 +11,12 @@ Maintainer: Raymond McTaggart <raymond@quandl.com>
 Description: This package interacts directly with the Quandl API to offer data
     in a number of formats usable in R, as well as the ability to search.
 Imports:
-    RCurl,
-    RJSONIO,
+    httr,
     zoo
 Suggests:
     testthat,
-    roxygen2
+    roxygen2,
+    timeSeries
 Depends:
     R (>= 2.15.0),
     xts

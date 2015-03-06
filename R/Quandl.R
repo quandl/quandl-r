@@ -1,4 +1,5 @@
 Quandl.auth_token <- NA
+Quandl.host <- 'https://www.quandl.com/api'
 Quandl.version <- '2.5.2'
 Quandl.curl <- NA
 
@@ -100,13 +101,17 @@ Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts'), start_date, end_da
 
   ## Helper functions
   frequency2integer <- function(freq) {
-    switch(freq,
+    if (is.null(freq) || is.na(freq)) {
+      return(365)
+    } else {
+      switch(freq,
            'daily'    = 365,
            'weekly'   = 52,
            'monthly'  = 12,
            'quarterly' = 4,
            'yearly'   = 1,
            1)
+    }
   }
 
   as.year <- function(x) {
@@ -193,7 +198,7 @@ Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts'), start_date, end_da
       c <- code_col[1]
       col <- code_col[2]
 
-      if(!is.null(col)) {
+      if(!is.null(col) && !is.na(col)) {
         tmp.params$column <- col
       }
 

@@ -48,7 +48,7 @@ metaData <- function(x){
 #' @param authcode Authentication Token for extended API access by default set by \code{\link{Quandl.auth}}.
 #' @param ... Additional named values that are interpretted as api parameters.
 #' @return Depending on the type the class is either data.frame, time series, xts, zoo or timeSeries.
-#' @references This R package uses the Quandl API. For more information go to http://www.quandl.com/api. For more help on the package itself go to http://www.quandl.com/help/r.
+#' @references This R package uses the Quandl API. For more information go to https://www.quandl.com/help/api. For more help on the package itself go to http://www.quandl.com/help/r.
 #' @author Raymond McTaggart
 #' @seealso \code{\link{Quandl.auth}}
 #' @examples \dontrun{
@@ -287,7 +287,7 @@ Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts', 'timeSeries'), star
 #' @param code Dataset code on Quandl specified as a string or an array of strings.
 #' @param params A list of parameters to be passed to the Quandl api.
 #' @return Returns a data.frame of the requested data
-#' @references This R package uses the Quandl API. For more information go to http://www.quandl.com/api. For more help on the package itself go to http://www.quandl.com/help/r.
+#' @references This R package uses the Quandl API. For more information go to https://www.quandl.com/help/api. For more help on the package itself go to http://www.quandl.com/help/r.
 #' @author Raymond McTaggart
 #' @seealso \code{\link{Quandl.auth}}
 #' @examples \dontrun{

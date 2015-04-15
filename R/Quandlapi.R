@@ -6,10 +6,10 @@
 #' @param version Set to the version of the Quandl API you want to access.
 #' @param path Path to api resource.
 #' @param http Type of http request sent.
-#' @param postdata in progress
+#' @param postdata A character or raw vector that is sent in a body.
 #' @param ... Named values that are interpretted as api parameters.
 #' @return Website response.
-#' @references This R package uses the Quandl API. For more information go to http://www.quandl.com/api. For more help on the package itself go to http://www.quandl.com/help/r.
+#' @references This R package uses the Quandl API. For more information go to https://www.quandl.com/help/api. For more help on the package itself go to http://www.quandl.com/help/r.
 #' @author Raymond McTaggart
 #' @seealso \code{\link{Quandl.auth}}
 #' @examples \dontrun{

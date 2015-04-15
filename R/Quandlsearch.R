@@ -9,20 +9,19 @@
 #' @param silent Prints the first few results when FALSE.
 #' @param authcode Authentication Token for extended API access by default set by \code{\link{Quandl.auth}}.
 #' @return A list of the search results.
-#' @references This R package uses the Quandl API. For more information go to http://www.quandl.com/api. For more help on the package itself go to http://www.quandl.com/help/r.
+#' @references This R package uses the Quandl API. For more information go to https://www.quandl.com/help/api. For more help on the package itself go to http://www.quandl.com/help/r.
 #' @author Raymond McTaggart
 #' @seealso \code{\link{Quandl.auth}}
 #' @examples \dontrun{
 #' search.results <- Quandl.search("oil")
 #' }
 #' @export
-Quandl.search <- function(query, page=1, source=NULL, silent=FALSE, authcode=Quandl.auth()) {
+Quandl.search <- function(query, page=1, specificSource=NULL, silent=FALSE, authcode=Quandl.auth()) {
 
   params <- list()
-  parsedQuery <- gsub(" ", "+", query)
-  params$query <- parsedQuery
+  params$query <- gsub(" ", "+", query) # parsedQuery
 
-  # url <- paste("http://www.quandl.com/api/v1/datasets.json?query=", parsedQuery, sep="")
+  # url <- paste("http://www.quandl.com/api/v1/datasets.json?query=", "gas", sep="")
   if (is.na(authcode)) {
     warning("It would appear you aren't using an authentication token.
             Please visit http://www.quandl.com/help/r or your usage may be limited.")
@@ -30,8 +29,8 @@ Quandl.search <- function(query, page=1, source=NULL, silent=FALSE, authcode=Qua
     params$auth_token <- authcode
   }
 
-  if (!is.null(source)) {
-    params$source_code <- source
+  if (!is.null(specificSource)) {
+    params$source_code <- specificSource
   }
   params$page <- as.character(page)
   path = "datasets"
@@ -52,7 +51,7 @@ Quandl.search <- function(query, page=1, source=NULL, silent=FALSE, authcode=Qua
 
   list <- list()
   length(list) <- length(json$docs)
-  if (length(json$docs)>0) {
+  if (length(json$docs) > 0) {
     for (i in 1:length(json$docs)) {
       name <- json$docs[[i]]$name
       code <- paste(json$docs[[i]]$source_code, "/", json$docs[[i]]$code, sep="")

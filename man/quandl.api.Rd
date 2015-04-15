@@ -14,6 +14,8 @@ quandl.api(version = "v1", path, http = c("GET", "PUT", "POST", "DELETE"),
 
 \item{http}{Type of http request sent.}
 
+\item{postdata}{in progress}
+
 \item{...}{Named values that are interpretted as api parameters.}
 }
 \value{

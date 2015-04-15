@@ -1,7 +1,6 @@
 library("zoo")
 library("xts")
 library("timeSeries")
-library("testthat")
 
 context("Checking return formats")
 

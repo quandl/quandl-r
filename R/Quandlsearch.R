@@ -36,40 +36,41 @@ Quandl.search <- function(query, page=1, specificSource=NULL, silent=FALSE, auth
   path = "datasets"
   json <- do.call(quandl.api, c(path=path, params))
 
-  # if there are zero returns than inform the user about it
+  # if there are zero returns then inform the user about it
   params$total_count <- json$total_count
   if(params$total_count == 0){
     warning("It seems as we haven't found anything.")
   }
 
   # print(params$total_count)
-  # json <- try(fromJSON(response),silent=FALSE)
   # print(json)
   if (inherits(json, 'try-error')) {
     stop("No data")
   }
 
-  list <- list()
-  length(list) <- length(json$docs)
+#   list <- list()
+#   length(list) <- length(json$docs)
   if (length(json$docs) > 0) {
-    for (i in 1:length(json$docs)) {
-      name <- json$docs[[i]]$name
-      code <- paste(json$docs[[i]]$source_code, "/", json$docs[[i]]$code, sep="")
-      desc <- json$docs[[i]]$description
-      freq <- json$docs[[i]]$frequency
-      colname <- json$docs[[i]]$column_names
-      if (i < 4 & !silent) {
-        cat(name, "\nCode: ", code, "\nDesc: ", desc, "\nFreq: ", freq, "\nCols: ", paste(colname, collapse="|"), "\n\n", sep="")
-      }
-      list[[i]]$name <- name
-      list[[i]]$code <- code
-      list[[i]]$description <- desc
-      list[[i]]$frequency <- freq
-      list[[i]]$column_names <- colname
-      list[[i]]$from_date <- json$docs[[i]]$from_date
-      list[[i]]$to_date <- json$docs[[i]]$to_date
-    }
+      name <- json$docs[5]
+      desc <- json$docs[8]
+      freq <- json$docs[10]
+      df.seach_results <- data.frame(Name = name, Description = desc, Update_Frequency = freq)
+      df.seach_results
   }
+#       list[[i]]$name <- name
+#       list[[i]]$code <- code
+#       list[[i]]$description <- desc
+#       list[[i]]$frequency <- freq
+#       list[[i]]$column_names <- colname
+#       list[[i]]$from_date <- json$docs[[i]]$from_date
+#       list[[i]]$to_date <- json$docs[[i]]$to_date
+#
+#
+#       code <- paste(json$docs[3], "/", json$docs[4], sep="")
+#       colname <- json$docs[[i]]$column_names
+#       if (i < 4 & !silent) {
+#         cat(name, "\nCode: ", code, "\nDesc: ", desc, "\nFreq: ", freq, "\nCols: ", paste(colname, collapse="|"), "\n\n", sep="")
+#       }
 
-  invisible(list)
+  # invisible(list)
 }

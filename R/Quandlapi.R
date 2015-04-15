@@ -32,7 +32,6 @@ quandl.api <- function(version="v1", path, http = c('GET', 'PUT', 'POST', 'DELET
     }
   }
 
-
   switch(http,
          GET={
            response <- httr::GET(request_url, nullValue=as.numeric(NA))
@@ -52,7 +51,7 @@ quandl.api <- function(version="v1", path, http = c('GET', 'PUT', 'POST', 'DELET
   if(httr::status_code(response) == 500) {
     stop("Sorry but Quandl is currently down. Please visit our twitter (@quandl) for more information.", call. = FALSE)
   } else if (httr::status_code(response) != 200) {
-    stop(httr::content(response), call. = FALSE)
+    stop(httr::content(response, as="text"), call. = FALSE)
   } else {
     return(httr::content(response, simplifyVector = TRUE))
   }

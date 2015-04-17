@@ -66,3 +66,13 @@ test_that("Data is the same across formats", {
   # Have to compare against raw as zoo and xts are sorted chronologically
   expect_that(max(abs(monthlyraw[,-1] - getDataPart(monthlytimeSeries))), equals(0))
 })
+
+test_that("Output message lists 3 codes", {
+  expect_output(Quandl.search("gas"), "UN/REFINERYGASPRODUCTION_PAN")
+  expect_output(Quandl.search("gas"), "BTN_NY_GDP_NGAS_RT_ZS")
+  expect_output(Quandl.search("gas"), "BLZ_NY_GDP_NGAS_RT_ZS")
+})
+
+test_that("Doesn't find anything", {
+  expect_warning(Quandl.search("asfdsgfrg"), "we haven't found anything")
+})

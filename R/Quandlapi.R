@@ -2,7 +2,7 @@
 #'
 #' An authentication token is needed for access to the Quandl API multiple times. Set your \code{access_token} with \code{Quandl.auth} function.
 #'
-#' For instructions on finding your authentication token go to www.quandl.com/API
+#' For instructions on finding your authentication token go to https://www.quandl.com/account
 #' @param version Set to the version of the Quandl API you want to access.
 #' @param path Path to api resource.
 #' @param http Type of http request sent.

@@ -1,6 +1,6 @@
 Quandl.auth_token <- NA
 Quandl.host <- 'https://www.quandl.com/api'
-Quandl.version <- '2.5.2'
+Quandl.version <- '2.6'
 Quandl.curl <- NA
 
 
@@ -283,7 +283,7 @@ Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts', 'timeSeries'), star
 #'
 #' An authentication token is needed for access to the Quandl API multiple times. Set your \code{access_token} with \code{Quandl.auth} function.
 #'
-#' For instructions on finding your authentication token go to www.quandl.com/API
+#' For instructions on finding your authentication token go to https://www.quandl.com/account
 #' @param code Dataset code on Quandl specified as a string or an array of strings.
 #' @param params A list of parameters to be passed to the Quandl api.
 #' @return Returns a data.frame of the requested data

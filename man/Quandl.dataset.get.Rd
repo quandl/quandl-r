@@ -18,7 +18,7 @@ Returns a data.frame of the requested data
 An authentication token is needed for access to the Quandl API multiple times. Set your \code{access_token} with \code{Quandl.auth} function.
 }
 \details{
-For instructions on finding your authentication token go to www.quandl.com/API
+For instructions on finding your authentication token go to https://www.quandl.com/account
 }
 \examples{
 \dontrun{

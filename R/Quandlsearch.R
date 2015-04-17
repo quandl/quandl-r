@@ -2,7 +2,7 @@
 #'
 #' An authentication token is needed for access to the Quandl API multiple times. Set your \code{access_token} with \code{Quandl.auth} function.
 #'
-#' For instructions on finding your authentication token go to www.quandl.com/help/api
+#' For instructions on finding your authentication token go to https://www.quandl.com/account
 #' @param query Search terms
 #' @param page Specifies which page of results to return.
 #' @param source Specifies a specific source to search within.

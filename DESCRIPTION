@@ -1,7 +1,7 @@
 Package: Quandl
 Title: Quandl Data Connection
-Version: 2.5.2
-Date: 2015-01-18
+Version: 2.6
+Date: 2015-04-17
 Authors@R: as.person(c(
     "Raymond McTaggart [aut, cre] <raymond@quandl.com>",
     "Gergely Daroczi [aut]",

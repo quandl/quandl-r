@@ -3,7 +3,7 @@
 ##############################
 
 - Move to httr library, which now also uses jsonlite library internally as well
-- Instead of using Quandl.seach, please start using the Quandl website (as it has been removed)
+- Fixed Quandl.seach functionality
 
 ##############################
 ####Version 2.5.1 to 2.5.2####

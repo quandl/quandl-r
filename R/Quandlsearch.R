@@ -2,14 +2,14 @@
 #'
 #' An authentication token is needed for access to the Quandl API multiple times. Set your \code{access_token} with \code{Quandl.auth} function.
 #'
-#' For instructions on finding your authentication token go to www.quandl.com/API
+#' For instructions on finding your authentication token go to https://www.quandl.com/account
 #' @param query Search terms
 #' @param page Specifies which page of results to return.
 #' @param source Specifies a specific source to search within.
 #' @param silent Prints the first few results when FALSE.
 #' @param authcode Authentication Token for extended API access by default set by \code{\link{Quandl.auth}}.
 #' @return A list of the search results.
-#' @references This R package uses the Quandl API. For more information go to http://www.quandl.com/api. For more help on the package itself go to http://www.quandl.com/help/r.
+#' @references This R package uses the Quandl API. For more information go to http://www.quandl.com/help/api. For more help on the package itself go to http://www.quandl.com/help/r.
 #' @author Raymond McTaggart
 #' @seealso \code{\link{Quandl.auth}}
 #' @examples \dontrun{

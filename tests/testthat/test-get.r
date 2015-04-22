@@ -1,7 +1,6 @@
 library("zoo")
 library("xts")
 library("timeSeries")
-library("testthat")
 
 context("Checking return formats")
 
@@ -69,10 +68,9 @@ test_that("Data is the same across formats", {
 })
 
 test_that("Output message lists 3 codes", {
-  search.results <- Quandl.search("gas")
-  expect_output(search.results, "UN/REFINERYGASPRODUCTION_PAN")
-  expect_output(search.results, "BTN_NY_GDP_NGAS_RT_ZS")
-  expect_output(search.results, "BLZ_NY_GDP_NGAS_RT_ZS")
+  expect_output(Quandl.search("gas"), "UN/REFINERYGASPRODUCTION_PAN")
+  expect_output(Quandl.search("gas"), "BTN_NY_GDP_NGAS_RT_ZS")
+  expect_output(Quandl.search("gas"), "BLZ_NY_GDP_NGAS_RT_ZS")
 })
 
 test_that("Doesn't find anything", {

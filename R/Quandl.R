@@ -1,6 +1,6 @@
 Quandl.auth_token <- NA
 Quandl.host <- 'https://www.quandl.com/api'
-Quandl.version <- '2.5.2'
+Quandl.version <- '2.6'
 Quandl.curl <- NA
 
 
@@ -48,7 +48,7 @@ metaData <- function(x){
 #' @param authcode Authentication Token for extended API access by default set by \code{\link{Quandl.auth}}.
 #' @param ... Additional named values that are interpretted as api parameters.
 #' @return Depending on the type the class is either data.frame, time series, xts, zoo or timeSeries.
-#' @references This R package uses the Quandl API. For more information go to http://www.quandl.com/api. For more help on the package itself go to http://www.quandl.com/help/r.
+#' @references This R package uses the Quandl API. For more information go to https://www.quandl.com/help/api. For more help on the package itself go to http://www.quandl.com/help/r.
 #' @author Raymond McTaggart
 #' @seealso \code{\link{Quandl.auth}}
 #' @examples \dontrun{
@@ -283,11 +283,11 @@ Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts', 'timeSeries'), star
 #'
 #' An authentication token is needed for access to the Quandl API multiple times. Set your \code{access_token} with \code{Quandl.auth} function.
 #'
-#' For instructions on finding your authentication token go to www.quandl.com/API
+#' For instructions on finding your authentication token go to https://www.quandl.com/account
 #' @param code Dataset code on Quandl specified as a string or an array of strings.
 #' @param params A list of parameters to be passed to the Quandl api.
 #' @return Returns a data.frame of the requested data
-#' @references This R package uses the Quandl API. For more information go to http://www.quandl.com/api. For more help on the package itself go to http://www.quandl.com/help/r.
+#' @references This R package uses the Quandl API. For more information go to https://www.quandl.com/help/api. For more help on the package itself go to http://www.quandl.com/help/r.
 #' @author Raymond McTaggart
 #' @seealso \code{\link{Quandl.auth}}
 #' @examples \dontrun{

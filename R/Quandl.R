@@ -330,7 +330,7 @@ Quandl.dataset.get <- function(code, params) {
   #                    warning(paste("This warning is most likely the result of a data structure error. If the output of this function does not make sense please email connect@quandl.com with the Quandl code: ", code), call. = FALSE)
   #                    return(suppressWarnings(as.data.frame(matrix(unlist(json$data), ncol = length(json$column_names), byrow = TRUE),stringsAsFactors=FALSE)))
   #                  })
-  data <- as.data.frame(json$data)
+  data <- as.data.frame(json$data, stringsAsFactors=FALSE)
   # data <- do.call(rbind, lapply(json$data, rbind))
   # data[apply(data, 1:2,is.null)] <- NA
   names(data) <- json$column_names

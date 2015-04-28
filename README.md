@@ -42,33 +42,6 @@ Create a graph of the Nasdaq, with a monthly frequency
 	 
     plot(stl(Quandl("GOOG/NASDAQ_GOOG",type="ts",collapse="monthly")[,1],s.window="per"))
 
-
-## Uploads ##
-
-### This functionality is currently disabled ###
-### Uploading can be done using Quandl Toolbelt ###
-There are a few things you need to do before you can proceed with uploading data.
- * Make an account and set your authentication token within the package with the Quandl.auth() function.
- * Get your data into a data frame with the dates in the first column.
- * Pick a code for your dataset - only capital letters, numbers and underscores are acceptable.
-
-Then call this function 	
-
-	Quandl.push(code="TEST", name="This is a test dataset", description="This description can include extra information about the time series including units",data=yourdataset)`
-
-The function returns a link to your newly created dataset. When creating a dataset the fields code, name, and data are mandatory. When updating a dataset only the code is mandatory.
-
-If you would like to update your dataset - change the name, add new data - pass update=TRUE to the function otherwise it will ask if you are sure.
-
-### Example ###
-Downloading a partial dataset and uploading it with code TEST. 
-
-    Quandl.auth("authenticationtoken")
-    mydata = Quandl("NSE/OIL", rows=5)
-    Quandl.push("TEST",name="This is a test dataset",description="This is a description",data=mydata)
-    
-
-Will return a link to your newly uploaded dataset
     
 ## Search ##
 Searching Quandl from within the R console is now supported. An authorization token is not required, but for extended use specify your token using `Quandl.auth()`.  The search function is:

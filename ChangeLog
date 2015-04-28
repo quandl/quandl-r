@@ -4,6 +4,7 @@
 
 - Move to httr library, which now also uses jsonlite library internally as well
 - Fixed Quandl.seach functionality
+- Quandl.curl has been removed along with httr
 
 ##############################
 ####Version 2.5.1 to 2.5.2####

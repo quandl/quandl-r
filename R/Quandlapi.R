@@ -20,10 +20,9 @@
 quandl.api <- function(version="v1", path, http = c('GET', 'PUT', 'POST', 'DELETE'), postdata = NULL, ...) {
 
   params <- list(...)
-
   params$request_source <- 'R'
   params$request_version <- Quandl.version
-
+  
   http <- match.arg(http)
   request_url <- paste(paste(Quandl.host, version, path, sep="/"), "?", sep="")
   param_names <- names(params)
@@ -35,7 +34,7 @@ quandl.api <- function(version="v1", path, http = c('GET', 'PUT', 'POST', 'DELET
 
   switch(http,
          GET={
-           response <- httr::GET(request_url, nullValue=as.numeric(NA))
+           response <- httr::GET(request_url)
          },
          PUT={
            response <- httr::PUT(request_url, body=postdata)
@@ -54,7 +53,8 @@ quandl.api <- function(version="v1", path, http = c('GET', 'PUT', 'POST', 'DELET
   } else if (httr::status_code(response) != 200) {
     stop(httr::content(response, as="text"), call. = FALSE)
   } else {
-    return(httr::content(response, simplifyVector = TRUE))
+    text_response <- httr::content(response, as="text")
+    return(jsonlite::fromJSON(text_response, simplifyVector=TRUE))
   }
 
 

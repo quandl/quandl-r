@@ -1,6 +1,6 @@
 Quandl.auth_token <- NA
 Quandl.host <- 'https://www.quandl.com/api'
-Quandl.version <- '2.6.1'
+Quandl.version <- '2.6.2'
 
 #' Query or set Quandl API token
 #' @param auth_token Optionally passed parameter to set Quandl \code{auth_token}.
@@ -86,12 +86,12 @@ Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts', 'timeSeries'), star
       return(365)
     } else {
       switch(freq,
-           'daily'    = 365,
-           'weekly'   = 52,
-           'monthly'  = 12,
-           'quarterly' = 4,
-           'yearly'   = 1,
-           1)
+             'daily'    = 365,
+             'weekly'   = 52,
+             'monthly'  = 12,
+             'quarterly' = 4,
+             'yearly'   = 1,
+             1)
     }
   }
 

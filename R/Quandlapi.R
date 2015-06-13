@@ -16,13 +16,15 @@
 #' quandldata = quandl.api(version="v1", path="datasets/NSE/OIL", http="GET")
 #' plot(quandldata[,1])
 #' }
+#' @import httr
+#' @import jsonlite
 #' @export
 quandl.api <- function(version="v1", path, http = c('GET', 'PUT', 'POST', 'DELETE'), postdata = NULL, ...) {
 
   params <- list(...)
   params$request_source <- 'R'
   params$request_version <- Quandl.version
-  
+
   http <- match.arg(http)
   request_url <- paste(paste(Quandl.host, version, path, sep="/"), "?", sep="")
   param_names <- names(params)
@@ -34,27 +36,27 @@ quandl.api <- function(version="v1", path, http = c('GET', 'PUT', 'POST', 'DELET
 
   switch(http,
          GET={
-           response <- httr::GET(request_url)
+           response <- GET(request_url)
          },
          PUT={
-           response <- httr::PUT(request_url, body=postdata)
+           response <- PUT(request_url, body=postdata)
          },
          POST={
-           response <- httr::POST(request_url, body=postdata)
+           response <- POST(request_url, body=postdata)
          },
          DELETE={
-           response <- httr::DELETE(request_url)
+           response <- DELETE(request_url)
          }
   )
 
 
-  if(httr::status_code(response) == 500) {
+  if(status_code(response) == 500) {
     stop("Sorry but Quandl is currently down. Please visit our twitter (@quandl) for more information.", call. = FALSE)
-  } else if (httr::status_code(response) != 200) {
-    stop(httr::content(response, as="text"), call. = FALSE)
+  } else if (status_code(response) != 200) {
+    stop(content(response, as="text"), call. = FALSE)
   } else {
-    text_response <- httr::content(response, as="text")
-    return(jsonlite::fromJSON(text_response, simplifyVector=TRUE))
+    text_response <- content(response, as="text")
+    return(fromJSON(text_response, simplifyVector=TRUE))
   }
 
 

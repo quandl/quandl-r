@@ -1,2 +1,6 @@
 library(testthat)
-# test_check("Quandl")
+library(httr)
+library(Quandl)
+library(jsonlite)
+
+test_check("Quandl")

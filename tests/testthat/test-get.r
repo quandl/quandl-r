@@ -1,6 +1,10 @@
-library("zoo")
-library("xts")
-library("timeSeries")
+library(testthat)
+library(Quandl)
+library(zoo)
+library(xts)
+library(timeSeries)
+
+Quandl.auth("GgnxpyUBXHsyQxqp67bY")
 
 context("Checking return formats")
 
@@ -68,9 +72,8 @@ test_that("Data is the same across formats", {
 })
 
 test_that("Output message lists 3 codes", {
-  expect_output(Quandl.search("gas"), "UN/REFINERYGASPRODUCTION_PAN")
-  expect_output(Quandl.search("gas"), "BTN_NY_GDP_NGAS_RT_ZS")
-  expect_output(Quandl.search("gas"), "BLZ_NY_GDP_NGAS_RT_ZS")
+  expect_output(str(Quandl.search("gas")), "GasCoin/BITCOIN Price")
+  expect_output(str(Quandl.search("oil")), "JODI/OIL_CRPRKB_USA")
 })
 
 test_that("Doesn't find anything", {

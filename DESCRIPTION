@@ -4,8 +4,8 @@ Version: 2.6.2
 Date: 2015-06-13
 Authors@R: c(
     person("Raymond McTaggart", role=c("aut", "cre"), email="raymond@quandl.com"),
-    person("John Malc", role="ctb"),
     person("Gergely Daroczi", role="aut"),
+    person("John Malc", role="ctb", comment="@dmpe"),
     person("Quandl Inc.", role="cph"))
 Maintainer: Raymond McTaggart <raymond@quandl.com>
 Description: Functions for interacting directly with the Quandl API to offer data

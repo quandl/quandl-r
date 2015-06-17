@@ -59,7 +59,6 @@ quandl.api <- function(version="v1", path, http = c('GET', 'PUT', 'POST', 'DELET
     return(fromJSON(text_response, simplifyVector=TRUE))
   }
 
-
 }
 
 

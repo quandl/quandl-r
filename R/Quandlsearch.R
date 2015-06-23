@@ -27,38 +27,31 @@ Quandl.search <- function(query, page=1, source=NULL, silent=FALSE, authcode=Qua
     warning("It would appear you aren't using an authentication token.
             Please visit http://www.quandl.com/help/r or your usage may be limited.")
   } else {
-    params$auth_token <- authcode
+    params$api_key <- authcode
   }
 
   if (!is.null(source)) {
-    params$source_code <- source
+    params$database_code <- source
   }
   params$page <- as.character(page)
   path = "datasets"
   json <- do.call(quandl.api, c(path=path, params))
 
-  # if there are zero returns than inform the user about it
-  params$total_count <- json$total_count
-  if(params$total_count == 0){
-    warning("It seems as we haven't found anything.")
-  }
 
-  # print(params$total_count)
-  # json <- try(fromJSON(response),silent=FALSE)
-  # print(json)
   if (inherits(json, 'try-error')) {
     stop("No data")
   }
 
   list <- list()
-  length(list) <- length(json$docs)
-  if (length(json$docs)>0) {
-    for (i in 1:length(json$docs)) {
-      name <- json$docs[i,]$name
-      code <- paste(json$docs[i,]$source_code, "/", json$docs[i,]$code, sep="")
-      desc <- json$docs[i,]$description
-      freq <- json$docs[i,]$frequency
-      colname <- json$docs[i,]$column_names
+  length(list) <- length(json$datasets)
+
+  if (length(json$datasets)>0) {
+    for (i in 1:length(json$datasets)) {
+      name <- json$datasets[i,]$name
+      code <- paste(json$datasets[i,]$database_code, "/", json$datasets[i,]$dataset_code, sep="")
+      desc <- json$datasets[i,]$description
+      freq <- json$datasets[i,]$frequency
+      colname <- json$datasets[i,]$column_names
       if (i < 4 & !silent) {
         cat(name, "\nCode: ", code, "\nDesc: ", desc, "\nFreq: ", freq, "\nCols: ", paste(colname, collapse="|"), "\n\n", sep="")
       }
@@ -67,9 +60,11 @@ Quandl.search <- function(query, page=1, source=NULL, silent=FALSE, authcode=Qua
       list[[i]]$description <- desc
       list[[i]]$frequency <- freq
       list[[i]]$column_names <- colname
-      list[[i]]$from_date <- json$docs[i,]$from_date
-      list[[i]]$to_date <- json$docs[i,]$to_date
+      list[[i]]$from_date <- json$datasets[i,]$oldest_available_date
+      list[[i]]$to_date <- json$datasets[i,]$newest_available_date
     }
+  } else {
+    warning("No datasets found")
   }
 
   invisible(list)

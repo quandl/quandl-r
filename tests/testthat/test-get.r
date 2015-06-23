@@ -14,7 +14,7 @@ test_that("Data is parsed correctly", {
 test_that("Metadata is correct", {
   daily <- Quandl("TESTS/1", type="zoo", meta=TRUE)
   expect_that(is.null(attr(daily,"meta")), is_false())
-  expect_that(metaData(daily)$source_code, equals("TESTS"))
+  expect_that(metaData(daily)$database_code, equals("TESTS"))
   expect_that(metaData(daily)$name, equals("Daily Dataset Test"))
 })
 
@@ -68,11 +68,9 @@ test_that("Data is the same across formats", {
 })
 
 test_that("Output message lists 3 codes", {
-  expect_output(Quandl.search("gas"), "UN/REFINERYGASPRODUCTION_PAN")
-  expect_output(Quandl.search("gas"), "BTN_NY_GDP_NGAS_RT_ZS")
-  expect_output(Quandl.search("gas"), "BLZ_NY_GDP_NGAS_RT_ZS")
+  expect_output(Quandl.search("gas"), "(Code: [A-Z0-9_]+/[A-Z0-9_]+.+){3}")
 })
 
 test_that("Doesn't find anything", {
-  expect_warning(Quandl.search("asfdsgfrg"), "we haven't found anything")
+  expect_warning(Quandl.search("asfdsgfrg"), "No datasets found")
 })

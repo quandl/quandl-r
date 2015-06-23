@@ -17,21 +17,20 @@
 #' plot(quandldata[,1])
 #' }
 #' @export
-quandl.api <- function(version="v1", path, http = c('GET', 'PUT', 'POST', 'DELETE'), postdata = NULL, ...) {
+quandl.api <- function(version=Quandl.api_version, path, http = c('GET', 'PUT', 'POST', 'DELETE'), postdata = NULL, ...) {
 
   params <- list(...)
   params$request_source <- 'R'
   params$request_version <- Quandl.version
   
   http <- match.arg(http)
-  request_url <- paste(paste(Quandl.host, version, path, sep="/"), "?", sep="")
+  request_url <- paste(paste(Quandl.host, version, path, sep="/"), ".json?", sep="")
   param_names <- names(params)
   if(length(params) > 0) {
     for(i in 1:length(params)) {
       request_url <- paste(request_url, "&", param_names[i], "=", params[[i]], sep="")
     }
   }
-
   switch(http,
          GET={
            response <- httr::GET(request_url)
@@ -46,7 +45,6 @@ quandl.api <- function(version="v1", path, http = c('GET', 'PUT', 'POST', 'DELET
            response <- httr::DELETE(request_url)
          }
   )
-
 
   if(httr::status_code(response) == 500) {
     stop("Sorry but Quandl is currently down. Please visit our twitter (@quandl) for more information.", call. = FALSE)

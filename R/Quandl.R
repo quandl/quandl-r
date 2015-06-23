@@ -1,23 +1,24 @@
-Quandl.auth_token <- NA
+Quandl.api_key <- NA
 Quandl.host <- 'https://www.quandl.com/api'
 Quandl.version <- '2.6.1'
+Quandl.api_version <- 'v3'
 Quandl.curl <- NA
 
 
 #' Query or set Quandl API token
-#' @param auth_token Optionally passed parameter to set Quandl \code{auth_token}.
-#' @return Returns invisibly the currently set \code{auth_token}.
+#' @param api_key Optionally passed parameter to set Quandl \code{api_key}.
+#' @return Returns invisibly the currently set \code{api_key}.
 #' @seealso \code{\link{Quandl}}
 #' @examples \dontrun{
 #' Quandl.auth('foobar')
 #' }
 #' @export
-Quandl.auth <- function(auth_token) {
+Quandl.auth <- function(api_key) {
   # Checks if a new token is being assigned and assigns it.
-  if (!missing(auth_token)) {
-    assignInMyNamespace('Quandl.auth_token', auth_token)
+  if (!missing(api_key)) {
+    assignInMyNamespace('Quandl.api_key', api_key)
   }
-  invisible(Quandl.auth_token)
+  invisible(Quandl.api_key)
 }
 
 #' Retrieve metadata from a Quandl series
@@ -122,7 +123,7 @@ Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts', 'timeSeries'), star
   }
 
   if (!is.na(authcode)) {
-    params$auth_token <- authcode
+    params$api_key <- authcode
   }
 
   ## Add API options
@@ -303,14 +304,14 @@ Quandl.dataset.get <- function(code, params) {
     meta <- FALSE
   }
 
-  if(!is.null(params$auth_token)) {
-    authcode <- params$auth_token
+  if(!is.null(params$api_key)) {
+    authcode <- params$api_key
   } else {
     authcode <- ""
   }
 
   path <- path <- paste("datasets/", code, sep="")
-  json <- do.call(quandl.api, c(path=path, params))
+  json <- do.call(quandl.api, c(path=path, params))$dataset
   #return(json)
   #print(json)
   if (length(json$data) == 0) {
@@ -344,17 +345,16 @@ Quandl.dataset.get <- function(code, params) {
   }
 
   if (meta) {
-    source_json <- quandl.api(path=paste("sources", json$source_code, sep="/"), auth_token=authcode)
+    database_json <- quandl.api(path=paste("databases", json$database_code, sep="/"), api_key=authcode)
     meta <- list(
       frequency   = json$frequency,
       name        = json$name,
       description = json$description,
       updated     = json$updated_at,
-      source_code = json$source_code,
-      code        = paste(json$source_code, json$code, sep = "/"),
-      source_name = source_json$name,
-      source_link = source_json$host,
-      source_description = source_json$description
+      database_code = json$database_code,
+      code        = paste(json$database_code, json$code, sep = "/"),
+      database_name = database_json$name,
+      database_description = database_json$description
     )
     attr(data, "meta") <- meta
   }

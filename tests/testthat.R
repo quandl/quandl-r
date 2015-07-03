@@ -1,2 +1,3 @@
 library(testthat)
-# test_check("Quandl")
+
+test_check("Quandl")

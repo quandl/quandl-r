@@ -17,7 +17,7 @@ Using the 'devtools' package:
 
 ## CRAN ##
 
-To install the most recent package from CRAN type:
+To install the most recent version from CRAN type:
 
     install.packages("Quandl")
     library(Quandl)

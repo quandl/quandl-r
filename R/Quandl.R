@@ -1,8 +1,6 @@
 Quandl.auth_token <- NA
 Quandl.host <- 'https://www.quandl.com/api'
-Quandl.version <- '2.6.1'
-Quandl.curl <- NA
-
+Quandl.version <- '2.6.2'
 
 #' Query or set Quandl API token
 #' @param auth_token Optionally passed parameter to set Quandl \code{auth_token}.
@@ -55,6 +53,7 @@ metaData <- function(x){
 #' quandldata = Quandl("NSE/OIL", collapse="monthly", start_date="2013-01-01", type="ts")
 #' plot(quandldata[,1])
 #' }
+#' @import timeSeries
 #' @importFrom zoo zoo
 #' @importFrom zoo as.zooreg
 #' @importFrom zoo as.yearmon
@@ -87,12 +86,12 @@ Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts', 'timeSeries'), star
       return(365)
     } else {
       switch(freq,
-           'daily'    = 365,
-           'weekly'   = 52,
-           'monthly'  = 12,
-           'quarterly' = 4,
-           'yearly'   = 1,
-           1)
+             'daily'    = 365,
+             'weekly'   = 52,
+             'monthly'  = 12,
+             'quarterly' = 4,
+             'yearly'   = 1,
+             1)
     }
   }
 
@@ -252,7 +251,7 @@ Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts', 'timeSeries'), star
           warning("xts has a non-standard meaning for 'frequency'.")
         }
       } else if (type == "timeSeries") {
-        data_out <- timeSeries::timeSeries(data=data[, -1], charvec=data[, 1])
+        data_out <- timeSeries(data=data[, -1], charvec=data[, 1])
       }
 
     } else if (type=="zoo" || type=="ts") {
@@ -264,7 +263,7 @@ Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts', 'timeSeries'), star
     } else if (type == "xts") {
       data_out <- xts(data[, -1], order.by=data[, 1])
     } else if (type == "timeSeries") {
-      data_out <- timeSeries::timeSeries(data = data[, -1], charvec=data[, 1])
+      data_out <- timeSeries(data = data[, -1], charvec=data[, 1])
     }
   }
 

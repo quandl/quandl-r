@@ -5,6 +5,7 @@ Quandl.api_version <- 'v3'
 Quandl.curl <- NA
 
 
+
 #' Query or set Quandl API token
 #' @param api_key Optionally passed parameter to set Quandl \code{api_key}.
 #' @return Returns invisibly the currently set \code{api_key}.
@@ -63,7 +64,7 @@ metaData <- function(x){
 #' @importFrom xts xts
 #' @importFrom xts as.xts
 #' @export
-Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts', 'timeSeries'), start_date, end_date, transformation = c('', 'diff', 'rdiff', 'normalize', 'cumul', 'rdiff_from'), collapse = c('', 'daily', 'weekly', 'monthly', 'quarterly', 'annual'), sort = c('desc', 'asc'), meta = FALSE, authcode = Quandl.auth(), ...) {
+Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts', 'timeSeries'), transform = c('', 'diff', 'rdiff', 'normalize', 'cumul', 'rdiff_from'), collapse = c('', 'daily', 'weekly', 'monthly', 'quarterly', 'annual'), order = c('desc', 'asc'), meta = FALSE, ...) {
   params = list()
   ## Flag to indicate frequency change due to collapse
   freqflag = FALSE
@@ -73,9 +74,9 @@ Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts', 'timeSeries'), star
   col = NULL
   ## Check params
   type                    <- match.arg(type)
-  params$transformation   <- match.arg(transformation)
+  params$transform   <- match.arg(transform)
   params$collapse         <- match.arg(collapse)
-  params$sort_order       <- match.arg(sort)
+  params$order       <- match.arg(order)
 
   if (type == 'timeSeries' && system.file(package = type) == "") {
     stop("Package ", type, " needed to use this type", call. = FALSE)
@@ -122,17 +123,9 @@ Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts', 'timeSeries'), star
     return(c(code, col))
   }
 
-  if (!is.na(authcode)) {
-    params$api_key <- authcode
-  }
-
-  ## Add API options
-  if (!missing(start_date)) {
-    params$trim_start <- as.Date(start_date)
-  }
-
-  if (!missing(end_date)) {
-    params$trim_end <- as.Date(end_date)
+  api_key <- Quandl.auth()
+  if (!is.na(api_key)) {
+    params$api_key <- api_key
   }
 
   # if (type != "raw")
@@ -143,6 +136,17 @@ Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts', 'timeSeries'), star
   }
 
   params <- c(params, list(...))
+
+  ## Add API options
+  if (!is.null(params$start_date)) {
+    params$start_date <- as.Date(params$start_date)
+  }
+
+  if (!is.null(params$end_date)) {
+    params$end_date <- as.Date(params$end_date)
+  }
+
+
   if(!is.null(params$force_irregular)) {
     force_irregular <- TRUE
     params[[which(names(params) == "force_irregular")]] <- NULL
@@ -216,9 +220,9 @@ Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts', 'timeSeries'), star
       freq <- 365
     }
 
-    if(type == "raw" && params$sort_order == "desc") {
-      data <- data[order(data[,1], decreasing=TRUE),]
-    }
+    # if(type == "raw" && params$sort_order == "desc") {
+    #   data <- data[order(data[,1], decreasing=TRUE),]
+    # }
   }
 
   meta <- attr(data, "meta")
@@ -345,17 +349,9 @@ Quandl.dataset.get <- function(code, params) {
   }
 
   if (meta) {
-    database_json <- quandl.api(path=paste("databases", json$database_code, sep="/"), api_key=authcode)
-    meta <- list(
-      frequency   = json$frequency,
-      name        = json$name,
-      description = json$description,
-      updated     = json$updated_at,
-      database_code = json$database_code,
-      code        = paste(json$database_code, json$code, sep = "/"),
-      database_name = database_json$name,
-      database_description = database_json$description
-    )
+    meta <- json
+    # all attributes except for the data itself
+    meta$data <- NULL
     attr(data, "meta") <- meta
   }
 

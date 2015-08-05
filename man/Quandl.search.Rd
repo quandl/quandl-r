@@ -4,8 +4,7 @@
 \alias{Quandl.search}
 \title{Search the Quandl database}
 \usage{
-Quandl.search(query, page = 1, source = NULL, silent = FALSE,
-  authcode = Quandl.auth())
+Quandl.search(query, page = 1, source = NULL, silent = FALSE)
 }
 \arguments{
 \item{query}{Search terms}

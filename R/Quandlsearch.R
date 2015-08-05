@@ -16,19 +16,19 @@
 #' search.results <- Quandl.search("oil")
 #' }
 #' @export
-Quandl.search <- function(query, page=1, source=NULL, silent=FALSE, authcode=Quandl.auth()) {
+Quandl.search <- function(query, page=1, source=NULL, silent=FALSE) {
 
   params <- list()
   parsedQuery <- gsub(" ", "+", query)
   params$query <- parsedQuery
 
   # url <- paste("http://www.quandl.com/api/v1/datasets.json?query=", parsedQuery, sep="")
-  if (is.na(authcode)) {
-    warning("It would appear you aren't using an authentication token.
-            Please visit http://www.quandl.com/help/r or your usage may be limited.")
-  } else {
-    params$api_key <- authcode
-  }
+  # if (is.na(authcode)) {
+  #   warning("It would appear you aren't using an authentication token.
+  #           Please visit http://www.quandl.com/help/r or your usage may be limited.")
+  # } else {
+  #   params$api_key <- authcode
+  # }
 
   if (!is.null(source)) {
     params$database_code <- source

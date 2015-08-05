@@ -1,26 +1,7 @@
-Quandl.api_key <- NA
-Quandl.host <- 'https://www.quandl.com/api'
+Quandl.base_url <- 'https://www.quandl.com/api/v3'
 Quandl.version <- '2.6.1'
-Quandl.api_version <- 'v3'
-Quandl.curl <- NA
+Quandl.api_version <- '2015-04-09'
 
-
-
-#' Query or set Quandl API token
-#' @param api_key Optionally passed parameter to set Quandl \code{api_key}.
-#' @return Returns invisibly the currently set \code{api_key}.
-#' @seealso \code{\link{Quandl}}
-#' @examples \dontrun{
-#' Quandl.auth('foobar')
-#' }
-#' @export
-Quandl.auth <- function(api_key) {
-  # Checks if a new token is being assigned and assigns it.
-  if (!missing(api_key)) {
-    assignInMyNamespace('Quandl.api_key', api_key)
-  }
-  invisible(Quandl.api_key)
-}
 
 #' Retrieve metadata from a Quandl series
 #' @param x A Quandl time series object with attached meta data.
@@ -119,24 +100,19 @@ Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts', 'timeSeries'), tran
     return(c(code, col))
   }
 
-  api_key <- Quandl.auth()
-  if (!is.na(api_key)) {
-    params$api_key <- api_key
-  }
-
   if (params$collapse %in% c("weekly", "monthly", "quarterly", "annual")) {
     freq   <- frequency2integer(collapse)
   }
 
   params <- c(params, list(...))
 
-  ## Add API options
+  ## validate date format if supplied
   if (!is.null(params$start_date)) {
-    params$start_date <- as.Date(params$start_date)
+    as.Date(params$start_date)
   }
 
   if (!is.null(params$end_date)) {
-    params$end_date <- as.Date(params$end_date)
+    as.Date(params$end_date)
   }
 
 
@@ -299,11 +275,11 @@ Quandl.dataset.get <- function(code, params) {
     meta <- FALSE
   }
 
-  if(!is.null(params$api_key)) {
-    authcode <- params$api_key
-  } else {
-    authcode <- ""
-  }
+  # if(!is.null(params$api_key)) {
+  #   authcode <- params$api_key
+  # } else {
+  #   authcode <- ""
+  # }
 
   path <- path <- paste("datasets/", code, sep="")
   json <- do.call(quandl.api, c(path=path, params))$dataset

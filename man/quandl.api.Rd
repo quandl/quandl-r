@@ -4,12 +4,10 @@
 \alias{quandl.api}
 \title{Pulls Data from the Quandl API}
 \usage{
-quandl.api(version = "v1", path, http = c("GET", "PUT", "POST", "DELETE"),
-  postdata = NULL, ...)
+quandl.api(path, http = c("GET", "PUT", "POST", "DELETE"), postdata = NULL,
+  ...)
 }
 \arguments{
-\item{version}{Set to the version of the Quandl API you want to access.}
-
 \item{path}{Path to api resource.}
 
 \item{http}{Type of http request sent.}
@@ -17,12 +15,14 @@ quandl.api(version = "v1", path, http = c("GET", "PUT", "POST", "DELETE"),
 \item{postdata}{A character or raw vector that is sent in a body.}
 
 \item{...}{Named values that are interpretted as api parameters.}
+
+\item{version}{Set to the version of the Quandl API you want to access.}
 }
 \value{
 Website response.
 }
 \description{
-An authentication token is needed for access to the Quandl API multiple times. Set your \code{access_token} with \code{Quandl.auth} function.
+An authentication token is needed for access to the Quandl API multiple times. Set your \code{access_token} with \code{Quandl.api_key} function.
 }
 \details{
 For instructions on finding your authentication token go to https://www.quandl.com/account
@@ -40,6 +40,6 @@ Raymond McTaggart
 This R package uses the Quandl API. For more information go to https://www.quandl.com/help/api. For more help on the package itself go to http://www.quandl.com/help/r.
 }
 \seealso{
-\code{\link{Quandl.auth}}
+\code{\link{Quandl.api_key}}
 }
 

@@ -4,32 +4,31 @@
 \alias{Quandl}
 \title{Pulls Data from the Quandl Dataset endpoint and formats}
 \usage{
-Quandl(code, type = c("raw", "ts", "zoo", "xts", "timeSeries"), start_date,
-  end_date, transformation = c("", "diff", "rdiff", "normalize", "cumul",
-  "rdiff_from"), collapse = c("", "daily", "weekly", "monthly", "quarterly",
-  "annual"), sort = c("desc", "asc"), meta = FALSE,
-  authcode = Quandl.auth(), ...)
+Quandl(code, type = c("raw", "ts", "zoo", "xts", "timeSeries"),
+  transform = c("", "diff", "rdiff", "normalize", "cumul", "rdiff_from"),
+  collapse = c("", "daily", "weekly", "monthly", "quarterly", "annual"),
+  order = c("desc", "asc"), meta = FALSE, ...)
 }
 \arguments{
 \item{code}{Dataset code on Quandl specified as a string or an array of strings.}
 
 \item{type}{Type of data returned specified as string. Can be 'raw', 'ts', 'zoo', 'xts' or 'timeSeries'.}
 
+\item{transform}{Apply Quandl API data transformations.}
+
+\item{collapse}{Collapse frequency of Data.}
+
+\item{order}{Select if data is given to R in ascending or descending formats. Helpful for the rows parameter.}
+
+\item{meta}{Returns meta data in list format as well as data.}
+
+\item{...}{Additional named values that are interpretted as api parameters.}
+
 \item{start_date}{Use to truncate data by start date in 'yyyy-mm-dd' format.}
 
 \item{end_date}{Use to truncate data by end date in 'yyyy-mm-dd' format.}
 
-\item{transformation}{Apply Quandl API data transformations.}
-
-\item{collapse}{Collapse frequency of Data.}
-
-\item{sort}{Select if data is given to R in ascending or descending formats. Helpful for the rows parameter.}
-
-\item{meta}{Returns meta data in list format as well as data.}
-
-\item{authcode}{Authentication Token for extended API access by default set by \code{\link{Quandl.auth}}.}
-
-\item{...}{Additional named values that are interpretted as api parameters.}
+\item{api_key}{Authentication Token for extended API access by default set by \code{\link{Quandl.auth}}.}
 }
 \value{
 Depending on the type the class is either data.frame, time series, xts, zoo or timeSeries.

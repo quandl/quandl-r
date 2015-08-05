@@ -66,10 +66,6 @@ metaData <- function(x){
 #' @export
 Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts', 'timeSeries'), transform = c('', 'diff', 'rdiff', 'normalize', 'cumul', 'rdiff_from'), collapse = c('', 'daily', 'weekly', 'monthly', 'quarterly', 'annual'), order = c('desc', 'asc'), meta = FALSE, ...) {
   params = list()
-  ## Flag to indicate frequency change due to collapse
-  freqflag = FALSE
-  ## Default to single dataset
-  multiset = FALSE
   ## Default to entire dataset
   col = NULL
   ## Check params
@@ -128,11 +124,8 @@ Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts', 'timeSeries'), tran
     params$api_key <- api_key
   }
 
-  # if (type != "raw")
-  #     params$sort_order <- "asc"
   if (params$collapse %in% c("weekly", "monthly", "quarterly", "annual")) {
     freq   <- frequency2integer(collapse)
-    freqflag = TRUE
   }
 
   params <- c(params, list(...))
@@ -162,7 +155,7 @@ Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts', 'timeSeries'), tran
     col <- code_col[2]
 
     if(!is.null(col) && !is.na(col)) {
-      params$column <- col
+      params$column_index <- col
     }
 
     if(meta) {
@@ -186,7 +179,7 @@ Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts', 'timeSeries'), tran
       col <- code_col[2]
 
       if(!is.null(col) && !is.na(col)) {
-        tmp.params$column <- col
+        tmp.params$column_index <- col
       }
 
       merge_data <- tryCatch(Quandl.dataset.get(c, tmp.params), error=function(e) {
@@ -212,8 +205,6 @@ Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts', 'timeSeries'), tran
       }
     }
 
-    multiset = TRUE
-    freqflag = TRUE ## Frequency not automatically supported with multisets
     if(params$collapse != '') {
       freq <- frequency2integer(params$collapse)
     } else {
@@ -324,8 +315,8 @@ Quandl.dataset.get <- function(code, params) {
 
   ## Detect frequency
   # freq <- frequency2integer(json$frequency)
-  if (!is.null(params$column) && length(json$column_names) > 2) {
-    json$column_names = json$column_names[c(1, as.numeric(params$column)+1)]
+  if (!is.null(params$column_index) && length(json$column_names) > 2) {
+    json$column_names = json$column_names[c(1, as.numeric(params$column_index)+1)]
   }
 
   ## Shell data from JSON's list

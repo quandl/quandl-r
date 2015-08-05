@@ -2,18 +2,18 @@
 % Please edit documentation in R/Quandl.R
 \name{metaData}
 \alias{metaData}
-\title{Retrieve metadata from a Quandl series}
+\title{Retrieve metadata from a Quandl series or search results}
 \usage{
 metaData(x)
 }
 \arguments{
-\item{x}{A Quandl time series object with attached meta data.}
+\item{x}{A Quandl time series object or search results with attached meta data.}
 }
 \value{
-Returns a list of meta data about the series.
+Returns a list of meta data about the series or search results.
 }
 \description{
-Retrieve metadata from a Quandl series
+Retrieve metadata from a Quandl series or search results
 }
 \examples{
 \dontrun{
@@ -21,6 +21,6 @@ metaData(ts)
 }
 }
 \seealso{
-\code{\link{Quandl}}
+\code{\link{Quandl}}, \code{\link{Quandl.search}}
 }
 

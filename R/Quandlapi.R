@@ -46,16 +46,10 @@ quandl.api <- function(version=Quandl.api_version, path, http = c('GET', 'PUT', 
          }
   )
 
-  if(httr::status_code(response) == 500) {
-    stop("Sorry but Quandl is currently down. Please visit our twitter (@quandl) for more information.", call. = FALSE)
-  } else if (httr::status_code(response) != 200) {
-    stop(httr::content(response, as="text"), call. = FALSE)
+  if(!(httr::status_code(response) >= 200 && httr::status_code(response) < 300)) {
+     stop(httr::content(response, as="text"), call. = FALSE)
   } else {
     text_response <- httr::content(response, as="text")
     return(jsonlite::fromJSON(text_response, simplifyVector=TRUE))
   }
-
-
 }
-
-

@@ -43,11 +43,11 @@ metaData <- function(x){
 #' @param type Type of data returned specified as string. Can be 'raw', 'ts', 'zoo', 'xts' or 'timeSeries'.
 #' @param start_date Use to truncate data by start date in 'yyyy-mm-dd' format.
 #' @param end_date Use to truncate data by end date in 'yyyy-mm-dd' format.
-#' @param transformation Apply Quandl API data transformations.
+#' @param transform Apply Quandl API data transformations.
 #' @param collapse Collapse frequency of Data.
-#' @param sort Select if data is given to R in ascending or descending formats. Helpful for the rows parameter.
+#' @param order Select if data is given to R in ascending or descending formats. Helpful for the rows parameter.
 #' @param meta Returns meta data in list format as well as data.
-#' @param authcode Authentication Token for extended API access by default set by \code{\link{Quandl.auth}}.
+#' @param api_key Authentication Token for extended API access by default set by \code{\link{Quandl.auth}}.
 #' @param ... Additional named values that are interpretted as api parameters.
 #' @return Depending on the type the class is either data.frame, time series, xts, zoo or timeSeries.
 #' @references This R package uses the Quandl API. For more information go to https://www.quandl.com/help/api. For more help on the package itself go to http://www.quandl.com/help/r.

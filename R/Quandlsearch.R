@@ -16,38 +16,29 @@
 #' search.results <- Quandl.search("oil")
 #' }
 #' @export
-Quandl.search <- function(query, silent=FALSE, ...) {
+Quandl.search <- function(query, silent = FALSE, per_page = 10, ...) {
   params <- list()
   params$query <- query
+  params$per_page <- per_page
   params <- c(params, list(...))
 
   path = "datasets"
   json <- do.call(quandl.api, c(path=path, params))
+  results <- structure(json$datasets, meta = json$meta)
 
-  list <- list()
-  length(list) <- length(json$datasets)
-
-  if (length(json$datasets)>0) {
-    for (i in 1:length(json$datasets)) {
-      name <- json$datasets[i,]$name
-      code <- paste(json$datasets[i,]$database_code, "/", json$datasets[i,]$dataset_code, sep="")
-      desc <- json$datasets[i,]$description
-      freq <- json$datasets[i,]$frequency
-      colname <- json$datasets[i,]$column_names
-      if (i < 4 & !silent) {
+  if (length(results) > 0) {
+    for (i in 1:length(results)) {
+      name <- results[i,]$name
+      code <- paste(results[i,]$database_code, "/", results[i,]$dataset_code, sep="")
+      desc <- results[i,]$description
+      freq <- results[i,]$frequency
+      colname <- results[i,]$column_names
+      if (!silent) {
         cat(name, "\nCode: ", code, "\nDesc: ", desc, "\nFreq: ", freq, "\nCols: ", paste(colname, collapse="|"), "\n\n", sep="")
       }
-      list[[i]]$name <- name
-      list[[i]]$code <- code
-      list[[i]]$description <- desc
-      list[[i]]$frequency <- freq
-      list[[i]]$column_names <- colname
-      list[[i]]$from_date <- json$datasets[i,]$oldest_available_date
-      list[[i]]$to_date <- json$datasets[i,]$newest_available_date
     }
   } else {
     warning("No datasets found")
   }
-
-  invisible(list)
+  invisible(results)
 }

@@ -24,7 +24,11 @@ quandl.api <- function(path, http = c('GET', 'PUT', 'POST', 'DELETE'), postdata 
 
   quandl.api.handl_errors(response)
   text_response <- httr::content(response, as="text")
-  return(jsonlite::fromJSON(text_response, simplifyVector=TRUE))
+
+  json_response <- tryCatch(jsonlite::fromJSON(text_response, simplifyVector=TRUE), error = function(e) {
+      stop(e, " Failed to parse response: ", text_response)
+    })
+  json_response
 }
 
 quandl.api.download_file <- function(path, file_path, ...) {

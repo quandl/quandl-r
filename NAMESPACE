@@ -3,6 +3,8 @@
 export(Quandl)
 export(Quandl.api_key)
 export(Quandl.api_version)
+export(Quandl.auth)
+export(Quandl.database.download_url)
 export(Quandl.dataset.get)
 export(Quandl.search)
 export(metaData)

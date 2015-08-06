@@ -28,13 +28,13 @@ Quandl(code, type = c("raw", "ts", "zoo", "xts", "timeSeries"),
 
 \item{end_date}{Use to truncate data by end date in 'yyyy-mm-dd' format.}
 
-\item{api_key}{Authentication Token for extended API access by default set by \code{\link{Quandl.auth}}.}
+\item{api_key}{Authentication Token for extended API access by default set by \code{\link{Quandl.api_key}}.}
 }
 \value{
 Depending on the type the class is either data.frame, time series, xts, zoo or timeSeries.
 }
 \description{
-An authentication token is needed for access to the Quandl API multiple times. Set your \code{access_token} with \code{Quandl.auth} function.
+An authentication token is needed for access to the Quandl API multiple times. Set your \code{access_token} with \code{Quandl.api_key} function.
 }
 \details{
 For instructions on finding your authentication token go to www.quandl.com/API
@@ -52,6 +52,6 @@ Raymond McTaggart
 This R package uses the Quandl API. For more information go to https://www.quandl.com/help/api. For more help on the package itself go to http://www.quandl.com/help/r.
 }
 \seealso{
-\code{\link{Quandl.auth}}
+\code{\link{Quandl.api_key}}
 }
 

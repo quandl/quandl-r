@@ -1,17 +1,17 @@
 #' Search the Quandl database
 #'
-#' An authentication token is needed for access to the Quandl API multiple times. Set your \code{access_token} with \code{Quandl.auth} function.
+#' An authentication token is needed for access to the Quandl API multiple times. Set your \code{access_token} with \code{Quandl.api_key} function.
 #'
 #' For instructions on finding your authentication token go to https://www.quandl.com/account
 #' @param query Search terms
 #' @param page Specifies which page of results to return.
 #' @param source Specifies a specific source to search within.
 #' @param silent Prints the first few results when FALSE.
-#' @param authcode Authentication Token for extended API access by default set by \code{\link{Quandl.auth}}.
+#' @param authcode Authentication Token for extended API access by default set by \code{\link{Quandl.api_key}}.
 #' @return A list of the search results.
 #' @references This R package uses the Quandl API. For more information go to http://www.quandl.com/help/api. For more help on the package itself go to http://www.quandl.com/help/r.
 #' @author Raymond McTaggart
-#' @seealso \code{\link{Quandl.auth}}
+#' @seealso \code{\link{Quandl.api_key}}
 #' @examples \dontrun{
 #' search.results <- Quandl.search("oil")
 #' }

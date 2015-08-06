@@ -15,13 +15,13 @@ Quandl.search(query, page = 1, source = NULL, silent = FALSE)
 
 \item{silent}{Prints the first few results when FALSE.}
 
-\item{authcode}{Authentication Token for extended API access by default set by \code{\link{Quandl.auth}}.}
+\item{authcode}{Authentication Token for extended API access by default set by \code{\link{Quandl.api_key}}.}
 }
 \value{
 A list of the search results.
 }
 \description{
-An authentication token is needed for access to the Quandl API multiple times. Set your \code{access_token} with \code{Quandl.auth} function.
+An authentication token is needed for access to the Quandl API multiple times. Set your \code{access_token} with \code{Quandl.api_key} function.
 }
 \details{
 For instructions on finding your authentication token go to https://www.quandl.com/account
@@ -38,6 +38,6 @@ Raymond McTaggart
 This R package uses the Quandl API. For more information go to http://www.quandl.com/help/api. For more help on the package itself go to http://www.quandl.com/help/r.
 }
 \seealso{
-\code{\link{Quandl.auth}}
+\code{\link{Quandl.api_key}}
 }
 

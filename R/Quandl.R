@@ -1,6 +1,4 @@
-Quandl.base_url <- 'https://www.quandl.com/api/v3'
 Quandl.version <- '2.6.1'
-Quandl.api_version <- '2015-04-09'
 
 
 #' Retrieve metadata from a Quandl series
@@ -17,7 +15,7 @@ metaData <- function(x){
 
 #' Pulls Data from the Quandl Dataset endpoint and formats
 #'
-#' An authentication token is needed for access to the Quandl API multiple times. Set your \code{access_token} with \code{Quandl.auth} function.
+#' An authentication token is needed for access to the Quandl API multiple times. Set your \code{access_token} with \code{Quandl.api_key} function.
 #'
 #' For instructions on finding your authentication token go to www.quandl.com/API
 #' @param code Dataset code on Quandl specified as a string or an array of strings.
@@ -28,12 +26,12 @@ metaData <- function(x){
 #' @param collapse Collapse frequency of Data.
 #' @param order Select if data is given to R in ascending or descending formats. Helpful for the rows parameter.
 #' @param meta Returns meta data in list format as well as data.
-#' @param api_key Authentication Token for extended API access by default set by \code{\link{Quandl.auth}}.
+#' @param api_key Authentication Token for extended API access by default set by \code{\link{Quandl.api_key}}.
 #' @param ... Additional named values that are interpretted as api parameters.
 #' @return Depending on the type the class is either data.frame, time series, xts, zoo or timeSeries.
 #' @references This R package uses the Quandl API. For more information go to https://www.quandl.com/help/api. For more help on the package itself go to http://www.quandl.com/help/r.
 #' @author Raymond McTaggart
-#' @seealso \code{\link{Quandl.auth}}
+#' @seealso \code{\link{Quandl.api_key}}
 #' @examples \dontrun{
 #' quandldata = Quandl("NSE/OIL", collapse="monthly", start_date="2013-01-01", type="ts")
 #' plot(quandldata[,1])
@@ -253,7 +251,7 @@ Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts', 'timeSeries'), tran
 
 #' Pulls Data from the Quandl Dataset endpoint
 #'
-#' An authentication token is needed for access to the Quandl API multiple times. Set your \code{access_token} with \code{Quandl.auth} function.
+#' An authentication token is needed for access to the Quandl API multiple times. Set your \code{access_token} with \code{Quandl.api_key} function.
 #'
 #' For instructions on finding your authentication token go to https://www.quandl.com/account
 #' @param code Dataset code on Quandl specified as a string or an array of strings.
@@ -261,7 +259,7 @@ Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts', 'timeSeries'), tran
 #' @return Returns a data.frame of the requested data
 #' @references This R package uses the Quandl API. For more information go to https://www.quandl.com/help/api. For more help on the package itself go to http://www.quandl.com/help/r.
 #' @author Raymond McTaggart
-#' @seealso \code{\link{Quandl.auth}}
+#' @seealso \code{\link{Quandl.api_key}}
 #' @examples \dontrun{
 #' quandldata = Quandl.dataset.get("NSE/OIL", list(rows=5))
 #' plot(quandldata[,1])

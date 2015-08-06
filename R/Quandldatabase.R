@@ -47,7 +47,7 @@ Quandl.database.bulk_download_to_file <- function(database_code, folder_path, ..
   }
   filename = paste0(database_code, '.zip')
   file_path = file.path(folder_path, filename)
-  quandl.api(Quandl.database.download_url_path(database_code), file_path = file_path, ...)
+  quandl.api.download_file(Quandl.database.download_url_path(database_code), file_path = file_path, ...)
 }
 
 Quandl.database.download_url_path <- function(database_code) {

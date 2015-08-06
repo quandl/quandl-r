@@ -18,10 +18,24 @@
 #' }
 #' @export
 quandl.api <- function(path, http = c('GET', 'PUT', 'POST', 'DELETE'), postdata = NULL, file_path = NULL, ...) {
-
-  params <- list(...)
-
   http <- match.arg(http)
+  request <- quandl.api.build_request(path, ...)
+  response <- httr::VERB(http, request$request_url, config = do.call(add_headers, request$headers), body = postdata, query = request$params)
+
+  quandl.api.handl_errors(response)
+  text_response <- httr::content(response, as="text")
+  return(jsonlite::fromJSON(text_response, simplifyVector=TRUE))
+}
+
+quandl.api.download_file <- function(path, file_path, ...) {
+  request <- quandl.api.build_request(path, ...)
+  response <- httr::GET(request$request_url, config = do.call(add_headers, request$headers), query = request$params, write_disk(file_path, overwrite = TRUE))
+  quandl.api.handl_errors(response)
+  httr::content(response, as="text")
+}
+
+quandl.api.build_request <- function(path, ...) {
+  params <- list(...)
   request_url <- paste(Quandl.base_url(), path, sep="/")
   accept_value <- "application/json"
   if (!is.null(Quandl.api_version())) {
@@ -40,19 +54,11 @@ quandl.api <- function(path, http = c('GET', 'PUT', 'POST', 'DELETE'), postdata 
     params$api_key <- NULL
   }
 
-  if (!is.null(file_path)) {
-    if (http != 'GET') {
-      stop("Write to file is only supported for GET requests!", call. = FALSE)
-    }
-    response <- httr::GET(request_url, config = do.call(add_headers, headers), body = postdata, query = params, write_disk(file_path, overwrite = TRUE))
-  } else {
-    response <- httr::VERB(http, request_url, config = do.call(add_headers, headers), body = postdata, query = params)
-  }
+  list(request_url = request_url, headers = headers, params = params)
+}
 
+quandl.api.handl_errors <- function(response) {
   if (!(httr::status_code(response) >= 200 && httr::status_code(response) < 300)) {
-     stop(httr::content(response, as="text"), call. = FALSE)
-  } else {
-    text_response <- httr::content(response, as="text")
-    return(jsonlite::fromJSON(text_response, simplifyVector=TRUE))
+    stop(httr::content(response, as="text"), call. = FALSE)
   }
 }

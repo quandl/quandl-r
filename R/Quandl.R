@@ -273,13 +273,7 @@ Quandl.dataset.get <- function(code, params) {
     meta <- FALSE
   }
 
-  # if(!is.null(params$api_key)) {
-  #   authcode <- params$api_key
-  # } else {
-  #   authcode <- ""
-  # }
-
-  path <- path <- paste("datasets/", code, sep="")
+  path <- paste0("datasets/", code)
   json <- do.call(quandl.api, c(path=path, params))$dataset
   #return(json)
   #print(json)

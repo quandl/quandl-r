@@ -15,13 +15,13 @@
 #' }
 #' @export
 Quandl.database.download_url <- function(database_code, ...) {
-  url <- Quandl.database.base_download_url(database_code)
+  url <- paste(Quandl.base_url(), Quandl.database.download_url_path(database_code), sep="/")
 
   params <- list()
-  if (!(is.null(Quandl.api_key()))) {
+  if (!is.null(Quandl.api_key())) {
     params$api_key <- Quandl.api_key()
   }
-  if (!(is.null(Quandl.api_version()))) {
+  if (!is.null(Quandl.api_version())) {
     params$api_version <- Quandl.api_version()
   }
   params <- c(params, list(...))
@@ -40,10 +40,16 @@ Quandl.database.download_url <- function(database_code, ...) {
   url
 }
 
-Quandl.database.base_download_url <- function(database_code) {
-  paste(Quandl.base_url(), "databases", database_code, "data", sep="/")
+#' @export
+Quandl.database.bulk_download_to_file <- function(database_code, folder_path, ...) {
+  if (!dir.exists(folder_path)) {
+    stop(folder_path, " directory does not exist!", call. = FALSE)
+  }
+  filename = paste0(database_code, '.zip')
+  file_path = file.path(folder_path, filename)
+  quandl.api(Quandl.database.download_url_path(database_code), file_path = file_path, ...)
 }
 
-Quandl.database.bulk_download_to_file <- function(database_code, file_or_folder_path, ...) {
-  
+Quandl.database.download_url_path <- function(database_code) {
+  paste("databases", database_code, "data", sep="/")
 }

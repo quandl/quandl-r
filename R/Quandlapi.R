@@ -17,30 +17,37 @@
 #' plot(quandldata[,1])
 #' }
 #' @export
-quandl.api <- function(path, http = c('GET', 'PUT', 'POST', 'DELETE'), postdata = NULL, ...) {
+quandl.api <- function(path, http = c('GET', 'PUT', 'POST', 'DELETE'), postdata = NULL, file_path = NULL, ...) {
 
   params <- list(...)
 
   http <- match.arg(http)
   request_url <- paste(Quandl.base_url(), path, sep="/")
   accept_value <- "application/json"
-  if (!(is.null(Quandl.api_version()))) {
-    accept_value <- paste('application/json, application/vnd.quandl+json;version=', Quandl.api_version(), sep="")
+  if (!is.null(Quandl.api_version())) {
+    accept_value <- paste0('application/json, application/vnd.quandl+json;version=', Quandl.api_version())
   }
 
   headers <- list(Accept = accept_value, `Request-Source` = 'R', `Request-Source-Version` = Quandl.version)
 
-  if (!(is.null(Quandl.api_key()))) {
+  if (!is.null(Quandl.api_key())) {
     headers <- c(headers, list(`X-Api-Token` = Quandl.api_key()))
   }
 
   # query param api_key takes precedence
-  if (!(is.null(params$api_key))) {
+  if (!is.null(params$api_key)) {
     headers <- c(headers, list(`X-Api-Token` = params$api_key))
     params$api_key <- NULL
   }
 
-  response <- httr::VERB(http, request_url, config = do.call(add_headers, headers), body = postdata, query = params)
+  if (!is.null(file_path)) {
+    if (http != 'GET') {
+      stop("Write to file is only supported for GET requests!", call. = FALSE)
+    }
+    response <- httr::GET(request_url, config = do.call(add_headers, headers), body = postdata, query = params, write_disk(file_path, overwrite = TRUE))
+  } else {
+    response <- httr::VERB(http, request_url, config = do.call(add_headers, headers), body = postdata, query = params)
+  }
 
   if (!(httr::status_code(response) >= 200 && httr::status_code(response) < 300)) {
      stop(httr::content(response, as="text"), call. = FALSE)

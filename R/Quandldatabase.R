@@ -14,7 +14,7 @@
 #' quandldata = Quandl.database.download_url("NSE", download_type="partial")
 #' }
 #' @export
-Quandl.database.download_url <- function(database_code, ...) {
+Quandl.database.bulk_download_url <- function(database_code, ...) {
   url <- paste(Quandl.base_url(), Quandl.database.download_url_path(database_code), sep="/")
 
   params <- list()

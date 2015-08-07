@@ -35,7 +35,7 @@ quandl.api <- function(path, http = c('GET', 'PUT', 'POST', 'DELETE'), postdata 
 quandl.api.download_file <- function(path, filename, ...) {
   request <- quandl.api.build_request(path, ...)
   response <- httr::GET(request$request_url, config = do.call(httr::add_headers, request$headers),
-                               query = request$params, httr::write_disk(filename, overwrite = TRUE), progress())
+                               query = request$params, httr::write_disk(filename, overwrite = TRUE), httr::progress())
   quandl.api.handl_errors(response)
   cat("Saved to file:", response$content)
 }

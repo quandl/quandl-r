@@ -41,13 +41,15 @@ Quandl.database.bulk_download_url <- function(database_code, ...) {
 }
 
 #' @export
-Quandl.database.bulk_download_to_file <- function(database_code, folder_path, ...) {
-  if (!dir.exists(folder_path)) {
-    stop(folder_path, " directory does not exist!", call. = FALSE)
+Quandl.database.bulk_download_to_file <- function(database_code, filename, ...) {
+  if (dir.exists(filename)) {
+    stop("Please add a filename to your directory path, e.g., ", filename, '/', database_code, '.zip', call. = FALSE)
   }
-  filename = paste0(database_code, '.zip')
-  file_path = file.path(folder_path, filename)
-  quandl.api.download_file(Quandl.database.download_url_path(database_code), file_path = file_path, ...)
+  dirname <- dirname(filename)
+  if (!dir.exists(dirname)) {
+    stop(dirname, " directory does not exist!", call. = FALSE)
+  }
+  quandl.api.download_file(Quandl.database.download_url_path(database_code), filename = filename, ...)
 }
 
 Quandl.database.download_url_path <- function(database_code) {

@@ -20,7 +20,8 @@
 quandl.api <- function(path, http = c('GET', 'PUT', 'POST', 'DELETE'), postdata = NULL, ...) {
   http <- match.arg(http)
   request <- quandl.api.build_request(path, ...)
-  response <- httr::VERB(http, request$request_url, config = do.call(httr::add_headers, request$headers), body = postdata, query = request$params)
+  response <- httr::VERB(http, request$request_url, config = do.call(httr::add_headers, request$headers),
+                                      body = postdata, query = request$params)
 
   quandl.api.handl_errors(response)
   text_response <- httr::content(response, as="text")
@@ -31,9 +32,10 @@ quandl.api <- function(path, http = c('GET', 'PUT', 'POST', 'DELETE'), postdata 
   json_response
 }
 
-quandl.api.download_file <- function(path, file_path, ...) {
+quandl.api.download_file <- function(path, filename, ...) {
   request <- quandl.api.build_request(path, ...)
-  response <- httr::GET(request$request_url, config = do.call(httr::add_headers, request$headers), query = request$params, httr::write_disk(file_path, overwrite = TRUE))
+  response <- httr::GET(request$request_url, config = do.call(httr::add_headers, request$headers),
+                               query = request$params, httr::write_disk(filename, overwrite = TRUE), progress())
   quandl.api.handl_errors(response)
   cat("Saved to file:", response$content)
 }

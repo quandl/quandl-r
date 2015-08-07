@@ -42,6 +42,9 @@ quandl.api.download_file <- function(path, filename, ...) {
 
 quandl.api.build_request <- function(path, ...) {
   params <- list(...)
+  # ensure Dates convert to characters or else curl will convert the Dates to timestamp
+  params <- quandl.api.convert_dates_to_character(params)
+
   request_url <- paste(Quandl.base_url(), path, sep="/")
   accept_value <- "application/json"
   if (!is.null(Quandl.api_version())) {
@@ -67,4 +70,14 @@ quandl.api.handl_errors <- function(response) {
   if (!(httr::status_code(response) >= 200 && httr::status_code(response) < 300)) {
     stop(httr::content(response, as="text"), call. = FALSE)
   }
+}
+
+quandl.api.convert_dates_to_character <- function(params) {
+  convert_date_to_character <- function(param) {
+    if (class(param) == 'Date') {
+      param <- as.character(param)
+    }
+    param
+  }
+  lapply(params, convert_date_to_character)
 }

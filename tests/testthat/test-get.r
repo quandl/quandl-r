@@ -35,10 +35,38 @@ mock_content <- function() {
   }"
 }
 
-mock_response <- function(status_code = 200) {
+mock_annual_content <- function() {
+  "{
+    \"dataset\":{
+      \"id\":6668,
+      \"dataset_code\":\"OIL\",
+      \"database_code\":\"NSE\",
+      \"name\":\"Oil India Limited\",
+      \"description\":\"Historical prices for Oil India Limited\",
+      \"refreshed_at\":\"2015-08-07T02:37:20.453Z\",
+      \"newest_available_date\":\"2015-08-06\",
+      \"oldest_available_date\":\"2009-09-30\",
+      \"column_names\":[\"Date\",\"Open\",\"High\",\"Low\",\"Last\",\"Close\",\"Total Trade Quantity\",\"Turnover (Lacs)\"],
+      \"frequency\":\"daily\",
+      \"type\":\"Time Series\",
+      \"premium\":false,
+      \"limit\":3,
+      \"transform\":null,
+      \"column_index\":null,
+      \"start_date\":\"2009-09-30\",
+      \"end_date\":\"2015-08-06\",
+      \"data\":[[\"2015-12-31\",450.9,460.7,447.3,454.8,456.4,339324.0,1542.22],[\"2014-12-31\",565.0,579.0,565.0,578.9,576.4,212525.0,1220.73],[\"2013-12-31\",484.05,492.0,475.1,488.2,488.35,359499.0,1741.57]],
+      \"collapse\":\"annual\",
+      \"order\":\"desc\",
+      \"database_id\":33
+    }
+  }"
+}
+
+mock_response <- function(status_code = 200, content = mock_content()) {
   httr:::response(
     status_code = status_code,
-    content = mock_content()
+    content = content
   )
 }
 
@@ -123,6 +151,20 @@ with_mock(
   test_that("display warning message if type ts is not supported by frequency", {
     expect_warning(Quandl("NSE/OIL", type = "ts"),
       "Type 'ts' does not support frequency 365. Returning zoo.", fixed = TRUE)
+  })
+)
+
+context("Request ts with supported frequency")
+with_mock(
+  `httr::VERB` = function(http, url, config, body, query) {
+    mock_response(content = mock_annual_content())
+  },
+  `httr::content` = function(response, as = "text") {
+    response$content
+  },
+  test_that("return ts when requested", {
+    dataset <- Quandl("NSE/OIL", type = "ts", collapse = "annual")
+    expect_is(dataset, "ts")
   })
 )
 

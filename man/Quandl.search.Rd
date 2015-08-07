@@ -4,16 +4,16 @@
 \alias{Quandl.search}
 \title{Search the Quandl database}
 \usage{
-Quandl.search(query, page = 1, source = NULL, silent = FALSE)
+Quandl.search(query, silent = FALSE, per_page = 10, ...)
 }
 \arguments{
 \item{query}{Search terms}
 
+\item{silent}{Prints the first few results when FALSE.}
+
 \item{page}{Specifies which page of results to return.}
 
 \item{source}{Specifies a specific source to search within.}
-
-\item{silent}{Prints the first few results when FALSE.}
 
 \item{authcode}{Authentication Token for extended API access by default set by \code{\link{Quandl.api_key}}.}
 }

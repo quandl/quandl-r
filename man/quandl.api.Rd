@@ -5,7 +5,7 @@
 \title{Pulls Data from the Quandl API}
 \usage{
 quandl.api(path, http = c("GET", "PUT", "POST", "DELETE"), postdata = NULL,
-  file_path = NULL, ...)
+  ...)
 }
 \arguments{
 \item{path}{Path to api resource.}

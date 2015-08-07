@@ -24,10 +24,12 @@ Quandl.search <- function(query, silent = FALSE, per_page = 10, ...) {
 
   path = "datasets"
   json <- do.call(quandl.api, c(path=path, params))
+
+  # results is a dataframe
   results <- structure(json$datasets, meta = json$meta)
 
-  if (length(results) > 0) {
-    for (i in 1:length(results)) {
+  if (!is.null(nrow(results)) && nrow(results) > 0) {
+    for (i in 1:nrow(results)) {
       name <- results[i,]$name
       code <- paste(results[i,]$database_code, "/", results[i,]$dataset_code, sep="")
       desc <- results[i,]$description

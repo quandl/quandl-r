@@ -46,11 +46,15 @@ context("Getting Dataset data")
 
 context("Quandl() bad argument errors")
 test_that("Invalid transform throws error", {
-  expect_error(Quandl("TESTS/1", transform="blah"))
+  expect_error(Quandl("NSE/OIL", transform = "blah"))
 })
 
 test_that("Invalid collapse throws error", {
-  expect_error(Quandl("TESTS/1", collapse="blah"))
+  expect_error(Quandl("NSE/OIL", collapse = "blah"))
+})
+
+test_that("Invalid type throws error", {
+  expect_error(Quandl("NSE/OIL", type = "blah"))
 })
 
 context("Quandl() call")
@@ -58,7 +62,7 @@ with_mock(
   `httr::VERB` = function(http, url, config, body, query) {
     test_that("correct arguments are passed in", {
       expect_equal(http, "GET")
-      expect_equal(url, "https://www.quandl.com/api/v3/datasets/TESTS/1")
+      expect_equal(url, "https://www.quandl.com/api/v3/datasets/NSE/OIL")
       expect_is(config, "request")
       expect_null(body)
       expect_equal(query, list(transform = "rdiff", collapse = "annual", 
@@ -69,7 +73,7 @@ with_mock(
   `httr::content` = function(response, as="text") {
     response$content
   },
-  Quandl("TESTS/1", transform = "rdiff", collapse = "annual", start_date = "2015-01-01")
+  Quandl("NSE/OIL", transform = "rdiff", collapse = "annual", start_date = "2015-01-01")
 )
 
 context("Quandl() response")
@@ -81,30 +85,46 @@ with_mock(
     response$content
   },
   test_that("list names are set to column names", {
-    dataset <- Quandl("TESTS/1")
+    dataset <- Quandl("NSE/OIL")
     expect_named(dataset, c("Date","Open","High" ,"Low" , "Last", "Close",
                             "Total Trade Quantity", "Turnover (Lacs)"))
   }),
   test_that("returned data is a dataframe", {
-    dataset <- Quandl("TESTS/1")
+    dataset <- Quandl("NSE/OIL")
     expect_is(dataset, 'data.frame')
   }),
   test_that("does not contain meta attribute by default", {
-    dataset <- Quandl("TESTS/1")
+    dataset <- Quandl("NSE/OIL")
     expect_null(attr(dataset, 'meta'))
   }),
-  test_that("does not contain meta attribute by default", {
-    dataset <- Quandl("TESTS/1")
-    expect_null(attr(dataset, 'meta'))
+  test_that("does contain meta attribute when requested", {
+    dataset <- Quandl("NSE/OIL", meta = TRUE)
+    expect_true(!is.null(attr(dataset, "meta")))
+    expect_equal(attr(dataset, "meta")$id, 6668)
+    expect_equal(attr(dataset, "meta")$database_code, "NSE")
+    expect_equal(attr(dataset, "meta")$dataset_code, "OIL")
+  }),
+  test_that("zoo is returned when requested", {
+    dataset <- Quandl("NSE/OIL", type = "zoo")
+    expect_is(dataset, "zoo")
+  }),
+  test_that("xts is returned when requested", {
+    dataset <- Quandl("NSE/OIL", type = "xts")
+    expect_is(dataset, "xts")
+  }),
+  test_that("timeSeries is returned when requested", {
+    dataset <- Quandl("NSE/OIL", type = "timeSeries")
+    expect_is(dataset, "timeSeries")
+  }),
+  test_that("zoo is returned instead of ts if ts is not supported for frequency", {
+    dataset <- Quandl("NSE/OIL", type = "ts")
+    expect_is(dataset, "zoo")
+  }),
+  test_that("display warning message if type ts is not supported by frequency", {
+    expect_warning(Quandl("NSE/OIL", type = "ts"),
+      "Type 'ts' does not support frequency 365. Returning zoo.", fixed = TRUE)
   })
 )
-
-# test_that("Metadata is correct", {
-#   daily <- Quandl("TESTS/1", type="zoo", meta=TRUE)
-#   expect_that(is.null(attr(daily,"meta")), is_false())
-#   expect_that(metaData(daily)$database_code, equals("TESTS"))
-#   expect_that(metaData(daily)$name, equals("Daily Dataset Test"))
-# })
 
 # test_that("Stop and start dates are correct (zoo)", {
 #   annual <- Quandl("TESTS/4", type="zoo", start_date="1995-01-01", end_date=as.Date("2006-01-01"))

@@ -275,8 +275,7 @@ Quandl.dataset.get <- function(code, params) {
 
   path <- paste0("datasets/", code)
   json <- do.call(quandl.api, c(path=path, params))$dataset
-  #return(json)
-  #print(json)
+
   if (length(json$data) == 0) {
     stop("Requested Entity does not exist.")
   }

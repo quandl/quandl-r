@@ -36,7 +36,7 @@ Quandl.search <- function(query, silent = FALSE, per_page = 10, ...) {
       freq <- results[i,]$frequency
       colname <- results[i,]$column_names
       if (!silent) {
-        cat(name, "\nCode: ", code, "\nDesc: ", desc, "\nFreq: ", freq, "\nCols: ", paste(colname, collapse="|"), "\n\n", sep="")
+        cat(name, "\nCode: ", code, "\nDesc: ", desc, "\nFreq: ", freq, "\nCols: ", paste(unlist(colname), collapse=" | "), "\n\n", sep="")
       }
     }
   } else {

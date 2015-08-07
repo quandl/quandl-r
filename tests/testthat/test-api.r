@@ -8,7 +8,7 @@ with_mock(
   `httr::VERB` = function(http, url, config, body, query) {
     httr:::response(status_code = 500)
   },
-  test_that('When status code is not 200 error is thrown', { 
+  test_that('When status code is not 200 error is thrown', {
     expect_error(quandl.api('datasets'))
   })
 )

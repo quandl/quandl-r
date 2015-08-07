@@ -3,6 +3,11 @@ library("xts")
 library("timeSeries")
 library("httr")
 
+reset_config <- function() {
+  Quandl.api_key(NULL)
+  Quandl.api_version(NULL)
+}
+
 mock_content <- function() {
   "{
     \"dataset\":{
@@ -38,16 +43,36 @@ mock_response <- function(status_code = 200) {
 }
 
 context("Getting Dataset data")
-# with_mock(VERB <- function(verb, ...) 1, 
-#   test_that("Data is parsed correctly", {
-#     daily <- Quandl("TESTS/1")
-#     browser()
-#     # expect_named(daily, c("Date","Open","High" ,"Low" , "Last", "Close",
-#     #                       "Total Trade Quantity", "Turnover (Lacs)"))
-#     # expect_that(dim(daily), equals(c(258,8)))
-#   })
-# )
 
+context("Quandl() bad argument errors")
+test_that("Invalid transform throws error", {
+  expect_error(Quandl("TESTS/1", transform="blah"))
+})
+
+test_that("Invalid collapse throws error", {
+  expect_error(Quandl("TESTS/1", collapse="blah"))
+})
+
+context("Quandl() call")
+with_mock(
+  `httr::VERB` = function(http, url, config, body, query) {
+    test_that("correct arguments are passed in", {
+      expect_equal(http, "GET")
+      expect_equal(url, "https://www.quandl.com/api/v3/datasets/TESTS/1")
+      expect_is(config, "request")
+      expect_null(body)
+      expect_equal(query, list(transform = "rdiff", collapse = "annual", 
+                               order = "desc", start_date = "2015-01-01"))
+    })
+    mock_response()
+  },
+  `httr::content` = function(response, as="text") {
+    response$content
+  },
+  Quandl("TESTS/1", transform = "rdiff", collapse = "annual", start_date = "2015-01-01")
+)
+
+context("Quandl() response")
 with_mock(
   `httr::VERB` = function(http, url, config, body, query) {
     mock_response()
@@ -55,11 +80,23 @@ with_mock(
   `httr::content` = function(response, as="text") {
     response$content
   },
-  test_that("list names are set to column names", { 
+  test_that("list names are set to column names", {
     dataset <- Quandl("TESTS/1")
     expect_named(dataset, c("Date","Open","High" ,"Low" , "Last", "Close",
                             "Total Trade Quantity", "Turnover (Lacs)"))
-  }) 
+  }),
+  test_that("returned data is a dataframe", {
+    dataset <- Quandl("TESTS/1")
+    expect_is(dataset, 'data.frame')
+  }),
+  test_that("does not contain meta attribute by default", {
+    dataset <- Quandl("TESTS/1")
+    expect_null(attr(dataset, 'meta'))
+  }),
+  test_that("does not contain meta attribute by default", {
+    dataset <- Quandl("TESTS/1")
+    expect_null(attr(dataset, 'meta'))
+  })
 )
 
 # test_that("Metadata is correct", {
@@ -125,3 +162,5 @@ with_mock(
 # test_that("Doesn't find anything", {
 #   expect_warning(Quandl.search("asfdsgfrg"), "No datasets found")
 # })
+
+reset_config()

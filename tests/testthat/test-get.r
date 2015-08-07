@@ -63,6 +63,34 @@ mock_annual_content <- function() {
   }"
 }
 
+mock_monthly_content <- function() {
+ "{
+    \"dataset\":{
+      \"id\":6668,
+      \"dataset_code\":\"OIL\",
+      \"database_code\":\"NSE\",
+      \"name\":\"Oil India Limited\",
+      \"description\":\"Historical prices for Oil India Limited\\u003cbr\\u003e\\u003cbr\\u003eNational Stock Exchange of India\\u003cbr\\u003e\\u003cbr\\u003eTicker: OIL\\u003cbr\\u003e\\u003cbr\\u003eISIN: INE274J01014\",
+      \"refreshed_at\":\"2015-08-07T02:37:20.453Z\",
+      \"newest_available_date\":\"2015-08-06\",
+      \"oldest_available_date\":\"2009-09-30\",
+      \"column_names\":[\"Date\",\"Open\",\"High\",\"Low\",\"Last\",\"Close\",\"Total Trade Quantity\",\"Turnover (Lacs)\"],
+      \"frequency\":\"daily\",
+      \"type\":\"Time Series\",
+      \"premium\":false,
+      \"limit\":3,
+      \"transform\":null,
+      \"column_index\":null,
+      \"start_date\":\"2009-09-30\",
+      \"end_date\":\"2015-08-06\",
+      \"data\":[[\"2015-08-31\",450.9,460.7,447.3,454.8,456.4,339324.0,1542.22],[\"2015-07-31\",425.0,435.0,423.2,432.95,432.35,330239.0,1416.0],[\"2015-06-30\",448.0,451.7,445.1,447.8,446.8,352514.0,1576.93]],
+      \"collapse\":\"monthly\",
+      \"order\":\"desc\",
+      \"database_id\":33
+    }
+  }"
+}
+
 mock_response <- function(status_code = 200, content = mock_content()) {
   httr:::response(
     status_code = status_code,
@@ -154,7 +182,7 @@ with_mock(
   })
 )
 
-context("Request ts with supported frequency")
+context("Annual response data")
 with_mock(
   `httr::VERB` = function(http, url, config, body, query) {
     mock_response(content = mock_annual_content())
@@ -165,6 +193,45 @@ with_mock(
   test_that("return ts when requested", {
     dataset <- Quandl("NSE/OIL", type = "ts", collapse = "annual")
     expect_is(dataset, "ts")
+  }),
+  test_that("Data is the same across formats", {
+    annaulraw <- Quandl("NSE/OIL", type="raw", collapse = "annual")
+    annaults <- Quandl("NSE/OIL", type="ts", collapse = "annual")
+    annaulzoo <- Quandl("NSE/OIL", type="zoo", collapse = "annual")
+    annaulxts <- Quandl("NSE/OIL", type="xts", collapse = "annual")
+    annaultimeSeries <- Quandl("NSE/OIL", type="timeSeries")
+    expect_that(max(abs(annaults - coredata(annaulzoo))), equals(0))
+    expect_that(max(abs(coredata(annaulzoo) - coredata(annaulxts))) , equals(0))
+    # timeSeries keeps data in same order as passed in, not chronological
+    # Have to compare against raw as zoo and xts are sorted chronologically
+    expect_that(max(abs(annaulraw[,-1] - getDataPart(annaultimeSeries))), equals(0))
+  }),
+  test_that("When requesting xts annual warn user xts has non-standard meaning for frequency", {
+    expect_warning(Quandl("NSE/OIL", type="xts", collapse = "annual"), 
+      "xts has a non-standard meaning for 'frequency'.", fixed = TRUE)
+  })
+)
+
+context("Monthly response data")
+with_mock(
+  `httr::VERB` = function(http, url, config, body, query) {
+    mock_response(content = mock_monthly_content())
+  },
+  `httr::content` = function(response, as = "text") {
+    response$content
+  },
+  test_that("Frequencies are correct across output formats", {
+    monthlyts <- Quandl("NSE/OIL", type="ts", collapse = "monthly")
+    monthlyzoo <- Quandl("NSE/OIL", type="zoo", collapse = "monthly")
+    monthlyxts <- Quandl("NSE/OIL", type="xts", collapse = "monthly")
+    monthlytimeSeries <- Quandl("NSE/OIL", type="timeSeries", collapse = "monthly")
+
+    expect_that(frequency(monthlyts), equals(12))
+    expect_that(frequency(monthlyzoo), equals(12))
+    expect_that(frequency(monthlyxts), equals(12))
+    # timeSeries allows time index in reverse order but regularity checks won't work then
+    # So we check reversed series also
+    expect_true((frequency(monthlytimeSeries)==12)||(frequency(rev(monthlytimeSeries))==12))
   })
 )
 
@@ -189,32 +256,6 @@ with_mock(
 # test_that("Collapsed data frequency", {
 #   dailytoquart <- Quandl("TESTS/1", type="ts", collapse="quarterly")
 #   expect_that(frequency(dailytoquart), equals(4))
-# })
-
-# test_that("Frequencies are correct across output formats", {
-#   monthlyts <- Quandl("TESTS/2", type="ts")
-#   monthlyzoo <- Quandl("TESTS/2", type="zoo")
-#   monthlyxts <- Quandl("TESTS/2", type="xts")
-#   monthlytimeSeries <- Quandl("TESTS/2", type="timeSeries")
-#   expect_that(frequency(monthlyts), equals(12))
-#   expect_that(frequency(monthlyzoo), equals(12))
-#   expect_that(frequency(monthlyxts), equals(12))
-#   # timeSeries allows time index in reverse order but regularity checks won't work then
-#   # So we check reversed series also
-#   expect_true((frequency(monthlytimeSeries)==12)||(frequency(rev(monthlytimeSeries))==12))
-# })
-
-# test_that("Data is the same across formats", {
-#   monthlyraw <- Quandl("TESTS/2", type="raw")
-#   monthlyts <- Quandl("TESTS/2", type="ts")
-#   monthlyzoo <- Quandl("TESTS/2", type="zoo")
-#   monthlyxts <- Quandl("TESTS/2", type="xts")
-#   monthlytimeSeries <- Quandl("TESTS/2", type="timeSeries")
-#   expect_that(max(abs(monthlyts - coredata(monthlyzoo))), equals(0))
-#   expect_that(max(abs(coredata(monthlyzoo) - coredata(monthlyxts))) , equals(0))
-#   # timeSeries keeps data in same order as passed in, not chronological
-#   # Have to compare against raw as zoo and xts are sorted chronologically
-#   expect_that(max(abs(monthlyraw[,-1] - getDataPart(monthlytimeSeries))), equals(0))
 # })
 
 # test_that("Output message lists 3 codes", {

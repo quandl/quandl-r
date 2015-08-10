@@ -166,7 +166,7 @@ with_mock(
   })
 )
 
-context("Quandl() annual frequency response data")
+context("Quandl() quarterly frequency response data")
 with_mock(
   `httr::VERB` = function(http, url, config, body, query) {
     mock_response(content = mock_quarterly_collapse_data())
@@ -217,6 +217,46 @@ test_that("Multiple dataset codes with dataset code column indexes are requested
     Quandl(c("NSE/OIL.1", "AAPL/WIKI.2"), transform = "rdiff", column_index = 3)
   )
   expect_equal(i, 2)
+})
+
+test_that("Multiple dataset codes calls merge", {
+  database_codes <- c("NSE", "AAPL", "TESTS")
+  dataset_codes <- c("OIL", "WIKI", "4")
+  i <- 0
+  with_mock(
+    `httr::VERB` = function(http, url, config, body, query) {
+      mock_response(content = mock_data(database_code = database_codes[i], dataset_code = dataset_codes[i]))
+    },
+    `httr::content` = function(response, as = "text") {
+      response$content
+    },
+    merge = function(data, merge_data, ...) {
+      i <<- i + 1
+    },
+    Quandl(c("NSE/OIL.1", "WIKI/AAPL.2", "TESTS/4.1"))
+  )
+  expect_equal(i, 2, info = "3 datasets are merged together, merged is called twice")
+})
+
+test_that("Multiple dataset codes returns desired requested type", {
+  with_mock(
+    `httr::VERB` = function(http, url, config, body, query) {
+      mock_response(content = mock_annual_data())
+    },
+    `httr::content` = function(response, as = "text") {
+      response$content
+    },
+    test_that("return type is correct", {
+      types <- c('raw', 'ts', 'zoo', 'xts', 'timeSeries')
+      expected <- c('data.frame', 'ts', 'zoo', 'xts', 'timeSeries')
+      i <- 0
+      for(type in types) {
+        i <- i + 1
+        dataset = Quandl(c("NSE/OIL.1", "WIKI/AAPL.2", "TESTS/4.1"), type = type, collapse = 'annual')
+        expect_is(dataset, expected[i])
+      }
+    })
+  )
 })
 
 reset_config()

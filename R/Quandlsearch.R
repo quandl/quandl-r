@@ -2,14 +2,13 @@
 #'
 #' An authentication token is needed for access to the Quandl API multiple times. Set your \code{access_token} with \code{Quandl.api_key} function.
 #'
-#' For instructions on finding your authentication token go to https://www.quandl.com/account
+#' For instructions on finding your authentication token go to https://www.quandl.com/account/api
 #' @param query Search terms
-#' @param page Specifies which page of results to return.
-#' @param source Specifies a specific source to search within.
 #' @param silent Prints the first few results when FALSE.
-#' @param authcode Authentication Token for extended API access by default set by \code{\link{Quandl.api_key}}.
+#' @param per_page Number of results returned per page.
+#' @param ... Additional named values that are interpretted as api parameters e.g., page.
 #' @return A list of the search results.
-#' @references This R package uses the Quandl API. For more information go to http://www.quandl.com/help/api. For more help on the package itself go to http://www.quandl.com/help/r.
+#' @references This R package uses the Quandl API. For more information go to http://www.quandl.com/docs/api. For more help on the package itself go to http://www.quandl.com/help/r.
 #' @author Raymond McTaggart
 #' @seealso \code{\link{Quandl.api_key}}
 #' @examples \dontrun{
@@ -22,7 +21,7 @@ Quandl.search <- function(query, silent = FALSE, per_page = 10, ...) {
   params$per_page <- per_page
   params <- c(params, list(...))
 
-  path = "datasets"
+  path <- "datasets"
   json <- do.call(quandl.api, c(path=path, params))
 
   # results is a dataframe

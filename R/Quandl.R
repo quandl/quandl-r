@@ -17,19 +17,16 @@ metaData <- function(x){
 #'
 #' An authentication token is needed for access to the Quandl API multiple times. Set your \code{access_token} with \code{Quandl.api_key} function.
 #'
-#' For instructions on finding your authentication token go to www.quandl.com/API
+#' For instructions on finding your authentication token go to https://www.quandl.com/account/api
 #' @param code Dataset code on Quandl specified as a string or an array of strings.
 #' @param type Type of data returned specified as string. Can be 'raw', 'ts', 'zoo', 'xts' or 'timeSeries'.
-#' @param start_date Use to truncate data by start date in 'yyyy-mm-dd' format.
-#' @param end_date Use to truncate data by end date in 'yyyy-mm-dd' format.
 #' @param transform Apply Quandl API data transformations.
 #' @param collapse Collapse frequency of Data.
 #' @param order Select if data is given to R in ascending or descending formats. Helpful for the rows parameter.
 #' @param meta Returns meta data in list format as well as data.
-#' @param api_key Authentication Token for extended API access by default set by \code{\link{Quandl.api_key}}.
-#' @param ... Additional named values that are interpretted as api parameters.
+#' @param ... Additional named values that are interpreted as api parameters.
 #' @return Depending on the type the class is either data.frame, time series, xts, zoo or timeSeries.
-#' @references This R package uses the Quandl API. For more information go to https://www.quandl.com/help/api. For more help on the package itself go to http://www.quandl.com/help/r.
+#' @references This R package uses the Quandl API. For more information go to https://www.quandl.com/docs/api. For more help on the package itself go to http://www.quandl.com/help/r.
 #' @author Raymond McTaggart
 #' @seealso \code{\link{Quandl.api_key}}
 #' @examples \dontrun{
@@ -111,6 +108,16 @@ Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts', 'timeSeries'), tran
 
   if (!is.null(params$end_date)) {
     as.Date(params$end_date)
+  }
+
+  if (!is.null(params$transformation)) {
+    warning("argument transformation is deprecated; please use transform instead.", 
+      call. = FALSE)
+  }
+
+  if (!is.null(params$sort)) {
+    warning("argument sort is deprecated; please use order instead.", 
+      call. = FALSE)
   }
 
 
@@ -257,7 +264,7 @@ Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts', 'timeSeries'), tran
 #' @param code Dataset code on Quandl specified as a string or an array of strings.
 #' @param params A list of parameters to be passed to the Quandl api.
 #' @return Returns a data.frame of the requested data
-#' @references This R package uses the Quandl API. For more information go to https://www.quandl.com/help/api. For more help on the package itself go to http://www.quandl.com/help/r.
+#' @references This R package uses the Quandl API. For more information go to https://www.quandl.com/docs/api. For more help on the package itself go to http://www.quandl.com/help/r.
 #' @author Raymond McTaggart
 #' @seealso \code{\link{Quandl.api_key}}
 #' @examples \dontrun{

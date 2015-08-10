@@ -22,13 +22,7 @@ Quandl(code, type = c("raw", "ts", "zoo", "xts", "timeSeries"),
 
 \item{meta}{Returns meta data in list format as well as data.}
 
-\item{...}{Additional named values that are interpretted as api parameters.}
-
-\item{start_date}{Use to truncate data by start date in 'yyyy-mm-dd' format.}
-
-\item{end_date}{Use to truncate data by end date in 'yyyy-mm-dd' format.}
-
-\item{api_key}{Authentication Token for extended API access by default set by \code{\link{Quandl.api_key}}.}
+\item{...}{Additional named values that are interpreted as api parameters.}
 }
 \value{
 Depending on the type the class is either data.frame, time series, xts, zoo or timeSeries.
@@ -37,7 +31,7 @@ Depending on the type the class is either data.frame, time series, xts, zoo or t
 An authentication token is needed for access to the Quandl API multiple times. Set your \code{access_token} with \code{Quandl.api_key} function.
 }
 \details{
-For instructions on finding your authentication token go to www.quandl.com/API
+For instructions on finding your authentication token go to https://www.quandl.com/account/api
 }
 \examples{
 \dontrun{
@@ -49,7 +43,7 @@ plot(quandldata[,1])
 Raymond McTaggart
 }
 \references{
-This R package uses the Quandl API. For more information go to https://www.quandl.com/help/api. For more help on the package itself go to http://www.quandl.com/help/r.
+This R package uses the Quandl API. For more information go to https://www.quandl.com/docs/api. For more help on the package itself go to http://www.quandl.com/help/r.
 }
 \seealso{
 \code{\link{Quandl.api_key}}

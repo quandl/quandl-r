@@ -11,7 +11,8 @@ Description: Functions for interacting directly with the Quandl API to offer dat
     in a number of formats usable in R, as well as the ability to search.
 Imports:
     httr (>= 0.6.1),
-    zoo
+    zoo,
+    jsonlite
 Suggests:
     testthat,
     roxygen2,

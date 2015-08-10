@@ -3,11 +3,11 @@
 #'
 #' An authentication token is needed for access to the Quandl API multiple times. Set your \code{access_token} with \code{Quandl.api_key} function.
 #'
-#' For instructions on finding your authentication token go to https://www.quandl.com/account
+#' For instructions on finding your authentication token go to https://www.quandl.com/account/api
 #' @param database_code Database code on Quandl specified as a string
 #' @param ... Additional named values that are interpretted as api parameters e.g., download_type.
 #' @return Returns the download url
-#' @references This R package uses the Quandl API. For more information go to https://www.quandl.com/help/api. For more help on the package itself go to http://www.quandl.com/help/r.
+#' @references This R package uses the Quandl API. For more information go to https://www.quandl.com/docs/api. For more help on the package itself go to http://www.quandl.com/help/r.
 #' @author Raymond McTaggart
 #' @seealso \code{\link{Quandl.api_key}}
 #' @examples \dontrun{
@@ -40,6 +40,21 @@ Quandl.database.bulk_download_url <- function(database_code, ...) {
   url
 }
 
+#' Downloads a zip with all data from a Quandl database
+#'
+#' An authentication token is needed for access to the Quandl API multiple times. Set your \code{access_token} with \code{Quandl.api_key} function.
+#'
+#' For instructions on finding your authentication token go to https://www.quandl.com/account
+#' @param database_code Database code on Quandl specified as a string
+#' @param filename Filename where data is to be downloaded
+#' @param ... Additional named values that are interpretted as api parameters e.g., download_type.
+#' @return VALUE
+#' @references This R package uses the Quandl API. For more information go to https://www.quandl.com/docs/api. For more help on the package itself go to http://www.quandl.com/help/r.
+#' @author Raymond McTaggart
+#' @seealso \code{\link{Quandl.api_key}}
+#' @examples \dontrun{
+#' quandldata = Quandl.database.download_url("NSE", download_type="partial")
+#' }
 #' @export
 Quandl.database.bulk_download_to_file <- function(database_code, filename, ...) {
   if (dir.exists(filename)) {

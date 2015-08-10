@@ -13,10 +13,17 @@ Quandl.api_key <- function(api_key) {
   invisible(getOption('Quandl.api_key'))
 }
 
+#' Query or set Quandl API token
+#' @param auth_token Optionally passed parameter to set Quandl \code{auth_token}.
+#' @return Returns invisibly the currently set \code{auth_token}.
+#' @seealso \code{\link{Quandl}}
+#' @examples \dontrun{
+#' Quandl.auth('foobar')
+#' }
 #' @export
-Quandl.auth <- function(api_key) {
-  message("Quandl.auth() is deprecated. Use Quandl.api_key()")
-  Quandl.api_key(api_key)
+Quandl.auth <- function(auth_token) {
+  .Deprecated('Quandl.api_key')
+  Quandl.api_key(auth_token)
 }
 
 #' Query or set Quandl API version

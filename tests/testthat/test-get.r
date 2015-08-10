@@ -106,11 +106,11 @@ with_mock(
     annaulzoo <- Quandl("NSE/OIL", type="zoo", collapse = "annual")
     annaulxts <- Quandl("NSE/OIL", type="xts", collapse = "annual")
     annaultimeSeries <- Quandl("NSE/OIL", type="timeSeries")
-    expect_that(max(abs(annaults - coredata(annaulzoo))), equals(0))
-    expect_that(max(abs(coredata(annaulzoo) - coredata(annaulxts))) , equals(0))
+    expect_equal(max(abs(annaults - coredata(annaulzoo))), 0)
+    expect_equal(max(abs(coredata(annaulzoo) - coredata(annaulxts))) , 0)
     # timeSeries keeps data in same order as passed in, not chronological
     # Have to compare against raw as zoo and xts are sorted chronologically
-    expect_that(max(abs(annaulraw[,-1] - getDataPart(annaultimeSeries))), equals(0))
+    expect_equal(max(abs(annaulraw[,-1] - getDataPart(annaultimeSeries))), 0)
   }),
   test_that("When requesting xts annual warn user xts has non-standard meaning for frequency", {
     expect_warning(Quandl("NSE/OIL", type="xts", collapse = "annual"), 
@@ -132,9 +132,9 @@ with_mock(
     monthlyxts <- Quandl("NSE/OIL", type="xts", collapse = "monthly")
     monthlytimeSeries <- Quandl("NSE/OIL", type="timeSeries", collapse = "monthly")
 
-    expect_that(frequency(monthlyts), equals(12))
-    expect_that(frequency(monthlyzoo), equals(12))
-    expect_that(frequency(monthlyxts), equals(12))
+    expect_equal(frequency(monthlyts), 12)
+    expect_equal(frequency(monthlyzoo), 12)
+    expect_equal(frequency(monthlyxts), 12)
     # timeSeries allows time index in reverse order but regularity checks won't work then
     # So we check reversed series also
     expect_true((frequency(monthlytimeSeries)==12)||(frequency(rev(monthlytimeSeries))==12))
@@ -151,8 +151,13 @@ with_mock(
   },
   test_that("Start and end dates are correct (zoo)", {
     annual <- Quandl("NSE/OIL", type="zoo")
-    expect_that(start(annual), equals(1995))
-    expect_that(end(annual), equals(2005))
+    expect_equal(start(annual), 1995)
+    expect_equal(end(annual), 2005)
+  }),
+    test_that("Start and end dates are correct (zoo) with force_irregular param set", {
+    annual <- Quandl("NSE/OIL", type="zoo", force_irregular = TRUE)
+    expect_equal(start(annual), as.Date("1995-12-31"))
+    expect_equal(end(annual), as.Date("2005-12-31"))
   }),
   test_that("Start and end dates are correct (xts)", {
     annual <- Quandl("TESTS/4", type="xts")
@@ -176,7 +181,7 @@ with_mock(
   },
   test_that("Collapsed data frequency", {
     dailytoquart <- Quandl("TESTS/1", type="ts", collapse="quarterly")
-    expect_that(frequency(dailytoquart), equals(4))
+    expect_equal(frequency(dailytoquart), 4)
   })
 )
 

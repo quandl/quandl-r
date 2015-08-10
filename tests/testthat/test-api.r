@@ -1,3 +1,5 @@
+source("test-helpers.r")
+
 context('Test api error handling')
 
 context('quandl.api')
@@ -42,3 +44,5 @@ test_that('request headers and query params are constructed', {
   expected_url <- "https://www.quandl.com/api/v3/datasets"
   expect_equal(results, list(request_url = expected_url, headers = expected_headers, params = expected_params))
 })
+
+reset_config()

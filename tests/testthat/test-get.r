@@ -2,101 +2,7 @@ library("zoo")
 library("xts")
 library("timeSeries")
 library("httr")
-
-reset_config <- function() {
-  Quandl.api_key(NULL)
-  Quandl.api_version(NULL)
-}
-
-mock_content <- function() {
-  "{
-    \"dataset\":{
-       \"id\":6668,
-       \"dataset_code\":\"OIL\",
-       \"database_code\":\"NSE\",
-       \"name\":\"Oil India Limited\",
-       \"description\":\"Historical\",
-       \"refreshed_at\":\"2015-08-07T02:37:20.453Z\",
-       \"newest_available_date\":\"2015-08-06\",
-       \"oldest_available_date\":\"2009-09-30\",
-       \"column_names\":[\"Date\",\"Open\",\"High\",\"Low\",\"Last\",\"Close\",\"Total Trade Quantity\",\"Turnover (Lacs)\"],
-       \"frequency\":\"daily\",
-       \"type\":\"Time Series\",
-       \"premium\":false,\"limit\":2,
-       \"transform\":null,
-       \"column_index\":null,
-       \"start_date\":\"2009-09-30\",
-       \"end_date\":\"2015-08-06\",
-       \"data\":[[\"2015-08-06\",450.9,460.7,447.3,454.8,456.4,339324.0,1542.22],[\"2015-08-05\",440.5,454.0,439.05,450.2,449.4,287698.0,1286.17]],
-       \"collapse\":null,
-       \"order\":\"desc\",
-       \"database_id\":33
-    }
-  }"
-}
-
-mock_annual_content <- function() {
-  "{
-    \"dataset\":{
-      \"id\":6668,
-      \"dataset_code\":\"OIL\",
-      \"database_code\":\"NSE\",
-      \"name\":\"Oil India Limited\",
-      \"description\":\"Historical prices for Oil India Limited\",
-      \"refreshed_at\":\"2015-08-07T02:37:20.453Z\",
-      \"newest_available_date\":\"2015-08-06\",
-      \"oldest_available_date\":\"2009-09-30\",
-      \"column_names\":[\"Date\",\"Open\",\"High\",\"Low\",\"Last\",\"Close\",\"Total Trade Quantity\",\"Turnover (Lacs)\"],
-      \"frequency\":\"daily\",
-      \"type\":\"Time Series\",
-      \"premium\":false,
-      \"limit\":3,
-      \"transform\":null,
-      \"column_index\":null,
-      \"start_date\":\"2009-09-30\",
-      \"end_date\":\"2015-08-06\",
-      \"data\":[[\"2015-12-31\",450.9,460.7,447.3,454.8,456.4,339324.0,1542.22],[\"2014-12-31\",565.0,579.0,565.0,578.9,576.4,212525.0,1220.73],[\"2013-12-31\",484.05,492.0,475.1,488.2,488.35,359499.0,1741.57]],
-      \"collapse\":\"annual\",
-      \"order\":\"desc\",
-      \"database_id\":33
-    }
-  }"
-}
-
-mock_monthly_content <- function() {
- "{
-    \"dataset\":{
-      \"id\":6668,
-      \"dataset_code\":\"OIL\",
-      \"database_code\":\"NSE\",
-      \"name\":\"Oil India Limited\",
-      \"description\":\"Historical prices for Oil India Limited\\u003cbr\\u003e\\u003cbr\\u003eNational Stock Exchange of India\\u003cbr\\u003e\\u003cbr\\u003eTicker: OIL\\u003cbr\\u003e\\u003cbr\\u003eISIN: INE274J01014\",
-      \"refreshed_at\":\"2015-08-07T02:37:20.453Z\",
-      \"newest_available_date\":\"2015-08-06\",
-      \"oldest_available_date\":\"2009-09-30\",
-      \"column_names\":[\"Date\",\"Open\",\"High\",\"Low\",\"Last\",\"Close\",\"Total Trade Quantity\",\"Turnover (Lacs)\"],
-      \"frequency\":\"daily\",
-      \"type\":\"Time Series\",
-      \"premium\":false,
-      \"limit\":3,
-      \"transform\":null,
-      \"column_index\":null,
-      \"start_date\":\"2009-09-30\",
-      \"end_date\":\"2015-08-06\",
-      \"data\":[[\"2015-08-31\",450.9,460.7,447.3,454.8,456.4,339324.0,1542.22],[\"2015-07-31\",425.0,435.0,423.2,432.95,432.35,330239.0,1416.0],[\"2015-06-30\",448.0,451.7,445.1,447.8,446.8,352514.0,1576.93]],
-      \"collapse\":\"monthly\",
-      \"order\":\"desc\",
-      \"database_id\":33
-    }
-  }"
-}
-
-mock_response <- function(status_code = 200, content = mock_content()) {
-  httr:::response(
-    status_code = status_code,
-    content = content
-  )
-}
+source("test-helpers.r")
 
 context("Getting Dataset data")
 
@@ -132,7 +38,7 @@ with_mock(
   Quandl("NSE/OIL", transform = "rdiff", collapse = "annual", start_date = "2015-01-01")
 )
 
-context("Quandl() response")
+context("Quandl() daily data response")
 with_mock(
   `httr::VERB` = function(http, url, config, body, query) {
     mock_response()
@@ -182,10 +88,10 @@ with_mock(
   })
 )
 
-context("Annual response data")
+context("Quandl() annual collapse response data")
 with_mock(
   `httr::VERB` = function(http, url, config, body, query) {
-    mock_response(content = mock_annual_content())
+    mock_response(content = mock_annual_data())
   },
   `httr::content` = function(response, as = "text") {
     response$content
@@ -212,10 +118,10 @@ with_mock(
   })
 )
 
-context("Monthly response data")
+context("Quandl() monthly collapse response data")
 with_mock(
   `httr::VERB` = function(http, url, config, body, query) {
-    mock_response(content = mock_monthly_content())
+    mock_response(content = mock_monthly_data())
   },
   `httr::content` = function(response, as = "text") {
     response$content
@@ -235,35 +141,43 @@ with_mock(
   })
 )
 
-# test_that("Stop and start dates are correct (zoo)", {
-#   annual <- Quandl("TESTS/4", type="zoo", start_date="1995-01-01", end_date=as.Date("2006-01-01"))
-#   expect_that(start(annual), equals(1995))
-#   expect_that(end(annual), equals(2005))
-# })
+context("Quandl() annual frequency response data")
+with_mock(
+  `httr::VERB` = function(http, url, config, body, query) {
+    mock_response(content = mock_annual_frequency_data())
+  },
+  `httr::content` = function(response, as = "text") {
+    response$content
+  },
+  test_that("Start and end dates are correct (zoo)", {
+    annual <- Quandl("NSE/OIL", type="zoo")
+    expect_that(start(annual), equals(1995))
+    expect_that(end(annual), equals(2005))
+  }),
+  test_that("Start and end dates are correct (xts)", {
+    annual <- Quandl("TESTS/4", type="xts")
+    expect_that(start(annual), is_equivalent_to(as.Date("1995-12-31")))
+    expect_that(end(annual), is_equivalent_to(as.Date("2005-12-31")))
+  }),
+  test_that("Start and end dates are correct (timeSeries)", {
+   annual <- Quandl("TESTS/4", type="timeSeries")
+   expect_that(start(annual), is_equivalent_to(as.timeDate("1995-12-31")))
+   expect_that(end(annual), is_equivalent_to(as.timeDate("2005-12-31")))
+  })
+)
 
-# test_that("Stop and start dates are correct (xts)", {
-#   annual <- Quandl("TESTS/4", type="xts", start_date="1995-01-01", end_date=as.Date("2006-01-01"))
-#   expect_that(start(annual), is_equivalent_to(as.Date("1995-12-31")))
-#   expect_that(end(annual), is_equivalent_to(as.Date("2005-12-31")))
-# })
-
-# test_that("Stop and start dates are correct (timeSeries)", {
-#   annual <- Quandl("TESTS/4", type="timeSeries", start_date="1995-01-01", end_date=as.Date("2006-01-01"))
-#   expect_that(start(annual), is_equivalent_to(as.timeDate("1995-12-31")))
-#   expect_that(end(annual), is_equivalent_to(as.timeDate("2005-12-31")))
-# })
-
-# test_that("Collapsed data frequency", {
-#   dailytoquart <- Quandl("TESTS/1", type="ts", collapse="quarterly")
-#   expect_that(frequency(dailytoquart), equals(4))
-# })
-
-# test_that("Output message lists 3 codes", {
-#   expect_output(Quandl.search("gas"), "(Code: [A-Z0-9_]+/[A-Z0-9_]+.+){3}")
-# })
-
-# test_that("Doesn't find anything", {
-#   expect_warning(Quandl.search("asfdsgfrg"), "No datasets found")
-# })
+context("Quandl() annual frequency response data")
+with_mock(
+  `httr::VERB` = function(http, url, config, body, query) {
+    mock_response(content = mock_quarterly_collapse_data())
+  },
+  `httr::content` = function(response, as = "text") {
+    response$content
+  },
+  test_that("Collapsed data frequency", {
+    dailytoquart <- Quandl("TESTS/1", type="ts", collapse="quarterly")
+    expect_that(frequency(dailytoquart), equals(4))
+  })
+)
 
 reset_config()

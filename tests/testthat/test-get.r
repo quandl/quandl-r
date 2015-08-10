@@ -195,7 +195,7 @@ with_mock(
 )
 
 context('Quandl() multiple datasets')
-test_that("Multiple datasets are requested", {
+test_that("Multiple dataset codes with dataset code column indexes are requested", {
   database_codes <- c("NSE", "AAPL")
   dataset_codes <- c("OIL", "WIKI")
   requested_column_indexes <- c("1", "2")
@@ -214,7 +214,7 @@ test_that("Multiple datasets are requested", {
     `httr::content` = function(response, as = "text") {
       response$content
     },
-    Quandl(c("NSE/OIL.1", "AAPL/WIKI.2"), transform = "rdiff")
+    Quandl(c("NSE/OIL.1", "AAPL/WIKI.2"), transform = "rdiff", column_index = 3)
   )
   expect_equal(i, 2)
 })

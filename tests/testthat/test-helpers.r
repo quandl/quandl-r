@@ -3,13 +3,11 @@ reset_config <- function() {
   Quandl.api_version(NULL)
 }
 
-mock_data <- function() {
-  "{
-    \"dataset\":{
-       \"id\":6668,
-       \"dataset_code\":\"OIL\",
-       \"database_code\":\"NSE\",
-       \"name\":\"Oil India Limited\",
+mock_data <- function(database_code = "NSE", dataset_code = "OIL") {
+  response_start <- "{\"dataset\":{ \"id\":6668,"
+  dataset_code <- paste0("\"dataset_code\":\"", dataset_code, "\"", ",")
+  database_code <- paste0("\"database_code\":\"", database_code, "\"", ",")
+  response_end <- "\"name\":\"Oil India Limited\",
        \"description\":\"Historical\",
        \"refreshed_at\":\"2015-08-07T02:37:20.453Z\",
        \"newest_available_date\":\"2015-08-06\",
@@ -28,6 +26,7 @@ mock_data <- function() {
        \"database_id\":33
     }
   }"
+  paste0(response_start, dataset_code, database_code, response_end)
 }
 
 mock_annual_data <- function() {

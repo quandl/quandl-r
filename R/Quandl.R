@@ -1,4 +1,4 @@
-Quandl.version <- '2.6.1'
+Quandl.version <- '2.7.1'
 
 
 #' Retrieve metadata from a Quandl series
@@ -9,7 +9,7 @@ Quandl.version <- '2.6.1'
 #' metaData(ts)
 #' }
 #' @export
-metaData <- function(x){
+metaData <- function(x) {
   attr(x, "meta")
 }
 
@@ -191,10 +191,6 @@ Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts', 'timeSeries'), tran
     } else {
       freq <- 365
     }
-
-    # if(type == "raw" && params$sort_order == "desc") {
-    #   data <- data[order(data[,1], decreasing=TRUE),]
-    # }
   }
 
   meta <- attr(data, "meta")

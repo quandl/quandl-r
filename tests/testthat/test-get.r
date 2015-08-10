@@ -180,4 +180,43 @@ with_mock(
   })
 )
 
+context('Quandl() filtering by column index')
+with_mock(
+  `httr::VERB` = function(http, url, config, body, query) {
+    test_that("correct arguments are passed in", {
+      expect_equal(query$column_index, "1")
+    })
+    mock_response()
+  },
+  `httr::content` = function(response, as="text") {
+    response$content
+  },
+  Quandl("NSE/OIL.1")
+)
+
+context('Quandl() multiple datasets')
+test_that("Multiple datasets are requested", {
+  database_codes <- c("NSE", "AAPL")
+  dataset_codes <- c("OIL", "WIKI")
+  requested_column_indexes <- c("1", "2")
+  i <- 0
+  with_mock(
+    `httr::VERB` = function(http, url, config, body, query) {
+      i <<- i + 1
+      test_that("request is made with correct params", {
+        expected_code <- paste(database_codes[i], dataset_codes[i], sep = "/")
+        expect_true(grepl(expected_code, url))
+        expect_equal(query$column_index, requested_column_indexes[i])
+        expect_equal(query$transform, "rdiff")
+      })
+      mock_response(content = mock_data(database_code = database_codes[i], dataset_code = dataset_codes[i]))
+    },
+    `httr::content` = function(response, as = "text") {
+      response$content
+    },
+    Quandl(c("NSE/OIL.1", "AAPL/WIKI.2"), transform = "rdiff")
+  )
+  expect_equal(i, 2)
+})
+
 reset_config()

@@ -1,5 +1,22 @@
 source("test-helpers.r")
 
+context("Search calls datasets endpoint")
+with_mock(
+  `httr::VERB` = function(http, url, config, body, query) {
+    test_that("correct endpoint is called", {
+      expect_equal(url, "https://www.quandl.com/api/v3/datasets")
+    })
+    test_that("search query param is added", {
+      expect_equal(query$query, "oil")
+    })
+    mock_response(content = mock_search_response())
+  },
+  `httr::content` = function(response, as = "text") {
+    response$content
+  },
+  Quandl.search("oil")
+)
+
 context("Quandl.search with results")
 with_mock(
   `httr::VERB` = function(http, url, config, body, query) {

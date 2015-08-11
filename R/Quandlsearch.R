@@ -9,7 +9,6 @@
 #' @param ... Additional named values that are interpretted as api parameters e.g., page.
 #' @return A list of the search results.
 #' @references This R package uses the Quandl API. For more information go to http://www.quandl.com/docs/api. For more help on the package itself go to http://www.quandl.com/help/r.
-#' @author Raymond McTaggart
 #' @seealso \code{\link{Quandl.api_key}}
 #' @examples \dontrun{
 #' search.results <- Quandl.search("oil")

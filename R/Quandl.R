@@ -1,7 +1,7 @@
-#' Retrieve metadata from a Quandl series
-#' @param x A Quandl time series object with attached meta data.
-#' @return Returns a list of meta data about the series.
-#' @seealso \code{\link{Quandl}}
+#' Retrieve metadata from a Quandl series or search results
+#' @param x A Quandl time series object or search results with attached meta data.
+#' @return Returns a list of meta data about the series or search results.
+#' @seealso \code{\link{Quandl}}, \code{\link{Quandl.search}}
 #' @examples \dontrun{
 #' metaData(ts)
 #' }
@@ -10,21 +10,19 @@ metaData <- function(x) {
   attr(x, "meta")
 }
 
-#' Pulls Data from the Quandl Dataset endpoint and formats
+#' Retrives Data from the Quandl Dataset endpoint and formats
 #'
-#' An authentication token is needed for access to the Quandl API multiple times. Set your \code{access_token} with \code{Quandl.api_key} function.
+#' @details Set your \code{api_key} with \code{Quandl.api_key} function. For instructions on finding your api key go to https://www.quandl.com/account/api
 #'
-#' For instructions on finding your authentication token go to https://www.quandl.com/account/api
 #' @param code Dataset code on Quandl specified as a string or an array of strings.
 #' @param type Type of data returned specified as string. Can be 'raw', 'ts', 'zoo', 'xts' or 'timeSeries'.
 #' @param transform Apply Quandl API data transformations.
 #' @param collapse Collapse frequency of Data.
 #' @param order Select if data is given to R in ascending or descending formats. Helpful for the rows parameter.
 #' @param meta Returns meta data in list format as well as data.
-#' @param ... Additional named values that are interpreted as api parameters.
+#' @param ... Additional named values that are interpreted as api parameters. Please see \url{https://www.quandl.com/docs/api#retrieve-data-and-metadata} a full list of parameters.
 #' @return Depending on the type the class is either data.frame, time series, xts, zoo or timeSeries.
-#' @references This R package uses the Quandl API. For more information go to https://www.quandl.com/docs/api. For more help on the package itself go to http://www.quandl.com/help/r.
-#' @author Raymond McTaggart
+#' @references This R package uses the Quandl API. For more information go to \url{https://www.quandl.com/docs/api}. For more help on the package itself go to s \url{http://www.quandl.com/help/r}.
 #' @seealso \code{\link{Quandl.api_key}}
 #' @examples \dontrun{
 #' quandldata = Quandl("NSE/OIL", collapse="monthly", start_date="2013-01-01", type="ts")
@@ -249,16 +247,14 @@ Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts', 'timeSeries'), tran
   return(data_out)
 }
 
-#' Pulls Data from the Quandl Dataset endpoint
+#' Retrieves Data from the Quandl Dataset endpoint
 #'
-#' An authentication token is needed for access to the Quandl API multiple times. Set your \code{access_token} with \code{Quandl.api_key} function.
+#' Set your \code{api_key} with \code{Quandl.api_key} function. For instructions on finding your api key go to https://www.quandl.com/account
 #'
-#' For instructions on finding your authentication token go to https://www.quandl.com/account
 #' @param code Dataset code on Quandl specified as a string or an array of strings.
 #' @param params A list of parameters to be passed to the Quandl api.
 #' @return Returns a data.frame of the requested data
 #' @references This R package uses the Quandl API. For more information go to https://www.quandl.com/docs/api. For more help on the package itself go to http://www.quandl.com/help/r.
-#' @author Raymond McTaggart
 #' @seealso \code{\link{Quandl.api_key}}
 #' @examples \dontrun{
 #' quandldata = Quandl.dataset.get("NSE/OIL", list(rows=5))

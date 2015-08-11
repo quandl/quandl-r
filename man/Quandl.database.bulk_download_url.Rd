@@ -15,18 +15,15 @@ Quandl.database.bulk_download_url(database_code, ...)
 Returns the download url
 }
 \description{
-An authentication token is needed for access to the Quandl API multiple times. Set your \code{access_token} with \code{Quandl.api_key} function.
+An api key is needed for access to the Quandl API multiple times. Set your \code{access_token} with \code{Quandl.api_key} function.
 }
 \details{
-For instructions on finding your authentication token go to https://www.quandl.com/account/api
+For instructions on finding your api key go to https://www.quandl.com/account/api
 }
 \examples{
 \dontrun{
 quandldata = Quandl.database.download_url("NSE", download_type="partial")
 }
-}
-\author{
-Raymond McTaggart
 }
 \references{
 This R package uses the Quandl API. For more information go to https://www.quandl.com/docs/api. For more help on the package itself go to http://www.quandl.com/help/r.

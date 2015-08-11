@@ -29,9 +29,6 @@ For instructions on finding your authentication token go to https://www.quandl.c
 search.results <- Quandl.search("oil")
 }
 }
-\author{
-Raymond McTaggart
-}
 \references{
 This R package uses the Quandl API. For more information go to http://www.quandl.com/docs/api. For more help on the package itself go to http://www.quandl.com/help/r.
 }

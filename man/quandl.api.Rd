@@ -31,9 +31,6 @@ quandldata = quandl.api(path="datasets/NSE/OIL", http="GET")
 plot(quandldata[,1])
 }
 }
-\author{
-Raymond McTaggart
-}
 \references{
 This R package uses the Quandl API. For more information go to https://www.quandl.com/docs/api. For more help on the package itself go to http://www.quandl.com/help/r.
 }

@@ -5,6 +5,7 @@ Date: 2015-04-17
 Authors@R: c(person(
     "Raymond McTaggart", role=c("aut", "cre"), email="raymond@quandl.com"),
     person("Gergely Daroczi", role="aut"),
+    person("Clement Leung", role="aut", email="clement@quandl.com"),
     person("Quandl Inc.", role="cph"))
 Maintainer: Raymond McTaggart <raymond@quandl.com>
 Description: Functions for interacting directly with the Quandl API to offer data
@@ -14,12 +15,12 @@ Imports:
     zoo,
     jsonlite
 Suggests:
-    testthat,
+    testthat (>= 0.10.0),
     roxygen2,
     timeSeries
 Depends:
     R (>= 2.15.0),
     xts
 License: MIT + file LICENSE
-URL: https://github.com/quandl/R-package
-BugReports: https://github.com/quandl/R-package/issues
+URL: https://github.com/quandl/quandl-r
+BugReports: https://github.com/quandl/quandl-r/issues

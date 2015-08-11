@@ -2,7 +2,7 @@
 % Please edit documentation in R/Quandl.R
 \name{Quandl}
 \alias{Quandl}
-\title{Pulls Data from the Quandl Dataset endpoint and formats}
+\title{Retrives Data from the Quandl Dataset endpoint and formats}
 \usage{
 Quandl(code, type = c("raw", "ts", "zoo", "xts", "timeSeries"),
   transform = c("", "diff", "rdiff", "normalize", "cumul", "rdiff_from"),
@@ -22,16 +22,16 @@ Quandl(code, type = c("raw", "ts", "zoo", "xts", "timeSeries"),
 
 \item{meta}{Returns meta data in list format as well as data.}
 
-\item{...}{Additional named values that are interpreted as api parameters.}
+\item{...}{Additional named values that are interpreted as api parameters. Please see \url{https://www.quandl.com/docs/api#retrieve-data-and-metadata} a full list of parameters.}
 }
 \value{
 Depending on the type the class is either data.frame, time series, xts, zoo or timeSeries.
 }
 \description{
-An authentication token is needed for access to the Quandl API multiple times. Set your \code{access_token} with \code{Quandl.api_key} function.
+Retrives Data from the Quandl Dataset endpoint and formats
 }
 \details{
-For instructions on finding your authentication token go to https://www.quandl.com/account/api
+Set your \code{api_key} with \code{Quandl.api_key} function. For instructions on finding your api key go to https://www.quandl.com/account/api
 }
 \examples{
 \dontrun{
@@ -39,11 +39,8 @@ quandldata = Quandl("NSE/OIL", collapse="monthly", start_date="2013-01-01", type
 plot(quandldata[,1])
 }
 }
-\author{
-Raymond McTaggart
-}
 \references{
-This R package uses the Quandl API. For more information go to https://www.quandl.com/docs/api. For more help on the package itself go to http://www.quandl.com/help/r.
+This R package uses the Quandl API. For more information go to \url{https://www.quandl.com/docs/api}. For more help on the package itself go to s \url{http://www.quandl.com/help/r}.
 }
 \seealso{
 \code{\link{Quandl.api_key}}

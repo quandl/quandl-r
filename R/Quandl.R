@@ -1,6 +1,3 @@
-Quandl.version <- '2.7.1'
-
-
 #' Retrieve metadata from a Quandl series
 #' @param x A Quandl time series object with attached meta data.
 #' @return Returns a list of meta data about the series.

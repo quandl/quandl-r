@@ -50,7 +50,8 @@ quandl.api.build_request <- function(path, ...) {
     accept_value <- paste0('application/json, application/vnd.quandl+json;version=', Quandl.api_version())
   }
 
-  headers <- list(Accept = accept_value, `Request-Source` = 'R', `Request-Source-Version` = Quandl.version)
+  quandl_version <- as.character(packageVersion('Quandl'))
+  headers <- list(Accept = accept_value, `Request-Source` = 'R', `Request-Source-Version` = quandl_version)
 
   if (!is.null(Quandl.api_key())) {
     headers <- c(headers, list(`X-Api-Token` = Quandl.api_key()))

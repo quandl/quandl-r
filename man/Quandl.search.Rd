@@ -4,41 +4,35 @@
 \alias{Quandl.search}
 \title{Search the Quandl database}
 \usage{
-Quandl.search(query, page = 1, source = NULL, silent = FALSE,
-  authcode = Quandl.auth())
+Quandl.search(query, silent = FALSE, per_page = 10, ...)
 }
 \arguments{
 \item{query}{Search terms}
 
-\item{page}{Specifies which page of results to return.}
-
-\item{source}{Specifies a specific source to search within.}
-
 \item{silent}{Prints the first few results when FALSE.}
 
-\item{authcode}{Authentication Token for extended API access by default set by \code{\link{Quandl.auth}}.}
+\item{per_page}{Number of results returned per page.}
+
+\item{...}{Additional named values that are interpretted as api parameters e.g., page.}
 }
 \value{
 A list of the search results.
 }
 \description{
-An authentication token is needed for access to the Quandl API multiple times. Set your \code{access_token} with \code{Quandl.auth} function.
+An authentication token is needed for access to the Quandl API multiple times. Set your \code{access_token} with \code{Quandl.api_key} function.
 }
 \details{
-For instructions on finding your authentication token go to https://www.quandl.com/account
+For instructions on finding your authentication token go to https://www.quandl.com/account/api
 }
 \examples{
 \dontrun{
 search.results <- Quandl.search("oil")
 }
 }
-\author{
-Raymond McTaggart
-}
 \references{
-This R package uses the Quandl API. For more information go to http://www.quandl.com/help/api. For more help on the package itself go to http://www.quandl.com/help/r.
+This R package uses the Quandl API. For more information go to \url{https://www.quandl.com/docs/api}. For more help on the package itself go to \url{http://www.quandl.com/help/r}.
 }
 \seealso{
-\code{\link{Quandl.auth}}
+\code{\link{Quandl.api_key}}
 }
 

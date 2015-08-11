@@ -2,43 +2,36 @@
 % Please edit documentation in R/Quandl.R
 \name{Quandl}
 \alias{Quandl}
-\title{Pulls Data from the Quandl Dataset endpoint and formats}
+\title{Retrives Data from the Quandl Dataset endpoint and formats}
 \usage{
-Quandl(code, type = c("raw", "ts", "zoo", "xts", "timeSeries"), start_date,
-  end_date, transformation = c("", "diff", "rdiff", "normalize", "cumul",
-  "rdiff_from"), collapse = c("", "daily", "weekly", "monthly", "quarterly",
-  "annual"), sort = c("desc", "asc"), meta = FALSE,
-  authcode = Quandl.auth(), ...)
+Quandl(code, type = c("raw", "ts", "zoo", "xts", "timeSeries"),
+  transform = c("", "diff", "rdiff", "normalize", "cumul", "rdiff_from"),
+  collapse = c("", "daily", "weekly", "monthly", "quarterly", "annual"),
+  order = c("desc", "asc"), meta = FALSE, ...)
 }
 \arguments{
 \item{code}{Dataset code on Quandl specified as a string or an array of strings.}
 
 \item{type}{Type of data returned specified as string. Can be 'raw', 'ts', 'zoo', 'xts' or 'timeSeries'.}
 
-\item{start_date}{Use to truncate data by start date in 'yyyy-mm-dd' format.}
-
-\item{end_date}{Use to truncate data by end date in 'yyyy-mm-dd' format.}
-
-\item{transformation}{Apply Quandl API data transformations.}
+\item{transform}{Apply Quandl API data transformations.}
 
 \item{collapse}{Collapse frequency of Data.}
 
-\item{sort}{Select if data is given to R in ascending or descending formats. Helpful for the rows parameter.}
+\item{order}{Select if data is given to R in ascending or descending formats. Helpful for the rows parameter.}
 
 \item{meta}{Returns meta data in list format as well as data.}
 
-\item{authcode}{Authentication Token for extended API access by default set by \code{\link{Quandl.auth}}.}
-
-\item{...}{Additional named values that are interpretted as api parameters.}
+\item{...}{Additional named values that are interpreted as Quandl API parameters. Please see \url{https://www.quandl.com/docs/api#retrieve-data-and-metadata} for a full list of parameters.}
 }
 \value{
 Depending on the type the class is either data.frame, time series, xts, zoo or timeSeries.
 }
 \description{
-An authentication token is needed for access to the Quandl API multiple times. Set your \code{access_token} with \code{Quandl.auth} function.
+Retrives Data from the Quandl Dataset endpoint and formats
 }
 \details{
-For instructions on finding your authentication token go to www.quandl.com/API
+Set your \code{api_key} with \code{Quandl.api_key} function. For instructions on finding your api key go to \url{https://www.quandl.com/account/api}
 }
 \examples{
 \dontrun{
@@ -46,13 +39,10 @@ quandldata = Quandl("NSE/OIL", collapse="monthly", start_date="2013-01-01", type
 plot(quandldata[,1])
 }
 }
-\author{
-Raymond McTaggart
-}
 \references{
-This R package uses the Quandl API. For more information go to https://www.quandl.com/help/api. For more help on the package itself go to http://www.quandl.com/help/r.
+This R package uses the Quandl API. For more information go to \url{https://www.quandl.com/docs/api}. For more help on the package itself go to \url{http://www.quandl.com/help/r}.
 }
 \seealso{
-\code{\link{Quandl.auth}}
+\code{\link{Quandl.api_key}}
 }
 

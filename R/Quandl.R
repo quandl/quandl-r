@@ -1,56 +1,29 @@
-Quandl.auth_token <- NA
-Quandl.host <- 'https://www.quandl.com/api'
-Quandl.version <- '2.6.1'
-Quandl.curl <- NA
-
-
-#' Query or set Quandl API token
-#' @param auth_token Optionally passed parameter to set Quandl \code{auth_token}.
-#' @return Returns invisibly the currently set \code{auth_token}.
-#' @seealso \code{\link{Quandl}}
-#' @examples \dontrun{
-#' Quandl.auth('foobar')
-#' }
-#' @export
-Quandl.auth <- function(auth_token) {
-  # Checks if a new token is being assigned and assigns it.
-  if (!missing(auth_token)) {
-    assignInMyNamespace('Quandl.auth_token', auth_token)
-  }
-  invisible(Quandl.auth_token)
-}
-
-#' Retrieve metadata from a Quandl series
-#' @param x A Quandl time series object with attached meta data.
-#' @return Returns a list of meta data about the series.
-#' @seealso \code{\link{Quandl}}
+#' Retrieve metadata from a Quandl series or search results
+#' @param x A Quandl time series object or search results with attached meta data.
+#' @return Returns a list of meta data about the series or search results.
+#' @seealso \code{\link{Quandl}}, \code{\link{Quandl.search}}
 #' @examples \dontrun{
 #' metaData(ts)
 #' }
 #' @export
-metaData <- function(x){
+metaData <- function(x) {
   attr(x, "meta")
 }
 
-#' Pulls Data from the Quandl Dataset endpoint and formats
+#' Retrives Data from the Quandl Dataset endpoint and formats
 #'
-#' An authentication token is needed for access to the Quandl API multiple times. Set your \code{access_token} with \code{Quandl.auth} function.
+#' @details Set your \code{api_key} with \code{Quandl.api_key} function. For instructions on finding your api key go to \url{https://www.quandl.com/account/api}
 #'
-#' For instructions on finding your authentication token go to www.quandl.com/API
 #' @param code Dataset code on Quandl specified as a string or an array of strings.
 #' @param type Type of data returned specified as string. Can be 'raw', 'ts', 'zoo', 'xts' or 'timeSeries'.
-#' @param start_date Use to truncate data by start date in 'yyyy-mm-dd' format.
-#' @param end_date Use to truncate data by end date in 'yyyy-mm-dd' format.
-#' @param transformation Apply Quandl API data transformations.
+#' @param transform Apply Quandl API data transformations.
 #' @param collapse Collapse frequency of Data.
-#' @param sort Select if data is given to R in ascending or descending formats. Helpful for the rows parameter.
+#' @param order Select if data is given to R in ascending or descending formats. Helpful for the rows parameter.
 #' @param meta Returns meta data in list format as well as data.
-#' @param authcode Authentication Token for extended API access by default set by \code{\link{Quandl.auth}}.
-#' @param ... Additional named values that are interpretted as api parameters.
+#' @param ... Additional named values that are interpreted as Quandl API parameters. Please see \url{https://www.quandl.com/docs/api#retrieve-data-and-metadata} for a full list of parameters.
 #' @return Depending on the type the class is either data.frame, time series, xts, zoo or timeSeries.
-#' @references This R package uses the Quandl API. For more information go to https://www.quandl.com/help/api. For more help on the package itself go to http://www.quandl.com/help/r.
-#' @author Raymond McTaggart
-#' @seealso \code{\link{Quandl.auth}}
+#' @references This R package uses the Quandl API. For more information go to \url{https://www.quandl.com/docs/api}. For more help on the package itself go to \url{http://www.quandl.com/help/r}.
+#' @seealso \code{\link{Quandl.api_key}}
 #' @examples \dontrun{
 #' quandldata = Quandl("NSE/OIL", collapse="monthly", start_date="2013-01-01", type="ts")
 #' plot(quandldata[,1])
@@ -62,19 +35,15 @@ metaData <- function(x){
 #' @importFrom xts xts
 #' @importFrom xts as.xts
 #' @export
-Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts', 'timeSeries'), start_date, end_date, transformation = c('', 'diff', 'rdiff', 'normalize', 'cumul', 'rdiff_from'), collapse = c('', 'daily', 'weekly', 'monthly', 'quarterly', 'annual'), sort = c('desc', 'asc'), meta = FALSE, authcode = Quandl.auth(), ...) {
+Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts', 'timeSeries'), transform = c('', 'diff', 'rdiff', 'normalize', 'cumul', 'rdiff_from'), collapse = c('', 'daily', 'weekly', 'monthly', 'quarterly', 'annual'), order = c('desc', 'asc'), meta = FALSE, ...) {
   params = list()
-  ## Flag to indicate frequency change due to collapse
-  freqflag = FALSE
-  ## Default to single dataset
-  multiset = FALSE
   ## Default to entire dataset
   col = NULL
   ## Check params
   type                    <- match.arg(type)
-  params$transformation   <- match.arg(transformation)
+  params$transform   <- match.arg(transform)
   params$collapse         <- match.arg(collapse)
-  params$sort_order       <- match.arg(sort)
+  params$order       <- match.arg(order)
 
   if (type == 'timeSeries' && system.file(package = type) == "") {
     stop("Package ", type, " needed to use this type", call. = FALSE)
@@ -121,27 +90,32 @@ Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts', 'timeSeries'), star
     return(c(code, col))
   }
 
-  if (!is.na(authcode)) {
-    params$auth_token <- authcode
-  }
-
-  ## Add API options
-  if (!missing(start_date)) {
-    params$trim_start <- as.Date(start_date)
-  }
-
-  if (!missing(end_date)) {
-    params$trim_end <- as.Date(end_date)
-  }
-
-  # if (type != "raw")
-  #     params$sort_order <- "asc"
   if (params$collapse %in% c("weekly", "monthly", "quarterly", "annual")) {
     freq   <- frequency2integer(collapse)
-    freqflag = TRUE
   }
 
   params <- c(params, list(...))
+
+  ## validate date format if supplied
+  if (!is.null(params$start_date)) {
+    as.Date(params$start_date)
+  }
+
+  if (!is.null(params$end_date)) {
+    as.Date(params$end_date)
+  }
+
+  if (!is.null(params$transformation)) {
+    warning("argument transformation is deprecated; please use transform instead.", 
+      call. = FALSE)
+  }
+
+  if (!is.null(params$sort)) {
+    warning("argument sort is deprecated; please use order instead.", 
+      call. = FALSE)
+  }
+
+
   if(!is.null(params$force_irregular)) {
     force_irregular <- TRUE
     params[[which(names(params) == "force_irregular")]] <- NULL
@@ -157,7 +131,7 @@ Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts', 'timeSeries'), star
     col <- code_col[2]
 
     if(!is.null(col) && !is.na(col)) {
-      params$column <- col
+      params$column_index <- col
     }
 
     if(meta) {
@@ -181,7 +155,7 @@ Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts', 'timeSeries'), star
       col <- code_col[2]
 
       if(!is.null(col) && !is.na(col)) {
-        tmp.params$column <- col
+        tmp.params$column_index <- col
       }
 
       merge_data <- tryCatch(Quandl.dataset.get(c, tmp.params), error=function(e) {
@@ -207,16 +181,10 @@ Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts', 'timeSeries'), star
       }
     }
 
-    multiset = TRUE
-    freqflag = TRUE ## Frequency not automatically supported with multisets
     if(params$collapse != '') {
       freq <- frequency2integer(params$collapse)
     } else {
       freq <- 365
-    }
-
-    if(type == "raw" && params$sort_order == "desc") {
-      data <- data[order(data[,1], decreasing=TRUE),]
     }
   }
 
@@ -279,17 +247,15 @@ Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts', 'timeSeries'), star
   return(data_out)
 }
 
-#' Pulls Data from the Quandl Dataset endpoint
+#' Retrieves Data from the Quandl Dataset endpoint
 #'
-#' An authentication token is needed for access to the Quandl API multiple times. Set your \code{access_token} with \code{Quandl.auth} function.
+#' @details Set your \code{api_key} with \code{Quandl.api_key} function. For instructions on finding your api key go to \url{https://www.quandl.com/account/api}
 #'
-#' For instructions on finding your authentication token go to https://www.quandl.com/account
-#' @param code Dataset code on Quandl specified as a string or an array of strings.
-#' @param params A list of parameters to be passed to the Quandl api.
+#' @param code Dataset code on Quandl specified as a string.
+#' @param params A list of parameters to be passed to the Quandl API.
 #' @return Returns a data.frame of the requested data
-#' @references This R package uses the Quandl API. For more information go to https://www.quandl.com/help/api. For more help on the package itself go to http://www.quandl.com/help/r.
-#' @author Raymond McTaggart
-#' @seealso \code{\link{Quandl.auth}}
+#' @references This R package uses the Quandl API. For more information go to \url{https://www.quandl.com/docs/api}. For more help on the package itself go to \url{http://www.quandl.com/help/r}.
+#' @seealso \code{\link{Quandl.api_key}}
 #' @examples \dontrun{
 #' quandldata = Quandl.dataset.get("NSE/OIL", list(rows=5))
 #' plot(quandldata[,1])
@@ -303,24 +269,17 @@ Quandl.dataset.get <- function(code, params) {
     meta <- FALSE
   }
 
-  if(!is.null(params$auth_token)) {
-    authcode <- params$auth_token
-  } else {
-    authcode <- ""
-  }
+  path <- paste0("datasets/", code)
+  json <- do.call(quandl.api, c(path=path, params))$dataset
 
-  path <- path <- paste("datasets/", code, sep="")
-  json <- do.call(quandl.api, c(path=path, params))
-  #return(json)
-  #print(json)
   if (length(json$data) == 0) {
     stop("Requested Entity does not exist.")
   }
 
   ## Detect frequency
   # freq <- frequency2integer(json$frequency)
-  if (!is.null(params$column) && length(json$column_names) > 2) {
-    json$column_names = json$column_names[c(1, as.numeric(params$column)+1)]
+  if (!is.null(params$column_index) && length(json$column_names) > 2) {
+    json$column_names = json$column_names[c(1, as.numeric(params$column_index)+1)]
   }
 
   ## Shell data from JSON's list
@@ -344,18 +303,9 @@ Quandl.dataset.get <- function(code, params) {
   }
 
   if (meta) {
-    source_json <- quandl.api(path=paste("sources", json$source_code, sep="/"), auth_token=authcode)
-    meta <- list(
-      frequency   = json$frequency,
-      name        = json$name,
-      description = json$description,
-      updated     = json$updated_at,
-      source_code = json$source_code,
-      code        = paste(json$source_code, json$code, sep = "/"),
-      source_name = source_json$name,
-      source_link = source_json$host,
-      source_description = source_json$description
-    )
+    meta <- json
+    # all attributes except for the data itself
+    meta$data <- NULL
     attr(data, "meta") <- meta
   }
 

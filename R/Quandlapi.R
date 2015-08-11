@@ -1,63 +1,81 @@
-#' Pulls Data from the Quandl API
+#' Executes Quandl API calls
 #'
-#' An authentication token is needed for access to the Quandl API multiple times. Set your \code{access_token} with \code{Quandl.auth} function.
+#' @details Set your \code{api_key} with \code{Quandl.api_key} function. For instructions on finding your api key go to \url{https://www.quandl.com/account/api}
 #'
-#' For instructions on finding your authentication token go to https://www.quandl.com/account
-#' @param version Set to the version of the Quandl API you want to access.
 #' @param path Path to api resource.
 #' @param http Type of http request sent.
 #' @param postdata A character or raw vector that is sent in a body.
-#' @param ... Named values that are interpretted as api parameters.
-#' @return Website response.
-#' @references This R package uses the Quandl API. For more information go to https://www.quandl.com/help/api. For more help on the package itself go to http://www.quandl.com/help/r.
-#' @author Raymond McTaggart
-#' @seealso \code{\link{Quandl.auth}}
+#' @param ... Named values that are interpretted as Quandl API parameters.
+#' @return Quandl API response.
+#' @references This R package uses the Quandl API. For more information go to \url{https://www.quandl.com/docs/api}. For more help on the package itself go to \url{http://www.quandl.com/help/r}.
+#' @seealso \code{\link{Quandl.api_key}}
 #' @examples \dontrun{
-#' quandldata = quandl.api(version="v1", path="datasets/NSE/OIL", http="GET")
+#' quandldata = quandl.api(path="datasets/NSE/OIL", http="GET")
 #' plot(quandldata[,1])
 #' }
 #' @export
-quandl.api <- function(version="v1", path, http = c('GET', 'PUT', 'POST', 'DELETE'), postdata = NULL, ...) {
-
-  params <- list(...)
-  params$request_source <- 'R'
-  params$request_version <- Quandl.version
-  
+quandl.api <- function(path, http = c('GET', 'PUT', 'POST', 'DELETE'), postdata = NULL, ...) {
   http <- match.arg(http)
-  request_url <- paste(paste(Quandl.host, version, path, sep="/"), "?", sep="")
-  param_names <- names(params)
-  if(length(params) > 0) {
-    for(i in 1:length(params)) {
-      request_url <- paste(request_url, "&", param_names[i], "=", params[[i]], sep="")
-    }
-  }
+  request <- quandl.api.build_request(path, ...)
+  response <- httr::VERB(http, request$request_url, config = do.call(httr::add_headers, request$headers),
+                                      body = postdata, query = request$params)
 
-  switch(http,
-         GET={
-           response <- httr::GET(request_url)
-         },
-         PUT={
-           response <- httr::PUT(request_url, body=postdata)
-         },
-         POST={
-           response <- httr::POST(request_url, body=postdata)
-         },
-         DELETE={
-           response <- httr::DELETE(request_url)
-         }
-  )
+  quandl.api.handl_errors(response)
+  text_response <- httr::content(response, as="text")
 
-
-  if(httr::status_code(response) == 500) {
-    stop("Sorry but Quandl is currently down. Please visit our twitter (@quandl) for more information.", call. = FALSE)
-  } else if (httr::status_code(response) != 200) {
-    stop(httr::content(response, as="text"), call. = FALSE)
-  } else {
-    text_response <- httr::content(response, as="text")
-    return(jsonlite::fromJSON(text_response, simplifyVector=TRUE))
-  }
-
-
+  json_response <- tryCatch(jsonlite::fromJSON(text_response, simplifyVector=TRUE), error = function(e) {
+      stop(e, " Failed to parse response: ", text_response)
+    })
+  json_response
 }
 
+quandl.api.download_file <- function(path, filename, ...) {
+  request <- quandl.api.build_request(path, ...)
+  response <- httr::GET(request$request_url, config = do.call(httr::add_headers, request$headers),
+                               query = request$params, httr::write_disk(filename, overwrite = TRUE), httr::progress())
+  quandl.api.handl_errors(response)
+  cat("Saved to file:", response$content)
+}
 
+quandl.api.build_request <- function(path, ...) {
+  params <- list(...)
+  # ensure Dates convert to characters or else curl will convert the Dates to timestamp
+  params <- quandl.api.convert_dates_to_character(params)
+
+  request_url <- paste(Quandl.base_url(), path, sep="/")
+  accept_value <- "application/json"
+  if (!is.null(Quandl.api_version())) {
+    accept_value <- paste0('application/json, application/vnd.quandl+json;version=', Quandl.api_version())
+  }
+
+  quandl_version <- as.character(packageVersion('Quandl'))
+  headers <- list(Accept = accept_value, `Request-Source` = 'R', `Request-Source-Version` = quandl_version)
+
+  if (!is.null(Quandl.api_key())) {
+    headers <- c(headers, list(`X-Api-Token` = Quandl.api_key()))
+  }
+
+  # query param api_key takes precedence
+  if (!is.null(params$api_key)) {
+    headers <- c(headers, list(`X-Api-Token` = params$api_key))
+    params$api_key <- NULL
+  }
+
+  list(request_url = request_url, headers = headers, params = params)
+}
+
+quandl.api.handl_errors <- function(response) {
+  if (!(httr::status_code(response) >= 200 && httr::status_code(response) < 300)) {
+    stop(httr::content(response, as="text"), call. = FALSE)
+  }
+}
+
+quandl.api.convert_dates_to_character <- function(params) {
+  convert_date_to_character <- function(param) {
+    if (class(param) == 'Date') {
+      param <- as.character(param)
+    }
+    param
+  }
+  lapply(params, convert_date_to_character)
+}

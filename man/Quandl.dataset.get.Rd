@@ -7,15 +7,18 @@
 Quandl.dataset.get(code, params)
 }
 \arguments{
-\item{code}{Dataset code on Quandl specified as a string or an array of strings.}
+\item{code}{Dataset code on Quandl specified as a string.}
 
-\item{params}{A list of parameters to be passed to the Quandl api.}
+\item{params}{A list of parameters to be passed to the Quandl API.}
 }
 \value{
 Returns a data.frame of the requested data
 }
 \description{
-Set your \code{api_key} with \code{Quandl.api_key} function. For instructions on finding your api key go to https://www.quandl.com/account
+Retrieves Data from the Quandl Dataset endpoint
+}
+\details{
+Set your \code{api_key} with \code{Quandl.api_key} function. For instructions on finding your api key go to \url{https://www.quandl.com/account/api}
 }
 \examples{
 \dontrun{
@@ -24,7 +27,7 @@ plot(quandldata[,1])
 }
 }
 \references{
-This R package uses the Quandl API. For more information go to https://www.quandl.com/docs/api. For more help on the package itself go to http://www.quandl.com/help/r.
+This R package uses the Quandl API. For more information go to \url{https://www.quandl.com/docs/api}. For more help on the package itself go to \url{http://www.quandl.com/help/r}.
 }
 \seealso{
 \code{\link{Quandl.api_key}}

@@ -8,7 +8,7 @@
 #' @param per_page Number of results returned per page.
 #' @param ... Additional named values that are interpretted as api parameters e.g., page.
 #' @return A list of the search results.
-#' @references This R package uses the Quandl API. For more information go to http://www.quandl.com/docs/api. For more help on the package itself go to http://www.quandl.com/help/r.
+#' @references This R package uses the Quandl API. For more information go to \url{https://www.quandl.com/docs/api}. For more help on the package itself go to \url{http://www.quandl.com/help/r}.
 #' @seealso \code{\link{Quandl.api_key}}
 #' @examples \dontrun{
 #' search.results <- Quandl.search("oil")

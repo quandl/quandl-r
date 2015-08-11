@@ -2,7 +2,7 @@
 % Please edit documentation in R/Quandlapi.R
 \name{quandl.api}
 \alias{quandl.api}
-\title{Pulls Data from the Quandl API}
+\title{Executes Quandl API calls}
 \usage{
 quandl.api(path, http = c("GET", "PUT", "POST", "DELETE"), postdata = NULL,
   ...)
@@ -14,16 +14,16 @@ quandl.api(path, http = c("GET", "PUT", "POST", "DELETE"), postdata = NULL,
 
 \item{postdata}{A character or raw vector that is sent in a body.}
 
-\item{...}{Named values that are interpretted as api parameters.}
+\item{...}{Named values that are interpretted as Quandl API parameters.}
 }
 \value{
-Website response.
+Quandl API response.
 }
 \description{
-An authentication token is needed for access to the Quandl API multiple times. Set your \code{access_token} with \code{Quandl.api_key} function.
+Executes Quandl API calls
 }
 \details{
-For instructions on finding your authentication token go to https://www.quandl.com/account/api
+Set your \code{api_key} with \code{Quandl.api_key} function. For instructions on finding your api key go to \url{https://www.quandl.com/account/api}
 }
 \examples{
 \dontrun{
@@ -32,7 +32,7 @@ plot(quandldata[,1])
 }
 }
 \references{
-This R package uses the Quandl API. For more information go to https://www.quandl.com/docs/api. For more help on the package itself go to http://www.quandl.com/help/r.
+This R package uses the Quandl API. For more information go to \url{https://www.quandl.com/docs/api}. For more help on the package itself go to \url{http://www.quandl.com/help/r}.
 }
 \seealso{
 \code{\link{Quandl.api_key}}

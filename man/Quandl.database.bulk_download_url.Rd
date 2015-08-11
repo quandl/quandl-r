@@ -7,26 +7,26 @@
 Quandl.database.bulk_download_url(database_code, ...)
 }
 \arguments{
-\item{database_code}{Database code on Quandl specified as a string}
+\item{database_code}{Database code on Quandl specified as a string.}
 
-\item{...}{Additional named values that are interpretted as api parameters e.g., download_type.}
+\item{...}{Additional named values that are interpreted as Quandl API parameters. Please see \url{https://www.quandl.com/docs/api#entire-database} for a full list of parameters.}
 }
 \value{
-Returns the download url
+Returns the download url.
 }
 \description{
-An api key is needed for access to the Quandl API multiple times. Set your \code{access_token} with \code{Quandl.api_key} function.
+Returns the bulk download url
 }
 \details{
-For instructions on finding your api key go to https://www.quandl.com/account/api
+Set your \code{api_key} with \code{Quandl.api_key} function. For instructions on finding your api key go to \url{https://www.quandl.com/account/api}
 }
 \examples{
 \dontrun{
-quandldata = Quandl.database.download_url("NSE", download_type="partial")
+url = Quandl.database.download_url("NSE", download_type="partial")
 }
 }
 \references{
-This R package uses the Quandl API. For more information go to https://www.quandl.com/docs/api. For more help on the package itself go to http://www.quandl.com/help/r.
+This R package uses the Quandl API. For more information go to \url{https://www.quandl.com/docs/api}. For more help on the package itself go to \url{http://www.quandl.com/help/r}.
 }
 \seealso{
 \code{\link{Quandl.api_key}}

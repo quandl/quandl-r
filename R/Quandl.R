@@ -12,7 +12,7 @@ metaData <- function(x) {
 
 #' Retrives Data from the Quandl Dataset endpoint and formats
 #'
-#' @details Set your \code{api_key} with \code{Quandl.api_key} function. For instructions on finding your api key go to https://www.quandl.com/account/api
+#' @details Set your \code{api_key} with \code{Quandl.api_key} function. For instructions on finding your api key go to \url{https://www.quandl.com/account/api}
 #'
 #' @param code Dataset code on Quandl specified as a string or an array of strings.
 #' @param type Type of data returned specified as string. Can be 'raw', 'ts', 'zoo', 'xts' or 'timeSeries'.
@@ -20,9 +20,9 @@ metaData <- function(x) {
 #' @param collapse Collapse frequency of Data.
 #' @param order Select if data is given to R in ascending or descending formats. Helpful for the rows parameter.
 #' @param meta Returns meta data in list format as well as data.
-#' @param ... Additional named values that are interpreted as api parameters. Please see \url{https://www.quandl.com/docs/api#retrieve-data-and-metadata} a full list of parameters.
+#' @param ... Additional named values that are interpreted as Quandl API parameters. Please see \url{https://www.quandl.com/docs/api#retrieve-data-and-metadata} for a full list of parameters.
 #' @return Depending on the type the class is either data.frame, time series, xts, zoo or timeSeries.
-#' @references This R package uses the Quandl API. For more information go to \url{https://www.quandl.com/docs/api}. For more help on the package itself go to s \url{http://www.quandl.com/help/r}.
+#' @references This R package uses the Quandl API. For more information go to \url{https://www.quandl.com/docs/api}. For more help on the package itself go to \url{http://www.quandl.com/help/r}.
 #' @seealso \code{\link{Quandl.api_key}}
 #' @examples \dontrun{
 #' quandldata = Quandl("NSE/OIL", collapse="monthly", start_date="2013-01-01", type="ts")
@@ -249,12 +249,12 @@ Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts', 'timeSeries'), tran
 
 #' Retrieves Data from the Quandl Dataset endpoint
 #'
-#' Set your \code{api_key} with \code{Quandl.api_key} function. For instructions on finding your api key go to https://www.quandl.com/account
+#' @details Set your \code{api_key} with \code{Quandl.api_key} function. For instructions on finding your api key go to \url{https://www.quandl.com/account/api}
 #'
-#' @param code Dataset code on Quandl specified as a string or an array of strings.
-#' @param params A list of parameters to be passed to the Quandl api.
+#' @param code Dataset code on Quandl specified as a string.
+#' @param params A list of parameters to be passed to the Quandl API.
 #' @return Returns a data.frame of the requested data
-#' @references This R package uses the Quandl API. For more information go to https://www.quandl.com/docs/api. For more help on the package itself go to http://www.quandl.com/help/r.
+#' @references This R package uses the Quandl API. For more information go to \url{https://www.quandl.com/docs/api}. For more help on the package itself go to \url{http://www.quandl.com/help/r}.
 #' @seealso \code{\link{Quandl.api_key}}
 #' @examples \dontrun{
 #' quandldata = Quandl.dataset.get("NSE/OIL", list(rows=5))

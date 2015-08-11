@@ -13,7 +13,7 @@ Quandl.auth(auth_token)
 Returns invisibly the currently set \code{auth_token}.
 }
 \description{
-Query or set Quandl API token
+Deprecated. Alias of \code{\link{Quandl.api_key}}
 }
 \examples{
 \dontrun{

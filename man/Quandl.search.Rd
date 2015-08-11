@@ -30,7 +30,7 @@ search.results <- Quandl.search("oil")
 }
 }
 \references{
-This R package uses the Quandl API. For more information go to http://www.quandl.com/docs/api. For more help on the package itself go to http://www.quandl.com/help/r.
+This R package uses the Quandl API. For more information go to \url{https://www.quandl.com/docs/api}. For more help on the package itself go to \url{http://www.quandl.com/help/r}.
 }
 \seealso{
 \code{\link{Quandl.api_key}}

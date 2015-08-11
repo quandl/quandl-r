@@ -1,6 +1,6 @@
 reset_config <- function() {
   Quandl.api_key(NULL)
-  Quandl.api_version(NULL)
+  Quandl:::Quandl.api_version(NULL)
 }
 
 mock_data <- function(database_code = "NSE", dataset_code = "OIL") {

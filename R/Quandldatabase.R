@@ -1,16 +1,15 @@
 
 #' Returns the bulk download url
 #'
-#' An api key is needed for access to the Quandl API multiple times. Set your \code{access_token} with \code{Quandl.api_key} function.
+#' @details Set your \code{api_key} with \code{Quandl.api_key} function. For instructions on finding your api key go to \url{https://www.quandl.com/account/api}
 #'
-#' For instructions on finding your api key go to https://www.quandl.com/account/api
-#' @param database_code Database code on Quandl specified as a string
-#' @param ... Additional named values that are interpretted as api parameters e.g., download_type.
-#' @return Returns the download url
-#' @references This R package uses the Quandl API. For more information go to https://www.quandl.com/docs/api. For more help on the package itself go to http://www.quandl.com/help/r.
+#' @param database_code Database code on Quandl specified as a string.
+#' @param ... Additional named values that are interpreted as Quandl API parameters. Please see \url{https://www.quandl.com/docs/api#entire-database} for a full list of parameters.
+#' @return Returns the download url.
+#' @references This R package uses the Quandl API. For more information go to \url{https://www.quandl.com/docs/api}. For more help on the package itself go to \url{http://www.quandl.com/help/r}.
 #' @seealso \code{\link{Quandl.api_key}}
 #' @examples \dontrun{
-#' quandldata = Quandl.database.download_url("NSE", download_type="partial")
+#' url = Quandl.database.download_url("NSE", download_type="partial")
 #' }
 #' @export
 Quandl.database.bulk_download_url <- function(database_code, ...) {
@@ -41,17 +40,16 @@ Quandl.database.bulk_download_url <- function(database_code, ...) {
 
 #' Downloads a zip with all data from a Quandl database
 #'
-#' Set your \code{access_token} with \code{Quandl.api_key} function.
+#' @details Set your \code{api_key} with \code{Quandl.api_key} function. For instructions on finding your api key go to \url{https://www.quandl.com/account/api}
 #'
-#' For instructions on finding your api key go to https://www.quandl.com/account
-#' @param database_code Database code on Quandl specified as a string
-#' @param filename Filename where data is to be downloaded
-#' @param ... Additional named values that are interpretted as api parameters e.g., download_type.
-#' @return VALUE
-#' @references This R package uses the Quandl API. For more information go to https://www.quandl.com/docs/api. For more help on the package itself go to http://www.quandl.com/help/r.
+#' @param database_code Database code on Quandl specified as a string.
+#' @param filename Filename (including path) of file to download.
+#' @param ... Additional named values that are interpreted as Quandl API parameters. Please see \url{https://www.quandl.com/docs/api#entire-database} for a full list of parameters.
+#' @return The filename of the downloaded file.
+#' @references This R package uses the Quandl API. For more information go to \url{https://www.quandl.com/docs/api}. For more help on the package itself go to \url{http://www.quandl.com/help/r}.
 #' @seealso \code{\link{Quandl.api_key}}
 #' @examples \dontrun{
-#' quandldata = Quandl.database.download_url("NSE", download_type="partial")
+#' Quandl.database.bulk_download_to_file("NSE")
 #' }
 #' @export
 Quandl.database.bulk_download_to_file <- function(database_code, filename, ...) {

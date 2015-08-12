@@ -36,7 +36,7 @@ This will then extend your usage.
 
 # Usage
 
-Once you find the data you would like to load into R on Quandl, copy the Quandl code from the description box and paste it into the function.
+The Quandl package functions use the Quandl API. Optional Quandl API query parameters can be passed into each function. For more information on supported query parameters, please see the [Quandl API documentation page](https://www.quandl.com/docs/api). Once you find the data you would like to load into R on Quandl, copy the Quandl code from the description box and paste it into the function.
 
 ```r
 data <- Quandl("NSE/OIL")
@@ -57,8 +57,24 @@ plot(stl(Quandl("GOOG/NASDAQ_GOOG",type="ts",collapse="monthly")[,1],s.window="p
 
 Note: `collapse` is a Quandl API query parameter. Click [here](https://www.quandl.com/docs/api#retrieve-data-and-metadata) for a full list of query parameter options.  
 
-## zoo xts and ts Return Types
-[zoo](https://cran.r-project.org/web/packages/zoo/index.html), [xts](https://cran.r-project.org/web/packages/xts/index.html), and [ts](https://stat.ethz.ch/R-manual/R-devel/library/stats/html/ts.html) have their own time series date formats. For example:
+## Return Types
+
+The supported return types for the `Quandl(code)` function are:
+* raw (which returns a data.frame)
+* [ts](https://stat.ethz.ch/R-manual/R-devel/library/stats/html/ts.html)
+* [zoo](https://cran.r-project.org/web/packages/zoo/index.html)
+* [xts](https://cran.r-project.org/web/packages/xts/index.html)
+* [timeSeries](https://cran.r-project.org/web/packages/timeSeries/index.html)
+
+To request a specific type, assign the `type` argument the return type:
+
+```r
+data <- Quandl('NSE/OIL', type = "xts")
+```
+
+### Date Formats
+
+zoo, xts, and ts have their own time series date formats. For example:
 
 ```r
 data <- Quandl('NSE/OIL', collapse = "quarterly", type = "zoo", limit = 3)
@@ -116,7 +132,9 @@ For a full list of optional query parameters for downloading an entire database,
 ## Search
 Searching Quandl from within the R console is now supported. The search function is:
 
-    Quandl.search(query = "Search Term", page = n, database_code = "Specific database to search", silent = TRUE|FALSE)
+```r
+Quandl.search(query = "Search Term", page = n, database_code = "Specific database to search", silent = TRUE|FALSE)
+```
 
 * **query**: Required; Your search term, as a string
 * **page**: Optional; page number of search you wish returned, defaults to 1.
@@ -136,27 +154,31 @@ Which outputs to console a list containing the following information for every i
 ### Example
 A search for Oil,  searching only the National Stock Exchange of India (NSE).
 
-	Quandl.search("Oil", database_code = "NSE", per_page = 3)
+```r
+Quandl.search("Oil", database_code = "NSE", per_page = 3)
+```
 	
 prints:
 
-	Oil India Limited
-	Code: NSE/OIL
-	Desc: Historical prices for Oil India Limited (OIL), (ISIN: INE274J01014),  National Stock Exchange of India.
-	Freq: daily
-	Cols: Date | Open | High | Low | Last | Close | Total Trade Quantity | Turnover (Lacs)
+```r
+Oil India Limited
+Code: NSE/OIL
+Desc: Historical prices for Oil India Limited<br><br>National Stock Exchange of India<br><br>Ticker: OIL<br><br>ISIN: INE274J01014
+Freq: daily
+Cols: Date | Open | High | Low | Last | Close | Total Trade Quantity | Turnover (Lacs)
 
-	Crude Oil (petroleum) Price
-	Code: IMF/POILAPSP_INDEX
-	Desc: Crude Oil (petroleum), Price index, 2005 = 100, simple average of three spot prices; Dated Brent, West Texas Intermediate, and the Dubai Fateh
-	Freq: monthly
-	Cols: Date | Price
+Oil Country Tubular Limited
+Code: NSE/OILCOUNTUB
+Desc: Historical prices for Oil Country Tubular Limited<br><br>National Stock Exchange of India<br><br>Ticker: OILCOUNTUB<br><br>ISIN: INE591A01010
+Freq: daily
+Cols: Date | Open | High | Low | Last | Close | Total Trade Quantity | Turnover (Lacs)
 
-	China Crude Oil Consumption
-	Code: INDEXMUNDI/ENERGY_CHINA_CRUDEOIL
-	Desc: Energy production of Crude Oil in China. Units=Thousand Barrels per Day
-	Freq: annual
-	Cols: Year | Thousand Barrels per Day
+Gulf Oil Corporation Limited
+Code: NSE/GULFOILCOR
+Desc: Historical prices for Gulf Oil Corporation Limited (GULFOILCOR), (ISIN: INE077F01027),  National Stock Exchange of India.
+Freq: daily
+Cols: Date | Open | High | Low | Last | Close | Total Trade Quantity | Turnover (Lacs)
+```
 
 
 # Additional Resources

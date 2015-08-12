@@ -20,6 +20,7 @@ metaData <- function(x) {
 #' @param collapse Collapse frequency of Data.
 #' @param order Select if data is given to R in ascending or descending formats. Helpful for the rows parameter.
 #' @param meta Adds meta data as an attribute to the returned Data.
+#' @param force_irregular When set to TRUE, forces the index of the Data to be of date format yyyy-mm-dd
 #' @param ... Additional named values that are interpreted as Quandl API parameters. Please see \url{https://www.quandl.com/docs/api#retrieve-data-and-metadata} for a full list of parameters.
 #' @return Depending on the type the class is either data.frame, time series, xts, zoo or timeSeries.
 #' @references This R package uses the Quandl API. For more information go to \url{https://www.quandl.com/docs/api}. For more help on the package itself go to \url{https://www.quandl.com/help/r}.
@@ -35,7 +36,7 @@ metaData <- function(x) {
 #' @importFrom xts xts
 #' @importFrom xts as.xts
 #' @export
-Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts', 'timeSeries'), transform = c('', 'diff', 'rdiff', 'normalize', 'cumul', 'rdiff_from'), collapse = c('', 'daily', 'weekly', 'monthly', 'quarterly', 'annual'), order = c('desc', 'asc'), meta = FALSE, ...) {
+Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts', 'timeSeries'), transform = c('', 'diff', 'rdiff', 'normalize', 'cumul', 'rdiff_from'), collapse = c('', 'daily', 'weekly', 'monthly', 'quarterly', 'annual'), order = c('desc', 'asc'), meta = FALSE, force_irregular = FALSE, ...) {
   params = list()
   ## Default to entire dataset
   col = NULL
@@ -113,14 +114,6 @@ Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts', 'timeSeries'), tran
   if (!is.null(params$sort)) {
     warning("argument sort is deprecated; please use order instead.", 
       call. = FALSE)
-  }
-
-
-  if(!is.null(params$force_irregular)) {
-    force_irregular <- TRUE
-    params[[which(names(params) == "force_irregular")]] <- NULL
-  } else {
-    force_irregular <- FALSE
   }
 
   ## Download and parse data

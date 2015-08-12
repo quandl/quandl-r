@@ -7,7 +7,7 @@
 Quandl(code, type = c("raw", "ts", "zoo", "xts", "timeSeries"),
   transform = c("", "diff", "rdiff", "normalize", "cumul", "rdiff_from"),
   collapse = c("", "daily", "weekly", "monthly", "quarterly", "annual"),
-  order = c("desc", "asc"), meta = FALSE, ...)
+  order = c("desc", "asc"), meta = FALSE, force_irregular = FALSE, ...)
 }
 \arguments{
 \item{code}{Dataset code on Quandl specified as a string or an array of strings.}
@@ -21,6 +21,8 @@ Quandl(code, type = c("raw", "ts", "zoo", "xts", "timeSeries"),
 \item{order}{Select if data is given to R in ascending or descending formats. Helpful for the rows parameter.}
 
 \item{meta}{Adds meta data as an attribute to the returned Data.}
+
+\item{force_irregular}{When set to TRUE, forces the index of the Data to be of date format yyyy-mm-dd}
 
 \item{...}{Additional named values that are interpreted as Quandl API parameters. Please see \url{https://www.quandl.com/docs/api#retrieve-data-and-metadata} for a full list of parameters.}
 }

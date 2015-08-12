@@ -1,21 +1,21 @@
-R-package
+Quandl R Package
 =========
 
-This is Quandl's R Package
+This is Quandl's R package. The Quandl R package uses the [Quandl API](https://www.quandl.com/docs/api). The official Quandl R package manual can be found [here](https://cran.r-project.org/web/packages/Quandl/index.html).
 
 License: MIT
 
 For more information please contact raymond@quandl.com
 
-# Installation #
+# Installation
 
-Using the 'devtools' package:
+Using the [devtools](https://cran.r-project.org/web/packages/devtools/index.html) package:
 
     install.packages("devtools")
     library(devtools)
-    install_github('quandl/R-package')
+    install_github("quandl/quandl-r")
 
-## CRAN ##
+## CRAN
 
 To install the most recent package from CRAN type:
 
@@ -24,36 +24,107 @@ To install the most recent package from CRAN type:
     
 Note that the version on CRAN might not reflect the most recent changes made to this package.
 
-# Usage #
+# Authentication
 
-Once you find the data you'd like to load into R on Quandl, copy the Quandl code from the description box and past it into the function.
+To extend your access to the Quandl API, use your [api key](https://www.quandl.com/docs/api#api-keys). To do this sign into your account (or create one) and go to your [account api key page](https://www.quandl.com/account/api). Then input your api key (with quotes):
 
-    data <- Quandl("NSE/OIL")
-
-To extend your access to the Quandl API, use your authentication token. To do this sign into your account (or create one) and go to your [account info page](https://www.quandl.com/account). Then copy your authentication token and type (with quotes):
-
-    Quandl.auth("authenticationtoken")
+```r
+Quandl.api_key("tEsTkEy123456789")
+```
 
 This will then extend your usage.
 
+# Usage
 
-### Example ###
-Create a graph of the Nasdaq, with a monthly frequency
-	 
-    plot(stl(Quandl("GOOG/NASDAQ_GOOG",type="ts",collapse="monthly")[,1],s.window="per"))
+Once you find the data you would like to load into R on Quandl, copy the Quandl code from the description box and paste it into the function.
 
+```r
+data <- Quandl("NSE/OIL")
+```
+
+To reset the package to not use an api key:
+
+```r
+Quandl.api_key(NULL)
+```
+
+## Graphing Data Example
+To create a graph of the Nasdaq, with a monthly frequency
+
+```r
+plot(stl(Quandl("GOOG/NASDAQ_GOOG",type="ts",collapse="monthly")[,1],s.window="per"))
+```
+
+Note: `collapse` is a Quandl API query parameter. Click [here](https://www.quandl.com/docs/api#retrieve-data-and-metadata) for a full list of query parameter options.  
+
+## zoo xts and ts Return Types
+[zoo](https://cran.r-project.org/web/packages/zoo/index.html), [xts](https://cran.r-project.org/web/packages/xts/index.html), and [ts](https://stat.ethz.ch/R-manual/R-devel/library/stats/html/ts.html) have their own time series date formats. For example:
+
+```r
+data <- Quandl('NSE/OIL', collapse = "quarterly", type = "zoo", limit = 3)
+```
+
+`data` will have indexes `2015 Q1`, `2015 Q2`, and `2015 Q3`:
+
+```r
+         Open  High    Low   Last  Close Total Trade Quantity Turnover (Lacs)
+2015 Q1 459.8 462.8 452.45 454.45 454.95               277225         1265.84
+2015 Q2 448.0 451.7 445.10 447.80 446.80               352514         1576.93
+2015 Q3 456.0 465.0 454.15 456.80 456.75               174154          797.79
+```
+
+If you want the time series index to be displayed as dates, you will need to set `force_irregular = TRUE`:
+
+```r
+data <- Quandl('NSE/OIL', collapse = "quarterly", type = "zoo", limit = 3, force_irregular = TRUE)
+```
+
+`data` will now have indexes `2015-03-31`, `2015-06-30`, and `2015-09-30`:
+
+```r
+            Open  High    Low   Last  Close Total Trade Quantity Turnover (Lacs)
+2015-03-31 459.8 462.8 452.45 454.45 454.95               277225         1265.84
+2015-06-30 448.0 451.7 445.10 447.80 446.80               352514         1576.93
+2015-09-30 456.0 465.0 454.15 456.80 456.75               174154          797.79
+```
+
+## Merged Dataset Data
+To get a merged representation of multiple Quandl code data, specify a vector of Quandl codes:
+
+```r
+merged_data <- Quandl(c('GOOG/NASDAQ_AAPL', 'GOOG/NASDAQ_MSFT'))
+```
+
+You can also specify specific columns to retrieve. For example, if you only want column 1 from `GOOG/NASDAQ_AAPL` and column 2 from `GOOG/NASDAQ_MSFT`:
+
+```r
+merged_data <- Quandl(c('GOOG/NASDAQ_AAPL.1', 'GOOG/NASDAQ_MSFT.2'))
+```
+
+## Downloading Entire Database
+
+An entire Database's data can be downloaded. For example, to download database `ZEA`:
+
+```r
+Quandl.database.bulk_download_to_file("ZEA", "./ZEA.zip")
+```
+
+Please set your [api key](#authentication) to download [premium databases](https://www.quandl.com/search?type=premium) you are subscribed to.
+
+For a full list of optional query parameters for downloading an entire database, click [here](https://www.quandl.com/docs/api#entire-database).
     
-## Search ##
-Searching Quandl from within the R console is now supported. An authorization token is not required, but for extended use specify your token using `Quandl.auth()`.  The search function is:
+## Search
+Searching Quandl from within the R console is now supported. The search function is:
 
-    Quandl.search(query = "Search Term", page = n, source = "Specific source to search", silent = TRUE|FALSE)
+    Quandl.search(query = "Search Term", page = n, database_code = "Specific database to search", silent = TRUE|FALSE)
 
-* **Query**: Required; Your search term, as a string
-* **Page**: Optional; page number of search you wish returned, defaults to 1.
-* **Source**: Optional; Name of a specific source you wish to search, as a string
-* **Silent**: Optional; specifies whether you wish the first three results printed to the console, defaults to True (see example below).
+* **query**: Required; Your search term, as a string
+* **page**: Optional; page number of search you wish returned, defaults to 1.
+* **per_page**: Optional; number of results per page, defaults to 10 in the Quandl R package.
+* **database_code**: Optional; Name of a specific source you wish to search, as a string
+* **silent**: Optional; specifies whether you wish the first three results printed to the console, defaults to True (see example below).
 
-Which returns a list containing the following information for every item returned by the search:
+Which outputs to console a list containing the following information for every item returned by the search:
 
 * Name
 * Quandl code
@@ -62,10 +133,10 @@ Which returns a list containing the following information for every item returne
 * Column names  
 
 
-###Example###
+### Example
 A search for Oil,  searching only the National Stock Exchange of India (NSE).
 
-	Quandl.search("Oil", source = "NSE")
+	Quandl.search("Oil", database_code = "NSE", per_page = 3)
 	
 prints:
 
@@ -73,21 +144,21 @@ prints:
 	Code: NSE/OIL
 	Desc: Historical prices for Oil India Limited (OIL), (ISIN: INE274J01014),  National Stock Exchange of India.
 	Freq: daily
-	Cols: Date|Open|High|Low|Last|Close|Total Trade Quantity|Turnover (Lacs)
+	Cols: Date | Open | High | Low | Last | Close | Total Trade Quantity | Turnover (Lacs)
 
 	Crude Oil (petroleum) Price
 	Code: IMF/POILAPSP_INDEX
 	Desc: Crude Oil (petroleum), Price index, 2005 = 100, simple average of three spot prices; Dated Brent, West Texas Intermediate, and the Dubai Fateh
 	Freq: monthly
-	Cols: Date|Price
+	Cols: Date | Price
 
 	China Crude Oil Consumption
 	Code: INDEXMUNDI/ENERGY_CHINA_CRUDEOIL
 	Desc: Energy production of Crude Oil in China. Units=Thousand Barrels per Day
 	Freq: annual
-	Cols: Year|Thousand Barrels per Day
+	Cols: Year | Thousand Barrels per Day
 
 
-# Additional Resources #
+# Additional Resources
     
-More help can be found at [Quandl](http://www.quandl.com) in our [R](http://www.quandl.com/help/r) and [API](http://www.quandl.com/help/api) help pages.
+More help can be found at [Quandl](https://www.quandl.com) in our [R](https://www.quandl.com/help/r) and [API](https://www.quandl.com/docs/api) pages.

@@ -2,23 +2,23 @@
 % Please edit documentation in R/Quandl.R
 \name{Quandl.dataset.get}
 \alias{Quandl.dataset.get}
-\title{Pulls Data from the Quandl Dataset endpoint}
+\title{Retrieves Data from the Quandl Dataset endpoint}
 \usage{
 Quandl.dataset.get(code, params)
 }
 \arguments{
-\item{code}{Dataset code on Quandl specified as a string or an array of strings.}
+\item{code}{Dataset code on Quandl specified as a string.}
 
-\item{params}{A list of parameters to be passed to the Quandl api.}
+\item{params}{A list of parameters to be passed to the Quandl API. Please see \url{https://www.quandl.com/docs/api#retrieve-data-and-metadata} for a full list of parameters.}
 }
 \value{
 Returns a data.frame of the requested data
 }
 \description{
-An authentication token is needed for access to the Quandl API multiple times. Set your \code{access_token} with \code{Quandl.auth} function.
+Retrieves Data from the Quandl Dataset endpoint
 }
 \details{
-For instructions on finding your authentication token go to https://www.quandl.com/account
+Set your \code{api_key} with \code{Quandl.api_key} function. For instructions on finding your api key go to \url{https://www.quandl.com/account/api}
 }
 \examples{
 \dontrun{
@@ -26,13 +26,7 @@ quandldata = Quandl.dataset.get("NSE/OIL", list(rows=5))
 plot(quandldata[,1])
 }
 }
-\author{
-Raymond McTaggart
-}
-\references{
-This R package uses the Quandl API. For more information go to https://www.quandl.com/help/api. For more help on the package itself go to http://www.quandl.com/help/r.
-}
 \seealso{
-\code{\link{Quandl.auth}}
+\code{\link{Quandl.api_key}}, \code{\link{Quandl}}
 }
 

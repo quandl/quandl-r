@@ -1,76 +1,43 @@
 #' Search the Quandl database
 #'
-#' An authentication token is needed for access to the Quandl API multiple times. Set your \code{access_token} with \code{Quandl.auth} function.
+#' @details Set your \code{api_key} with \code{Quandl.api_key} function. For instructions on finding your api key go to \url{https://www.quandl.com/account/api}
 #'
-#' For instructions on finding your authentication token go to https://www.quandl.com/account
+#' For instructions on finding your authentication token go to https://www.quandl.com/account/api
 #' @param query Search terms
-#' @param page Specifies which page of results to return.
-#' @param source Specifies a specific source to search within.
-#' @param silent Prints the first few results when FALSE.
-#' @param authcode Authentication Token for extended API access by default set by \code{\link{Quandl.auth}}.
-#' @return A list of the search results.
-#' @references This R package uses the Quandl API. For more information go to http://www.quandl.com/help/api. For more help on the package itself go to http://www.quandl.com/help/r.
-#' @author Raymond McTaggart
-#' @seealso \code{\link{Quandl.auth}}
+#' @param silent Prints the results when FALSE.
+#' @param per_page Number of results returned per page.
+#' @param ... Additional named values that are interpretted as Quandl API parameters.
+#' @return Search results returned as a data.frame.
+#' @seealso \code{\link{Quandl.api_key}}
 #' @examples \dontrun{
 #' search.results <- Quandl.search("oil")
 #' }
 #' @export
-Quandl.search <- function(query, page=1, source=NULL, silent=FALSE, authcode=Quandl.auth()) {
-
+Quandl.search <- function(query, silent = FALSE, per_page = 10, ...) {
   params <- list()
-  parsedQuery <- gsub(" ", "+", query)
-  params$query <- parsedQuery
+  params$query <- query
+  params$per_page <- per_page
+  params <- c(params, list(...))
 
-  # url <- paste("http://www.quandl.com/api/v1/datasets.json?query=", parsedQuery, sep="")
-  if (is.na(authcode)) {
-    warning("It would appear you aren't using an authentication token.
-            Please visit http://www.quandl.com/help/r or your usage may be limited.")
-  } else {
-    params$auth_token <- authcode
-  }
-
-  if (!is.null(source)) {
-    params$source_code <- source
-  }
-  params$page <- as.character(page)
-  path = "datasets"
+  path <- "datasets"
   json <- do.call(quandl.api, c(path=path, params))
 
-  # if there are zero returns than inform the user about it
-  params$total_count <- json$total_count
-  if(params$total_count == 0){
-    warning("It seems as we haven't found anything.")
-  }
+  # results is a dataframe
+  results <- structure(json$datasets, meta = json$meta)
 
-  # print(params$total_count)
-  # json <- try(fromJSON(response),silent=FALSE)
-  # print(json)
-  if (inherits(json, 'try-error')) {
-    stop("No data")
-  }
-
-  list <- list()
-  length(list) <- length(json$docs)
-  if (length(json$docs)>0) {
-    for (i in 1:length(json$docs)) {
-      name <- json$docs[i,]$name
-      code <- paste(json$docs[i,]$source_code, "/", json$docs[i,]$code, sep="")
-      desc <- json$docs[i,]$description
-      freq <- json$docs[i,]$frequency
-      colname <- json$docs[i,]$column_names
-      if (i < 4 & !silent) {
-        cat(name, "\nCode: ", code, "\nDesc: ", desc, "\nFreq: ", freq, "\nCols: ", paste(colname, collapse="|"), "\n\n", sep="")
+  if (!is.null(nrow(results)) && nrow(results) > 0) {
+    for (i in 1:nrow(results)) {
+      name <- results[i,]$name
+      code <- paste(results[i,]$database_code, "/", results[i,]$dataset_code, sep="")
+      desc <- results[i,]$description
+      freq <- results[i,]$frequency
+      colname <- results[i,]$column_names
+      if (!silent) {
+        cat(name, "\nCode: ", code, "\nDesc: ", desc, "\nFreq: ", freq, "\nCols: ", paste(unlist(colname), collapse=" | "), "\n\n", sep="")
       }
-      list[[i]]$name <- name
-      list[[i]]$code <- code
-      list[[i]]$description <- desc
-      list[[i]]$frequency <- freq
-      list[[i]]$column_names <- colname
-      list[[i]]$from_date <- json$docs[i,]$from_date
-      list[[i]]$to_date <- json$docs[i,]$to_date
     }
+  } else {
+    warning("No datasets found")
   }
-
-  invisible(list)
+  invisible(results)
 }

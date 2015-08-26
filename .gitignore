@@ -1,7 +1,7 @@
 # History files
 .Rhistory
 .Rapp.history
-*.Rbuildignore
+
 
 # Example code in package build process
 *-Ex.R

@@ -14,7 +14,7 @@ quandl.api(path, http = c("GET", "PUT", "POST", "DELETE"), postdata = NULL,
 
 \item{postdata}{A character or raw vector that is sent in a body.}
 
-\item{...}{Named values that are interpretted as Quandl API parameters. Please see \url{https://www.quandl.com/ docs/api}.}
+\item{...}{Named values that are interpretted as Quandl API parameters. Please see \url{https://www.quandl.com/docs/api}.}
 }
 \value{
 Quandl API response.

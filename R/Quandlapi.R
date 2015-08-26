@@ -5,7 +5,7 @@
 #' @param path Path to api resource.
 #' @param http Type of http request sent.
 #' @param postdata A character or raw vector that is sent in a body.
-#' @param ... Named values that are interpretted as Quandl API parameters. Please see \url{https://www.quandl.com/ docs/api}.
+#' @param ... Named values that are interpretted as Quandl API parameters. Please see \url{https://www.quandl.com/docs/api}.
 #' @return Quandl API response.
 #' @seealso \code{\link{Quandl.api_key}}
 #' @examples \dontrun{
@@ -47,7 +47,7 @@ quandl.api.build_request <- function(path, ...) {
     accept_value <- paste0('application/json, application/vnd.quandl+json;version=', Quandl.api_version())
   }
 
-  quandl_version <- as.character(packageVersion('Quandl'))
+  quandl_version <- as.character(utils::packageVersion('Quandl'))
   headers <- list(Accept = accept_value, `Request-Source` = 'R', `Request-Source-Version` = quandl_version)
 
   if (!is.null(Quandl.api_key())) {

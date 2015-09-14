@@ -12,6 +12,8 @@
 #' quandldata = quandl.api(path="datasets/NSE/OIL", http="GET")
 #' plot(quandldata[,1])
 #' }
+#' @importFrom httr VERB
+#' @importFrom jsonlite fromJSON
 #' @export
 quandl.api <- function(path, http = c('GET', 'PUT', 'POST', 'DELETE'), postdata = NULL, ...) {
   http <- match.arg(http)

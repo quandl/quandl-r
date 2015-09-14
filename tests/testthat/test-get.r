@@ -25,7 +25,6 @@ with_mock(
     test_that("correct arguments are passed in", {
       expect_equal(http, "GET")
       expect_equal(url, "https://www.quandl.com/api/v3/datasets/NSE/OIL")
-      expect_is(config, "request")
       expect_null(body)
       expect_equal(query, list(transform = "rdiff", collapse = "annual", 
                                order = "desc", start_date = "2015-01-01"))

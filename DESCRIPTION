@@ -12,7 +12,7 @@ Description: Functions for interacting directly with the Quandl API to offer dat
 Imports:
     httr (>= 0.6.1),
     zoo,
-    jsonlite
+    jsonlite (>= 0.9.14)
 Suggests:
     testthat (>= 0.10.0),
     roxygen2,

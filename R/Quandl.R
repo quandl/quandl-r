@@ -200,7 +200,7 @@ Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts', 'timeSeries'), tran
 
       # Convert to type
       if (type == "ts") {
-        data_out <- as.ts(data_out)
+        data_out <- stats::as.ts(data_out)
       } else if (type == "zoo") {
         data_out <- as.zooreg(data_out)
       } else if (type == "xts") {
@@ -209,7 +209,7 @@ Quandl <- function(code, type = c('raw', 'ts', 'zoo', 'xts', 'timeSeries'), tran
         } else  {
           as.xts(data_out)
         }
-        if (freq != frequency(data_out)) {
+        if (freq != stats::frequency(data_out)) {
           warning("xts has a non-standard meaning for 'frequency'.")
         }
       } else if (type == "timeSeries") {

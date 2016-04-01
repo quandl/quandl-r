@@ -40,6 +40,9 @@ quandl.api.download_file <- function(path, filename, ...) {
 
 quandl.api.build_request <- function(path, ...) {
   params <- list(...)
+  # ensure vectors get converted into v3 api supported query params
+  # e.g., qopts.columns=c('ticker', 'rev') -> list('qopts.columns[]'=ticker,'qopts.columns[]'=rev)
+  params <- quandl.api.build_query_params(params)
   # ensure Dates convert to characters or else curl will convert the Dates to timestamp
   params <- quandl.api.convert_dates_to_character(params)
 
@@ -79,4 +82,35 @@ quandl.api.convert_dates_to_character <- function(params) {
     param
   }
   lapply(params, convert_date_to_character)
+}
+
+quandl.api.build_query_params <- function(params) {
+  if (length(params) <= 0) {
+    return(params)
+  }
+  mod_params <- list()
+  for(i in 1:length(params)) {
+    # keep the params the same if not a vector
+    converted_params <- params[i]
+
+    # check val to see if vector
+    # if so, convert
+    if (length(params[[i]]) > 1) {
+      converted_params <- quandl.api.convert_vector_params(names(params[i]), params[[i]])
+    }
+    mod_params <- c(mod_params, converted_params)
+  }
+  return(mod_params)
+}
+
+quandl.api.convert_vector_params <- function(name, vector_values) {
+  mod_query_name <- paste0(name, '[]')
+  mod_query_list <- list()
+
+  for(val in vector_values) {
+    l <- list()
+    l[[mod_query_name]] <- val
+    mod_query_list <- c(mod_query_list, l)
+  }
+  return(mod_query_list)
 }

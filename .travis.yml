@@ -1,4 +1,8 @@
 language: r
+r:
+  - oldrel
+  - release
+cache: packages
 # Be strict when checking our package
 warnings_are_errors: true
 sudo: required

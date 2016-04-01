@@ -45,4 +45,15 @@ test_that('request headers and query params are constructed', {
   expect_equal(results, list(request_url = expected_url, headers = expected_headers, params = expected_params))
 })
 
+context('quandl.api.build_query_params')
+test_that('query params with array values are converted properly', {
+  params <- list()
+  params$param1 <- 'foo'
+  params$param2 <- c('hello', 'world', 'bar')
+  params$param3 <- 'cool'
+
+  expected_params <- list(param1='foo', 'param2[]'='hello', 'param2[]'='world', 'param2[]'='bar', param3='cool')
+  expect_equal(quandl.api.build_query_params(params), expected_params)
+})
+
 reset_config()

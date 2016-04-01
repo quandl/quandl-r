@@ -9,31 +9,6 @@ test_that("download database url is constructed correctly", {
 })
 
 with_mock(
-  # this is not a folder
-  dir.exists = function(paths) {
-    FALSE
-  },
-  test_that("bulk download errors when invalid filepath given", {
-    expect_error(Quandl.database.bulk_download_to_file("NSE", "path/does/not/exist"), "path/does/not directory does not exist!", fixed = TRUE)
-  })
-)
-
-with_mock(
-  dir.exists = function(paths) {
-    TRUE
-  },
-  test_that("bulk download errors when invalid filepath given", {
-    expect_error(Quandl.database.bulk_download_to_file("NSE", "path/is/folder"), "Please add a filename to your directory path, e.g., path/is/folder/NSE.zip", fixed = TRUE)
-  })
-)
-
-with_mock(
-  dir.exists = function(paths) {
-    if (paths == "folder/exists/NSE.zip") {
-      return(FALSE)
-    }
-    return(TRUE)
-  },
   `Quandl:::quandl.api.download_file` = function(path, filename, ...) {
     test_that("correct arguments are passed to api layer", {
       params <- list(...)

@@ -1,7 +1,7 @@
 Quandl R Package [![Build Status](https://travis-ci.org/quandl/quandl-r.svg?branch=master)](https://travis-ci.org/quandl/quandl-r)
 =========
 
-This is Quandl's R package. The Quandl R package uses the [Quandl API](https://www.quandl.com/docs/api). The official Quandl R package manual can be found [here](https://cran.r-project.org/web/packages/Quandl/index.html).
+This is Quandl's R package. The Quandl R package uses the [Quandl API](https://www.quandl.com/docs/api). The official Quandl R package manual can be found [here](https://cran.r-project.org/package=Quandl).
 
 License: MIT
 
@@ -9,7 +9,7 @@ For more information please contact raymond@quandl.com
 
 # Installation
 
-Using the [devtools](https://cran.r-project.org/web/packages/devtools/index.html) package:
+Using the [devtools](https://cran.r-project.org/package=devtools) package:
 
     install.packages("devtools")
     library(devtools)
@@ -62,9 +62,9 @@ Note: `collapse` is a Quandl API query parameter. Click [here](https://www.quand
 The supported return types for the `Quandl(code)` function are:
 * raw (which returns a data.frame)
 * [ts](https://stat.ethz.ch/R-manual/R-devel/library/stats/html/ts.html)
-* [zoo](https://cran.r-project.org/web/packages/zoo/index.html)
-* [xts](https://cran.r-project.org/web/packages/xts/index.html)
-* [timeSeries](https://cran.r-project.org/web/packages/timeSeries/index.html)
+* [zoo](https://cran.r-project.org/package=zoo)
+* [xts](https://cran.r-project.org/package=xts)
+* [timeSeries](https://cran.r-project.org/package=timeSeries)
 
 To request a specific type, assign the `type` argument the return type:
 

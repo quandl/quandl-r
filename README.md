@@ -1,4 +1,4 @@
-Quandl R Package
+Quandl R Package [![Build Status](https://travis-ci.org/quandl/quandl-r.svg?branch=master)](https://travis-ci.org/quandl/quandl-r)
 =========
 
 This is Quandl's R package. The Quandl R package uses the [Quandl API](https://www.quandl.com/docs/api). The official Quandl R package manual can be found [here](https://cran.r-project.org/web/packages/Quandl/index.html).

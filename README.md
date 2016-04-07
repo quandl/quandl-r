@@ -128,6 +128,28 @@ Quandl.database.bulk_download_to_file("ZEA", "./ZEA.zip")
 Please set your [api key](#authentication) to download [premium databases](https://www.quandl.com/search?type=premium) you are subscribed to.
 
 For a full list of optional query parameters for downloading an entire database, click [here](https://www.quandl.com/docs/api#entire-database).
+
+## Datatables
+
+To retrieve Datatable data, provide a Datatable code to the Quandl datatables function:
+
+```r
+data = Quandl.datatable('ZACKS/FC')
+```
+
+The output format is `data.frame`. Given the volume of data stored in datatables, this call will retrieve the first page of the ZACKS/FC datatable. You may turn on pagination to return more data by using:
+
+```r
+data = Quandl.datatable('ZACKS/FC', paginate=TRUE)
+```
+
+This will retrieve multiple pages of data and merge them together as if they were one large page. In some cases, however, you will still exceed the request limit. In this case we recommend you filter your data using the available query parameters, as in the following example:
+
+```r
+Quandl.datatable('ZACKS/FC', ticker=c('AAPL', 'MSFT'), per_end_date.gt='2015-01-01', qopts.columns=c('ticker', 'per_end_date', 'tot_revnu'))
+```
+
+In this query we are asking for more pages of data, ticker values of either AAPL or MSFT and a per_end_date that is greater than or equal to 2015-01-01. We are also filtering the returned columns on ticker, per_end_date and tot_revnu rather than all available columns.
     
 ## Search
 Searching Quandl from within the R console is now supported. The search function is:

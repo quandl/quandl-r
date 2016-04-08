@@ -3,7 +3,7 @@ Quandl R Package [![Build Status](https://travis-ci.org/quandl/quandl-r.svg?bran
 
 This is Quandl's R package. The Quandl R package uses the [Quandl API](https://www.quandl.com/docs/api). The official Quandl R package manual can be found [here](https://cran.r-project.org/package=Quandl).
 
-R License provided by MIT.
+License provided by MIT.
 
 For more information please contact raymond@quandl.com
 
@@ -40,17 +40,11 @@ The Quandl package functions use the Quandl API. Optional Quandl API query param
 data <- Quandl("NSE/OIL")
 ```
 
-To reset the package to not use an API key:
-
-```r
-Quandl.api_key(NULL)
-```
-
 ## Graphing Data Example
-To create a graph Google's performance on the Nasdaq, with a monthly frequency:
+To create a graph of Google's performance month-over-month:
 
 ```r
-plot(stl(Quandl("GOOG/NASDAQ_GOOG",type="ts",collapse="monthly")[,1],s.window="per"))
+plot(stl(Quandl("WIKI/GOOG",type="ts",collapse="monthly")[,11],s.window="per"))
 ```
 
 Note: `collapse` is a Quandl API query parameter. Click [here](https://www.quandl.com/docs/api#retrieve-data-and-metadata) for a full list of query parameter options.  

@@ -3,13 +3,13 @@ Quandl R Package [![Build Status](https://travis-ci.org/quandl/quandl-r.svg?bran
 
 This is Quandl's R package. The Quandl R package uses the [Quandl API](https://www.quandl.com/docs/api). The official Quandl R package manual can be found [here](https://cran.r-project.org/package=Quandl).
 
-License: MIT
+License provided by MIT.
 
 For more information please contact raymond@quandl.com
 
 # Installation
 
-Using the [devtools](https://cran.r-project.org/package=devtools) package:
+To install the [devtools](https://cran.r-project.org/package=devtools) package:
 
     install.packages("devtools")
     library(devtools)
@@ -26,13 +26,11 @@ Note that the version on CRAN might not reflect the most recent changes made to 
 
 # Authentication
 
-To extend your access to the Quandl API, use your [api key](https://www.quandl.com/docs/api#api-keys). To do this sign into your account (or create one) and go to your [account api key page](https://www.quandl.com/account/api). Then input your api key (with quotes):
+To make full use of the package we recommend you set your [api key](https://www.quandl.com/docs/api#api-keys). To do this create or sign into your account and go to your [account api key page](https://www.quandl.com/account/api). Then input your API key (with quotes):
 
 ```r
 Quandl.api_key("tEsTkEy123456789")
 ```
-
-This will then extend your usage.
 
 # Usage
 
@@ -42,17 +40,11 @@ The Quandl package functions use the Quandl API. Optional Quandl API query param
 data <- Quandl("NSE/OIL")
 ```
 
-To reset the package to not use an api key:
-
-```r
-Quandl.api_key(NULL)
-```
-
 ## Graphing Data Example
-To create a graph of the Nasdaq, with a monthly frequency
+To create a graph of Google's performance month-over-month:
 
 ```r
-plot(stl(Quandl("GOOG/NASDAQ_GOOG",type="ts",collapse="monthly")[,1],s.window="per"))
+plot(stl(Quandl("WIKI/GOOG",type="ts",collapse="monthly")[,11],s.window="per"))
 ```
 
 Note: `collapse` is a Quandl API query parameter. Click [here](https://www.quandl.com/docs/api#retrieve-data-and-metadata) for a full list of query parameter options.  
@@ -105,7 +97,7 @@ data <- Quandl('NSE/OIL', collapse = "quarterly", type = "zoo", limit = 3, force
 ```
 
 ## Merged Dataset Data
-To get a merged representation of multiple Quandl code data, specify a vector of Quandl codes:
+If you want to get multiple codes at once, delimit the codes with ',', and put them into an array. This will return a multiset.
 
 ```r
 merged_data <- Quandl(c('GOOG/NASDAQ_AAPL', 'GOOG/NASDAQ_MSFT'))
@@ -119,13 +111,13 @@ merged_data <- Quandl(c('GOOG/NASDAQ_AAPL.1', 'GOOG/NASDAQ_MSFT.2'))
 
 ## Downloading Entire Database
 
-An entire Database's data can be downloaded. For example, to download database `ZEA`:
+An entire database's data can be downloaded. For example, to download the database `ZEA`:
 
 ```r
 Quandl.database.bulk_download_to_file("ZEA", "./ZEA.zip")
 ```
 
-Please set your [api key](#authentication) to download [premium databases](https://www.quandl.com/search?type=premium) you are subscribed to.
+Note you must set your [api key](#authentication) to download [premium databases](https://www.quandl.com/search?type=premium) to which you are subscribed.
 
 For a full list of optional query parameters for downloading an entire database, click [here](https://www.quandl.com/docs/api#entire-database).
 

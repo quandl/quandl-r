@@ -36,7 +36,7 @@ Quandl.datatable <- function(code, paginate=FALSE, ...) {
     if (nrow(df) >= quandl.datatable.max_rows() && !is.null(next_cursor_id)) {
       warning(paste("This call returns a larger amount of data than Quandl.datatable() allows.",
                     "Please view our documentation on developer methods to request more data.",
-                    "https://github.com/quandl/quandl-r/blob/master/README.md"), call. = FALSE)
+                    "https://github.com/quandl/quandl-r/blob/master/README.md#datatables"), call. = FALSE)
       break
     }
   }
@@ -44,7 +44,7 @@ Quandl.datatable <- function(code, paginate=FALSE, ...) {
   if (!isTRUE(paginate) && !is.null(next_cursor_id)) {
     warning(paste("This call returns more data. To request more pages, please set paginate=TRUE",
                   "in your Quandl.datatable() call. For more information see our documentation:",
-                  "https://github.com/quandl/quandl-r/blob/master/README.md"), call. = FALSE)
+                  "https://github.com/quandl/quandl-r/blob/master/README.md#datatables"), call. = FALSE)
   }
 
   names(df) <- columns[,1]

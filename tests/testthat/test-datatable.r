@@ -59,7 +59,7 @@ with_mock(
     expect_warning(Quandl.datatable('ZACKS/FE'),
                    paste("This call returns more data. To request more pages, please set paginate=TRUE",
                          "in your Quandl.datatable() call. For more information see our documentation:",
-                         "https://github.com/quandl/quandl-r/blob/master/README.md"), fixed = TRUE)
+                         "https://github.com/quandl/quandl-r/blob/master/README.md#datatables"), fixed = TRUE)
   }),
   test_that("response data is data frame", {
     expect_is(Quandl.datatable('ZACKS/FC'), "data.frame")
@@ -87,7 +87,7 @@ with_mock(
     expect_warning(Quandl.datatable('ZACKS/FE', paginate=TRUE),
       paste("This call returns a larger amount of data than Quandl.datatable() allows.",
             "Please view our documentation on developer methods to request more data.",
-            "https://github.com/quandl/quandl-r/blob/master/README.md"), fixed = TRUE)
+            "https://github.com/quandl/quandl-r/blob/master/README.md#datatables"), fixed = TRUE)
   })
 )
 

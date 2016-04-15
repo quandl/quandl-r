@@ -38,11 +38,22 @@ test_that('request headers and query params are constructed', {
   expected_headers <- list(
       Accept = 'application/json, application/vnd.quandl+json;version=2015-04-09',
       `Request-Source` = 'R',
-      `Request-Source-Version` = '2.7.0',
+      `Request-Source-Version` = '2.8.0',
       `X-Api-Token` = 'test_key'
     )
   expected_url <- "https://www.quandl.com/api/v3/datasets"
   expect_equal(results, list(request_url = expected_url, headers = expected_headers, params = expected_params))
+})
+
+context('quandl.api.build_query_params')
+test_that('query params with array values are converted properly', {
+  params <- list()
+  params$param1 <- 'foo'
+  params$param2 <- c('hello', 'world', 'bar')
+  params$param3 <- 'cool'
+
+  expected_params <- list(param1='foo', 'param2[]'='hello', 'param2[]'='world', 'param2[]'='bar', param3='cool')
+  expect_equal(quandl.api.build_query_params(params), expected_params)
 })
 
 reset_config()

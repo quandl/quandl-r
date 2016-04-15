@@ -51,13 +51,7 @@ Quandl.database.bulk_download_url <- function(database_code, ...) {
 #' }
 #' @export
 Quandl.database.bulk_download_to_file <- function(database_code, filename, ...) {
-  if (dir.exists(filename)) {
-    stop("Please add a filename to your directory path, e.g., ", filename, '/', database_code, '.zip', call. = FALSE)
-  }
   dirname <- dirname(filename)
-  if (!dir.exists(dirname)) {
-    stop(dirname, " directory does not exist!", call. = FALSE)
-  }
   quandl.api.download_file(Quandl.database.download_url_path(database_code), filename = filename, ...)
 }
 

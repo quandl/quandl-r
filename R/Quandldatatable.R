@@ -66,7 +66,7 @@ quandl.datatable.set_df_columns <- function(df, columns) {
   # set column types
   df <- quandl.datatable.convert_df_columns(df, columns[,2])
 
-  return(df);
+  return(df)
 }
 
 quandl.datatable.convert_df_columns <- function(df, column_types) {

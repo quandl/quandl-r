@@ -36,3 +36,17 @@ mock_datatable_data <- function(cursor_id = 'null') {
   mock_data <- gsub("\"#cursor_id\"", cursor_id, mock_data)
   return(mock_data)
 }
+
+mock_empty_datatable_data <- function(cursor_id = 'null') {
+  mock_data <- "{\"datatable\":
+  {\"data\": [],
+  \"columns\":[{\"name\":\"ticker\",\"type\":\"String\"},
+  {\"name\":\"oper_income\",\"type\":\"BigDecimal(12,4)\"},
+  {\"name\":\"comm_share_holder\",\"type\":\"Integer\"},
+  {\"name\":\"per_end_date\",\"type\":\"Date\"}]},
+  \"meta\":{\"next_cursor_id\":\"#cursor_id\"
+  }
+  }"
+  mock_data <- gsub("\"#cursor_id\"", cursor_id, mock_data)
+  return(mock_data)
+}

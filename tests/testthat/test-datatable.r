@@ -68,7 +68,7 @@ with_mock(
     data <- Quandl.datatable('ZACKS/FC')
     expect_equal(names(data), c("ticker", "oper_income", "comm_share_holder", "per_end_date"))
   }),
-  test_that("response data columns are convereted to proper data types", {
+  test_that("response data columns are converted to proper data types", {
     data <- Quandl.datatable('ZACKS/FC')
     expect_is(data[,1], "character")
     expect_is(data[,2], "numeric")
@@ -88,6 +88,24 @@ with_mock(
       paste("This call returns a larger amount of data than Quandl.datatable() allows.",
             "Please view our documentation on developer methods to request more data.",
             "https://github.com/quandl/quandl-r/blob/master/README.md#datatables"), fixed = TRUE)
+  })
+)
+
+context("Quandl.datatable() empty data response")
+with_mock(
+  `httr::VERB` = function(http, url, config, body, query) {
+    mock_response(content = mock_empty_datatable_data())
+  },
+  `httr::content` = function(response, as="text") {
+    response$content
+  },
+  test_that("empty response data columns are converted to proper data types", {
+    data <- Quandl.datatable('ZACKS/FC')
+    expect_equal(nrow(data), 0)
+    expect_is(data[,1], "character")
+    expect_is(data[,2], "numeric")
+    expect_is(data[,3], "numeric")
+    expect_is(data[,4], "Date")
   })
 )
 

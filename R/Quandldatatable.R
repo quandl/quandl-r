@@ -47,10 +47,26 @@ Quandl.datatable <- function(code, paginate=FALSE, ...) {
                   "https://github.com/quandl/quandl-r/blob/master/README.md#datatables"), call. = FALSE)
   }
 
-  names(df) <- columns[,1]
-  df <- quandl.datatable.convert_df_columns(df, columns[,2])
+  df <- quandl.datatable.set_df_columns(df, columns)
 
   return(df)
+}
+
+quandl.datatable.set_df_columns <- function(df, columns) {
+  ncols <- length(columns[,1])
+  # if df is empty create an empty df with ncolumns set
+  # or else we won't be able to set the column names
+  if (nrow(df) <= 0 && ncols > 0) {
+    df <- data.frame(matrix(ncol = ncols, nrow = 0))
+  }
+
+  # set column names
+  names(df) <- columns[,1]
+
+  # set column types
+  df <- quandl.datatable.convert_df_columns(df, columns[,2])
+
+  return(df);
 }
 
 quandl.datatable.convert_df_columns <- function(df, column_types) {
@@ -63,6 +79,8 @@ quandl.datatable.convert_df_columns <- function(df, column_types) {
       df[,i] <- as.numeric(df[,i])
     } else if (grepl("^date", column_types[i])) {
       df[,i] <- as.Date(df[,i])
+    } else if (grepl("^string", column_types[i])) {
+      df[,i] <- as.character(df[,i])
     }
   }
   return(df)

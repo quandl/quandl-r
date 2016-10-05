@@ -1,7 +1,7 @@
 Package: Quandl
 Title: API Wrapper for Quandl.com
-Version: 2.8.0
-Date: 2016-04-05
+Version: 2.8.1
+Date: 2016-10-05
 Authors@R: c(person(
     "Raymond McTaggart", role=c("aut", "cre"), email="ray@quandl.com"),
     person("Gergely Daroczi", role="aut"),

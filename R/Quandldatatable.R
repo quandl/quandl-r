@@ -75,8 +75,10 @@ quandl.datatable.convert_df_columns <- function(df, column_types) {
   }
   column_types <- tolower(column_types)
   for(i in 1:length(column_types)) {
-    if (grepl("^float|^bigdecimal|^integer", column_types[i])) {
+    if (grepl("^float|^bigdecimal|^integer|^double", column_types[i])) {
       df[,i] <- as.numeric(df[,i])
+    } else if (grepl("^datetime", column_types[i])) {
+      df[,i] <- as.POSIXct(df[,i])
     } else if (grepl("^date", column_types[i])) {
       df[,i] <- as.Date(df[,i])
     } else {

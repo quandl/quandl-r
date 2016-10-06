@@ -109,4 +109,18 @@ with_mock(
   })
 )
 
+context("Quandl.datatable() response new column types")
+with_mock(
+  `httr::VERB` = function(http, url, config, body, query) {
+    mock_response(content = mock_datatable_data_extra_columns())
+  },
+  `httr::content` = function(response, as="text") {
+    response$content
+  },
+  test_that("response data columns are converted to proper new data types", {
+    data <- Quandl.datatable('USTRE/AUCTHIST')
+    expect_is(data[,1], "numeric")
+    expect_is(data[,2], "POSIXct")
+  })
+)
 reset_config()

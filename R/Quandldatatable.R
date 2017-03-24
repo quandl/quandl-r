@@ -2,7 +2,7 @@
 #'
 #' @details Set your \code{api_key} with \code{Quandl.api_key} function. For instructions on finding your api key go to \url{https://www.quandl.com/account/api}
 #'
-#' @param code Datatable code on Quandl specified as a string.
+#' @param datatable_code Datatable code on Quandl specified as a string.
 #' @param paginate When set to TRUE, fetches up to 1,000,000 rows of data
 #' @param ... Additional named values that are interpreted as Quandl API parameters.
 #' @return Returns a data.frame.
@@ -11,24 +11,24 @@
 #' Quandl.datatable('ZACKS/FC', paginate=TRUE)
 #' }
 #' @export
-Quandl.datatable <- function(code, paginate=FALSE, ...) {
-  path <- paste0("datatables/", code)
+Quandl.datatable <- function(datatable_code, paginate=FALSE, ...) {
+  path <- paste0("datatables/", datatable_code)
   params <- list(...)
 
   # make request for first page of data
-  json <- do.call(quandl.api, c(path=path, params))
+  json <- do.call(quandl.api, c(path = path, params))
   datatable <- json$datatable
   data <- datatable$data
   # contains a list of names and corresponding types
   columns <- datatable$columns
   next_cursor_id <- json$meta$next_cursor_id
-  df <- as.data.frame(data, stringsAsFactors=FALSE)
+  df <- as.data.frame(data, stringsAsFactors = FALSE)
 
   # continue to make requests for data if paginate=TRUE and there is data
   while (isTRUE(paginate) && !is.null(next_cursor_id)) {
-    params['qopts.cursor_id'] <- next_cursor_id
-    json <- do.call(quandl.api, c(path=path, params))
-    df_page <- as.data.frame(json$datatable$data, stringsAsFactors=FALSE)
+    params["qopts.cursor_id"] <- next_cursor_id
+    json <- do.call(quandl.api, c(path = path, params))
+    df_page <- as.data.frame(json$datatable$data, stringsAsFactors = FALSE)
     df <- rbind(df, df_page)
     next_cursor_id <- json$meta$next_cursor_id
 
@@ -53,7 +53,7 @@ Quandl.datatable <- function(code, paginate=FALSE, ...) {
 }
 
 quandl.datatable.set_df_columns <- function(df, columns) {
-  ncols <- length(columns[,1])
+  ncols <- length(columns[, 1])
   # if df is empty create an empty df with ncolumns set
   # or else we won't be able to set the column names
   if (nrow(df) <= 0 && ncols > 0) {
@@ -61,10 +61,10 @@ quandl.datatable.set_df_columns <- function(df, columns) {
   }
 
   # set column names
-  names(df) <- columns[,1]
+  names(df) <- columns[, 1]
 
   # set column types
-  df <- quandl.datatable.convert_df_columns(df, columns[,2])
+  df <- quandl.datatable.convert_df_columns(df, columns[, 2])
 
   return(df)
 }
@@ -74,15 +74,15 @@ quandl.datatable.convert_df_columns <- function(df, column_types) {
     return(df)
   }
   column_types <- tolower(column_types)
-  for(i in 1:length(column_types)) {
+  for (i in 1:length(column_types)) {
     if (grepl("^float|^bigdecimal|^integer|^double", column_types[i])) {
-      df[,i] <- as.numeric(df[,i])
+      df[, i] <- as.numeric(df[, i])
     } else if (grepl("^datetime", column_types[i])) {
-      df[,i] <- as.POSIXct(df[,i])
+      df[, i] <- as.POSIXct(df[, i])
     } else if (grepl("^date", column_types[i])) {
-      df[,i] <- as.Date(df[,i])
+      df[, i] <- as.Date(df[, i])
     } else {
-      df[,i] <- as.character(df[,i])
+      df[, i] <- as.character(df[, i])
     }
   }
   return(df)

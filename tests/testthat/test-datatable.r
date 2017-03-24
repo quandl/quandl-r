@@ -29,7 +29,7 @@ with_mock(
       expect_equal(url, "https://www.quandl.com/api/v3/datatables/ZACKS/FE")
       expect_null(body)
       expect_equal(query, list('ticker[]'='AAPL', 'ticker[]'='MSFT',
-                               per_end_date.gt='2015-01-01',
+                               per_end_date.gt='2015-01-01', code='FOO',
                                'qopts.columns[]'='ticker', 'qopts.columns[]'='per_end_date',
                                'qopts.columns[]'='tot_revnu'))
     })
@@ -40,6 +40,7 @@ with_mock(
   },
   Quandl.datatable("ZACKS/FE", ticker=c('AAPL', 'MSFT'),
                                per_end_date.gt='2015-01-01',
+                               code='FOO',
                                qopts.columns=c('ticker','per_end_date','tot_revnu'),
                     paginate=FALSE)
 )

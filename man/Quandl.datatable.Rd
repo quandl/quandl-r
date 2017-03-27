@@ -4,10 +4,10 @@
 \alias{Quandl.datatable}
 \title{Retrieves Data from the Quandl Datatable endpoint}
 \usage{
-Quandl.datatable(code, paginate = FALSE, ...)
+Quandl.datatable(datatable_code, paginate = FALSE, ...)
 }
 \arguments{
-\item{code}{Datatable code on Quandl specified as a string.}
+\item{datatable_code}{Datatable code on Quandl specified as a string.}
 
 \item{paginate}{When set to TRUE, fetches up to 1,000,000 rows of data}
 

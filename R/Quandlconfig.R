@@ -9,7 +9,7 @@ Quandl.api_key <- function(api_key) {
   if (!missing(api_key)) {
     options(Quandl.api_key = api_key)
   }
-  invisible(getOption('Quandl.api_key'))
+  invisible(getOption("Quandl.api_key"))
 }
 
 #' Query or set Quandl API token
@@ -24,7 +24,7 @@ Quandl.api_key <- function(api_key) {
 #' }
 #' @export
 Quandl.auth <- function(auth_token) {
-  .Deprecated('Quandl.api_key')
+  .Deprecated("Quandl.api_key")
   Quandl.api_key(auth_token)
 }
 
@@ -32,12 +32,12 @@ Quandl.api_version <- function(api_version) {
   if (!missing(api_version)) {
     options(Quandl.api_version = api_version)
   }
-  invisible(getOption('Quandl.api_version'))
+  invisible(getOption("Quandl.api_version"))
 }
 
 Quandl.base_url <- function(base_url) {
   if (!missing(base_url)) {
     options(Quandl.base_url = base_url)
   }
-  invisible(getOption('Quandl.base_url', 'https://www.quandl.com/api/v3'))
+  invisible(getOption("Quandl.base_url", "https://www.quandl.com/api/v3"))
 }

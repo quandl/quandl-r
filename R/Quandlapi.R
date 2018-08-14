@@ -15,16 +15,17 @@
 #' @importFrom httr VERB
 #' @importFrom jsonlite fromJSON
 #' @export
-quandl.api <- function(path, http = c('GET', 'PUT', 'POST', 'DELETE'), postdata = NULL, ...) {
+quandl.api <- function(path, http = c("GET", "PUT", "POST", "DELETE"), postdata = NULL, ...) {
   http <- match.arg(http)
   request <- quandl.api.build_request(path, ...)
-  response <- httr::VERB(http, request$request_url, config = do.call(httr::add_headers, request$headers),
-                                      body = postdata, query = request$params)
+  response <- httr::VERB(http, request$request_url,
+                         config = do.call(httr::add_headers, request$headers),
+                         body = postdata, query = request$params)
 
   quandl.api.handl_errors(response)
-  text_response <- httr::content(response, as="text")
+  text_response <- httr::content(response, as = "text")
 
-  json_response <- tryCatch(jsonlite::fromJSON(text_response, simplifyVector=TRUE), error = function(e) {
+  json_response <- tryCatch(jsonlite::fromJSON(text_response, simplifyVector = TRUE), error = function(e) {
       stop(e, " Failed to parse response: ", text_response)
     })
   json_response
@@ -32,8 +33,11 @@ quandl.api <- function(path, http = c('GET', 'PUT', 'POST', 'DELETE'), postdata 
 
 quandl.api.download_file <- function(path, filename, ...) {
   request <- quandl.api.build_request(path, ...)
-  response <- httr::GET(request$request_url, config = do.call(httr::add_headers, request$headers),
-                               query = request$params, httr::write_disk(filename, overwrite = TRUE), httr::progress())
+  response <- httr::GET(request$request_url,
+                        config = do.call(httr::add_headers, request$headers),
+                        query = request$params,
+                        httr::write_disk(filename, overwrite = TRUE),
+                        httr::progress())
   quandl.api.handl_errors(response)
   cat("Saved to file:", response$content)
 }
@@ -46,14 +50,14 @@ quandl.api.build_request <- function(path, ...) {
   # ensure Dates convert to characters or else curl will convert the Dates to timestamp
   params <- quandl.api.convert_dates_to_character(params)
 
-  request_url <- paste(Quandl.base_url(), path, sep="/")
+  request_url <- paste(Quandl.base_url(), path, sep = "/")
   accept_value <- "application/json"
   if (!is.null(Quandl.api_version())) {
-    accept_value <- paste0('application/json, application/vnd.quandl+json;version=', Quandl.api_version())
+    accept_value <- paste0("application/json, application/vnd.quandl+json;version=", Quandl.api_version())
   }
 
-  quandl_version <- as.character(utils::packageVersion('Quandl'))
-  headers <- list(Accept = accept_value, `Request-Source` = 'R', `Request-Source-Version` = quandl_version)
+  quandl_version <- as.character(utils::packageVersion("Quandl"))
+  headers <- list(Accept = accept_value, `Request-Source` = "R", `Request-Source-Version` = quandl_version)
 
   if (!is.null(Quandl.api_key())) {
     headers <- c(headers, list(`X-Api-Token` = Quandl.api_key()))
@@ -70,13 +74,13 @@ quandl.api.build_request <- function(path, ...) {
 
 quandl.api.handl_errors <- function(response) {
   if (!(httr::status_code(response) >= 200 && httr::status_code(response) < 300)) {
-    stop(httr::content(response, as="text"), call. = FALSE)
+    stop(httr::content(response, as = "text"), call. = FALSE)
   }
 }
 
 quandl.api.convert_dates_to_character <- function(params) {
   convert_date_to_character <- function(param) {
-    if (class(param) == 'Date') {
+    if (class(param) == "Date") {
       param <- as.character(param)
     }
     param
@@ -104,7 +108,7 @@ quandl.api.build_query_params <- function(params) {
 }
 
 quandl.api.convert_vector_params <- function(name, vector_values) {
-  mod_query_name <- paste0(name, '[]')
+  mod_query_name <- paste0(name, "[]")
   mod_query_list <- list()
 
   for(val in vector_values) {

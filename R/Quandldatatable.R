@@ -11,7 +11,7 @@
 #' Quandl.datatable('ZACKS/FC', paginate=TRUE)
 #' }
 #' @export
-Quandl.datatable <- function(datatable_code, paginate=FALSE, ...) {
+Quandl.datatable <- function(datatable_code, paginate = FALSE, ...) {
   path <- paste0("datatables/", datatable_code)
   params <- list(...)
 

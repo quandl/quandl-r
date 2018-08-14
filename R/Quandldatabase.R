@@ -12,7 +12,7 @@
 #' }
 #' @export
 Quandl.database.bulk_download_url <- function(database_code, ...) {
-  url <- paste(Quandl.base_url(), Quandl.database.download_url_path(database_code), sep="/")
+  url <- paste(Quandl.base_url(), Quandl.database.download_url_path(database_code), sep = "/")
 
   params <- list()
   if (!is.null(Quandl.api_key())) {
@@ -25,13 +25,13 @@ Quandl.database.bulk_download_url <- function(database_code, ...) {
 
   param_names <- names(params)
   if (length(params) > 0) {
-    for(i in 1:length(params)) {
+    for (i in 1:length(params)) {
       delimiter <- "&"
       if (i == 1) {
         delimiter <- "?"
       }
-      query <- paste(param_names[i], params[[i]], sep="=")
-      url <- paste(url, query, sep=delimiter)
+      query <- paste(param_names[i], params[[i]], sep = "=")
+      url <- paste(url, query, sep = delimiter)
     }
   }
   url
@@ -56,5 +56,5 @@ Quandl.database.bulk_download_to_file <- function(database_code, filename, ...) 
 }
 
 Quandl.database.download_url_path <- function(database_code) {
-  paste("databases", database_code, "data", sep="/")
+  paste("databases", database_code, "data", sep = "/")
 }

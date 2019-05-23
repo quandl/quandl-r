@@ -79,3 +79,27 @@ mock_datatable_data_extra_columns <- function() {
   }"
   return(mock_data)
 }
+
+mock_datatable_export_response_creating <- function() {
+  mock_data <- "{\"datatable_bulk_download\":
+  {\"file\":
+  {\"link\": null,
+  \"status\": \"creating\",
+  \"data_snapshot_time\": null},
+  \"datatable\":
+  {\"last_refreshed_time\": \"2019-05-22 07:35:43 UTC\"}}
+  }"
+  return(mock_data)
+}
+
+mock_datatable_export_response_fresh <- function() {
+  mock_data <- "{\"datatable_bulk_download\":
+  {\"file\":
+  {\"link\": \"https://www.quandl.com\",
+  \"status\": \"fresh\",
+  \"data_snapshot_time\": \"2019-05-22 21:43:24 UTC\"},
+  \"datatable\":
+  {\"last_refreshed_time\": \"2019-05-22 07:35:43 UTC\"}}
+  }"
+  return(mock_data)
+}

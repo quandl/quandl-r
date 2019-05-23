@@ -1,7 +1,7 @@
 Package: Quandl
 Title: API Wrapper for Quandl.com
-Version: 2.9.1
-Date: 2018-08-14
+Version: 2.10.0
+Date: 2019-05-23
 Authors@R: c(person(
     "Raymond McTaggart", role=c("aut", "cre"), email="ray@quandl.com"),
     person("Gergely Daroczi", role="aut"),
@@ -23,4 +23,4 @@ Depends:
 License: MIT + file LICENSE
 URL: https://github.com/quandl/quandl-r
 BugReports: https://github.com/quandl/quandl-r/issues
-RoxygenNote: 6.1.0
+RoxygenNote: 6.1.1

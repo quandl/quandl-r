@@ -250,7 +250,7 @@ test_that("Multiple dataset codes returns desired requested type", {
     `httr::content` = function(response, as = "text") {
       response$content
     },
-    test_that("return type is correct", {
+    {
       types <- c('raw', 'ts', 'zoo', 'xts', 'timeSeries')
       expected <- c('data.frame', 'ts', 'zoo', 'xts', 'timeSeries')
       i <- 0
@@ -259,7 +259,7 @@ test_that("Multiple dataset codes returns desired requested type", {
         dataset = Quandl(c("NSE/OIL.1", "WIKI/AAPL.2", "TESTS/4.1"), type = type, collapse = 'annual')
         expect_is(dataset, expected[i])
       }
-    })
+    }
   )
 })
 

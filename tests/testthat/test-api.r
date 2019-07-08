@@ -38,7 +38,7 @@ test_that('request headers and query params are constructed', {
   expected_headers <- list(
       Accept = 'application/json, application/vnd.quandl+json;version=2015-04-09',
       `Request-Source` = 'R',
-      `Request-Source-Version` = '2.9.1',
+      `Request-Source-Version` = '2.10.0',
       `X-Api-Token` = 'test_key'
     )
   expected_url <- "https://www.quandl.com/api/v3/datasets"

@@ -124,4 +124,47 @@ with_mock(
     expect_is(data[,2], "POSIXct")
   })
 )
+context("Quandl.datatable.bulk_download_url()")
+with_mock(
+  `Quandl:::quandl.api` = function(path, filename, ...) {
+    test_that("correct arguments are passed to api layer", {
+      params <- list(...)
+      expect_equal(params$ticker, "AAPL")
+      expect_equal(params$qopts.export, 'true')
+      expect_equal(path, "datatables/ZACKS/EE")
+    })
+    json_response <- tryCatch(jsonlite::fromJSON(mock_datatable_export_response_fresh(), simplifyVector = TRUE), error = function(e) {
+      stop(e, " Failed to parse response: ", text_response)
+    })
+    json_response
+  },
+  Quandl.datatable.bulk_download_url("ZACKS/EE", "folder/exists/NSE.zip", ticker="AAPL")
+)
+context("Quandl.datatable.bulk_download_url ready detection")
+with_mock(
+  `httr::VERB` = function(http, url, config, body, query) {
+    mock_response(content = mock_datatable_export_response_creating())
+  },
+  `httr::content` = function(response, as = "text") {
+    response$content
+  },
+  test_that("detect response is not ready", {
+    not_ready_response <- Quandl:::quandl.api('datatables')
+    ready <- Quandl:::quandl.datatable.export_ready(not_ready_response, '2019-05-23')
+    expect_equal(ready, FALSE)
+  })
+)
+with_mock(
+  `httr::VERB` = function(http, url, config, body, query) {
+    mock_response(content = mock_datatable_export_response_fresh())
+  },
+  `httr::content` = function(response, as = "text") {
+    response$content
+  },
+  test_that("detect response is ready", {
+    ready_response <- Quandl:::quandl.api('datatables')
+    ready <- Quandl:::quandl.datatable.export_ready(ready_response, '2019-05-23')
+    expect_equal(ready, TRUE)
+    })
+)
 reset_config()

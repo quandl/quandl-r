@@ -1,6 +1,6 @@
 Package: Quandl
 Title: API Wrapper for Quandl.com
-Version: 2.10.0
+Version: 2.11.0
 Date: 2019-06-07
 Authors@R: c(
     person("Dave Dotson", role="cre", email="dave@quandl.com"),

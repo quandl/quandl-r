@@ -11,7 +11,7 @@
 #' @return Returns a data.frame.
 #' @seealso \code{\link{Quandl.api_key}}
 #' @examples \dontrun{
-#' Quandl.pit.fromto('QA/PIT1', '2020-06-11', '2020-06-12', paginate=TRUE)
+#' Quandl.pit.fromto('RSM/MSB', '2020-06-11', '2020-06-12', paginate=TRUE)
 #' }
 #' @export
 Quandl.pit.fromto <- function(datatable_code, start_date, end_date, paginate = FALSE, ...) {
@@ -32,7 +32,7 @@ Quandl.pit.fromto <- function(datatable_code, start_date, end_date, paginate = F
 #' @return Returns a data.frame.
 #' @seealso \code{\link{Quandl.api_key}}
 #' @examples \dontrun{
-#' Quandl.pit.between('QA/PIT1', '2020-06-11', '2020-06-12', paginate=TRUE)
+#' Quandl.pit.between('RSM/MSB', '2020-06-11', '2020-06-12', paginate=TRUE)
 #' }
 #' @export
 Quandl.pit.between <- function(datatable_code, start_date, end_date, paginate = FALSE, ...) {
@@ -52,7 +52,7 @@ Quandl.pit.between <- function(datatable_code, start_date, end_date, paginate = 
 #' @return Returns a data.frame.
 #' @seealso \code{\link{Quandl.api_key}}
 #' @examples \dontrun{
-#' Quandl.pit.asofdate('QA/PIT1', '2020-06-11', paginate=TRUE)
+#' Quandl.pit.asofdate('RSM/MSB', '2020-06-11', paginate=TRUE)
 #' }
 #' @export
 Quandl.pit.asofdate <- function(datatable_code, start_date, paginate = FALSE, ...) {

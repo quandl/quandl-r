@@ -194,7 +194,32 @@ Freq: daily
 Cols: Date | Open | High | Low | Last | Close | Total Trade Quantity | Turnover (Lacs)
 ```
 
+## Point in Time
 
-# Additional Resources
-    
+PointInTime works similarly to datatables but filtering the data based on dates. For example, a simple way to retrieve datatable information for a specific date would be:
+
+```r
+Quandl.pit.asofdate('DATABASE/CODE', '2020-01-01')
+```
+
+### Available functions
+
+| Interval | Explanation | Required params | Example |
+|----------|-------------|-----------------|---------|
+| asofdate | Returns data as of a specific date | date | `Quandl.pit.asofdate('DATABASE/CODE', 'yyyy-mm-dd', ...)` |
+| fromto | Returns data from `start` up to but excluding `end`; [start, end) | start_date, end_date  | `Quandl.pit.fromto('DATABASE/CODE', '2020-01-01', '2020-02-01', ...)` |
+| between | Returns data inclusively between dates; [start, end] | start_end, end_date  | `Quandl.pit.between('DATABASE/CODE', '2019-01-01', '2020-01-31', ...)` |
+
+### Additional Examples
+
+Filter Point in Time records for specific columns:
+
+```r
+Quandl.pit.asofdate('DATABASE/CODE', '2020-01-01', qopts.columns=c('x', 'y', 'z'))
+Quandl.pit.fromto('DATABASE/CODE', '2020-01-01', '2020-02-01', qopts.columns=c('x', 'y', 'z'))
+Quandl.pit.between('DATABASE/CODE', '2020-01-01', '2020-01-31', qopts.columns=c('x', 'y', 'z'))
+```
+
+## Additional Resources
+
 More help can be found at [Quandl](https://www.quandl.com) in our [R](https://www.quandl.com/help/r) and [API](https://www.quandl.com/docs/api) pages.

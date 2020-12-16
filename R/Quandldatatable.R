@@ -21,6 +21,7 @@ quandl.datatable.perform <- function(path, paginate, params) {
   json <- do.call(quandl.api, c(path = path, params))
   datatable <- json$datatable
   data <- datatable$data
+
   # contains a list of names and corresponding types
   columns <- datatable$columns
   next_cursor_id <- json$meta$next_cursor_id

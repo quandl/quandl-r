@@ -21,7 +21,7 @@ To install the most recent package from CRAN type:
 
     install.packages("Quandl")
     library(Quandl)
-    
+
 Note that the version on CRAN might not reflect the most recent changes made to this package.
 
 # Authentication
@@ -47,7 +47,7 @@ To create a graph of Google's performance month-over-month:
 plot(stl(Quandl("WIKI/GOOG",type="ts",collapse="monthly")[,11],s.window="per"))
 ```
 
-Note: `collapse` is a Quandl API query parameter. Click [here](https://www.quandl.com/docs/api#retrieve-data-and-metadata) for a full list of query parameter options.  
+Note: `collapse` is a Quandl API query parameter. Click [here](https://www.quandl.com/docs/api#retrieve-data-and-metadata) for a full list of query parameter options.
 
 ## Return Types
 
@@ -142,7 +142,7 @@ Quandl.datatable('ZACKS/FC', ticker=c('AAPL', 'MSFT'), per_end_date.gt='2015-01-
 ```
 
 In this query we are asking for more pages of data, ticker values of either AAPL or MSFT and a per_end_date that is greater than or equal to 2015-01-01. We are also filtering the returned columns on ticker, per_end_date and tot_revnu rather than all available columns.
-    
+
 ## Search
 Searching Quandl from within the R console is now supported. The search function is:
 
@@ -162,7 +162,7 @@ Which outputs to console a list containing the following information for every i
 * Quandl code
 * Description
 * Frequency
-* Column names  
+* Column names
 
 
 ### Example
@@ -171,7 +171,7 @@ A search for Oil,  searching only the National Stock Exchange of India (NSE).
 ```r
 Quandl.search("Oil", database_code = "NSE", per_page = 3)
 ```
-	
+
 prints:
 
 ```r

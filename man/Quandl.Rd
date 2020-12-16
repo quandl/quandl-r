@@ -4,11 +4,16 @@
 \alias{Quandl}
 \title{Retrieves Data from the Quandl Dataset endpoint and formats}
 \usage{
-Quandl(code, type = c("raw", "ts", "zoo", "xts", "timeSeries"),
+Quandl(
+  code,
+  type = c("raw", "ts", "zoo", "xts", "timeSeries"),
   transform = c("", "diff", "rdiff", "normalize", "cumul", "rdiff_from"),
   collapse = c("", "daily", "weekly", "monthly", "quarterly", "annual"),
-  order = c("desc", "asc"), meta = FALSE, force_irregular = FALSE,
-  ...)
+  order = c("desc", "asc"),
+  meta = FALSE,
+  force_irregular = FALSE,
+  ...
+)
 }
 \arguments{
 \item{code}{Dataset code on Quandl specified as a string or an array of strings.}

@@ -24,4 +24,4 @@ Depends:
 License: MIT + file LICENSE
 URL: https://github.com/quandl/quandl-r
 BugReports: https://github.com/quandl/quandl-r/issues
-RoxygenNote: 6.1.1
+RoxygenNote: 7.1.1

@@ -13,8 +13,10 @@
 #' @export
 Quandl.datatable <- function(datatable_code, paginate = FALSE, ...) {
   path <- paste0("datatables/", datatable_code)
-  params <- list(...)
+  quandl.datatable.perform(path, paginate, list(...))
+}
 
+quandl.datatable.perform <- function(path, paginate, params) {
   # make request for first page of data
   json <- do.call(quandl.api, c(path = path, params))
   datatable <- json$datatable

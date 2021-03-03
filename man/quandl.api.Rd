@@ -4,8 +4,12 @@
 \alias{quandl.api}
 \title{Executes Quandl API calls}
 \usage{
-quandl.api(path, http = c("GET", "PUT", "POST", "DELETE"),
-  postdata = NULL, ...)
+quandl.api(
+  path,
+  http = c("GET", "PUT", "POST", "DELETE"),
+  postdata = NULL,
+  ...
+)
 }
 \arguments{
 \item{path}{Path to api resource.}

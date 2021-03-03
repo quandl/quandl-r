@@ -202,6 +202,19 @@ PointInTime works similarly to datatables but filtering the data based on dates.
 Quandl.pit.asofdate('DATABASE/CODE', '2020-01-01')
 ```
 
+## Date Format
+
+Dates passed to `Quandl.pit` calls must be a valid `ISO 8601` datetime. For example, the follow values are valid dates:
+
+- `2021-03-02`
+- `2021-03-02T13:45:00`
+- `2021-03-02T12:55:00-05:00`
+
+While the following are invalid:
+
+- `2021-03-02 13:45:00` (missing `T` between date and time)
+- `March 2nd, 2021` (not `ISO 8601` compliant)
+
 ### Available functions
 
 | Interval | Explanation | Required params | Example |

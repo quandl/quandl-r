@@ -9,7 +9,7 @@ Quandl.dataset.get(code, params)
 \arguments{
 \item{code}{Dataset code on Quandl specified as a string.}
 
-\item{params}{A list of parameters to be passed to the Quandl API. Please see \url{https://www.quandl.com/docs/api#retrieve-data-and-metadata} for a full list of parameters.}
+\item{params}{A list of parameters to be passed to the Quandl API. Please see \url{https://docs.quandl.com/docs/in-depth-usage#get-time-series-metadata} for a full list of parameters.}
 }
 \value{
 Returns a data.frame of the requested data
@@ -18,7 +18,7 @@ Returns a data.frame of the requested data
 Retrieves Data from the Quandl Dataset endpoint
 }
 \details{
-Set your \code{api_key} with \code{Quandl.api_key} function. For instructions on finding your api key go to \url{https://www.quandl.com/account/api}
+Set your \code{api_key} with \code{Quandl.api_key} function. For instructions on finding your api key go to \url{https://www.quandl.com/account/profile}
 }
 \examples{
 \dontrun{

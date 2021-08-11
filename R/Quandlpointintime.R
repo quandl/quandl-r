@@ -1,7 +1,7 @@
 #' Retrieves Point In Time Data from the Quandl PIT endpoint.
 #' From start to end will also show all rows that were visible at any point between two specified points in time, including start, but excluding end.
 #'
-#' @details Set your \code{api_key} with \code{Quandl.api_key} function. For instructions on finding your api key go to \url{https://www.quandl.com/account/api}
+#' @details Set your \code{api_key} with \code{Quandl.api_key} function. For instructions on finding your api key go to \url{https://www.quandl.com/account/profile}
 #'
 #' @param datatable_code Datatable code on Quandl specified as a string.
 #' @param start_date Lower date as a string.
@@ -22,7 +22,7 @@ Quandl.pit.fromto <- function(datatable_code, start_date, end_date, paginate = F
 #' Retrieves Point In Time Data from the Quandl PIT endpoint.
 #' Between start and end will show all rows that were visible at any point between two specified points in time. It works inclusively, a row visible exactly at start or exactly at end will be shown too.
 #'
-#' @details Set your \code{api_key} with \code{Quandl.api_key} function. For instructions on finding your api key go to \url{https://www.quandl.com/account/api}
+#' @details Set your \code{api_key} with \code{Quandl.api_key} function. For instructions on finding your api key go to \url{https://www.quandl.com/account/profile}
 #'
 #' @param datatable_code Datatable code on Quandl specified as a string.
 #' @param start_date Lower date as a string.
@@ -43,7 +43,7 @@ Quandl.pit.between <- function(datatable_code, start_date, end_date, paginate = 
 #' Retrieves Point In Time Data from the Quandl PIT endpoint.
 #' As of date is used to see the table as it was at a specific point in time in the past.
 #'
-#' @details Set your \code{api_key} with \code{Quandl.api_key} function. For instructions on finding your api key go to \url{https://www.quandl.com/account/api}
+#' @details Set your \code{api_key} with \code{Quandl.api_key} function. For instructions on finding your api key go to \url{https://www.quandl.com/account/profile}
 #'
 #' @param datatable_code Datatable code on Quandl specified as a string.
 #' @param start_date Lower date as a string.

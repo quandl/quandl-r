@@ -20,7 +20,7 @@ Returns a data.frame.
 Retrieves Data from the Quandl Datatable endpoint
 }
 \details{
-Set your \code{api_key} with \code{Quandl.api_key} function. For instructions on finding your api key go to \url{https://www.quandl.com/account/api}
+Set your \code{api_key} with \code{Quandl.api_key} function. For instructions on finding your api key go to \url{https://www.quandl.com/account/profile}
 }
 \examples{
 \dontrun{

@@ -1,7 +1,7 @@
 Package: Quandl
 Title: API Wrapper for Quandl.com
 Version: 2.11.0
-Date: 2019-06-07
+Date: 2021-08-11
 Authors@R: c(
     person("Dave Dotson", role="cre", email="dave@quandl.com"),
     person("Raymond McTaggart", role=c("aut")),
@@ -9,7 +9,7 @@ Authors@R: c(
     person("Clement Leung", role="aut"),
     person("Quandl Inc.", role="cph"))
 Maintainer: Dave Dotson <dave@quandl.com>
-Description: Functions for interacting directly with the Quandl API to offer data in a number of formats usable in R, downloading a zip with all data from a Quandl database, and the ability to search. This R package uses the Quandl API. For more information go to <https://www.quandl.com/docs/api>. For more help on the package itself go to <https://www.quandl.com/help/r>.
+Description: Functions for interacting directly with the Quandl API to offer data in a number of formats usable in R, downloading a zip with all data from a Quandl database, and the ability to search. This R package uses the Quandl API. For more information go to <https://docs.quandl.com>. For more help on the package itself go to <https://www.quandl.com/tools/r>.
 Imports:
     httr (>= 0.6.1),
     zoo,

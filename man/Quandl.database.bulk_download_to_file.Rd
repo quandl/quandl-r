@@ -11,7 +11,7 @@ Quandl.database.bulk_download_to_file(database_code, filename, ...)
 
 \item{filename}{Filename (including path) of file to download.}
 
-\item{...}{Additional named values that are interpreted as Quandl API parameters. Please see \url{https://www.quandl.com/docs/api#entire-database} for a full list of parameters.}
+\item{...}{Additional named values that are interpreted as Quandl API parameters. Please see \url{https://docs.quandl.com/docs/parameters-2} for a full list of parameters.}
 }
 \value{
 The filename of the downloaded file.
@@ -20,7 +20,7 @@ The filename of the downloaded file.
 Downloads a zip with all data from a Quandl database
 }
 \details{
-Set your \code{api_key} with \code{Quandl.api_key} function. For instructions on finding your api key go to \url{https://www.quandl.com/account/api}
+Set your \code{api_key} with \code{Quandl.api_key} function. For instructions on finding your api key go to \url{https://www.quandl.com/account/profile}
 }
 \examples{
 \dontrun{

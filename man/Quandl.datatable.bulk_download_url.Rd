@@ -9,7 +9,7 @@ Quandl.datatable.bulk_download_url(datatable_code, ...)
 \arguments{
 \item{datatable_code}{Datatable code on Quandl specified as a string.}
 
-\item{...}{Additional named values that are interpreted as Quandl API parameters. Please see \url{https://www.quandl.com/docs/api#entire-database} for a full list of parameters.}
+\item{...}{Additional named values that are interpreted as Quandl API parameters. Please see \url{https://docs.quandl.com/docs/parameters-1} for a full list of parameters.}
 }
 \value{
 Returns the download url.
@@ -18,7 +18,7 @@ Returns the download url.
 Generates and returns a bulk download url
 }
 \details{
-Set your \code{api_key} with \code{Quandl.api_key} function. For instructions on finding your api key go to \url{https://www.quandl.com/account/api}
+Set your \code{api_key} with \code{Quandl.api_key} function. For instructions on finding your api key go to \url{https://www.quandl.com/account/profile}
 }
 \examples{
 \dontrun{

@@ -22,9 +22,9 @@ Search results returned as a data.frame.
 Search the Quandl database
 }
 \details{
-Set your \code{api_key} with \code{Quandl.api_key} function. For instructions on finding your api key go to \url{https://www.quandl.com/account/api}
+Set your \code{api_key} with \code{Quandl.api_key} function. For instructions on finding your api key go to \url{https://www.quandl.com/account/profile}
 
-For instructions on finding your authentication token go to https://www.quandl.com/account/api
+For instructions on finding your authentication token go to https://www.quandl.com/account/profile
 }
 \examples{
 \dontrun{

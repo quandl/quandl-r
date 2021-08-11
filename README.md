@@ -1,7 +1,7 @@
 Quandl R Package [![Build Status](https://travis-ci.org/quandl/quandl-r.svg?branch=master)](https://travis-ci.org/quandl/quandl-r)
 =========
 
-This is Quandl's R package. The Quandl R package uses the [Quandl API](https://www.quandl.com/docs/api). The official Quandl R package manual can be found [here](https://cran.r-project.org/package=Quandl).
+This is Quandl's R package. The Quandl R package uses the [Quandl API](https://docs.quandl.com). The official Quandl R package manual can be found [here](https://cran.r-project.org/package=Quandl).
 
 License provided by MIT.
 
@@ -26,7 +26,7 @@ Note that the version on CRAN might not reflect the most recent changes made to 
 
 # Authentication
 
-To make full use of the package we recommend you set your [api key](https://www.quandl.com/docs/api#api-keys). To do this create or sign into your account and go to your [account api key page](https://www.quandl.com/account/api). Then input your API key (with quotes):
+To make full use of the package we recommend you set your [api key](https://docs.quandl.com/docs/getting-started#getting-an-api-key). To do this create or sign into your account and go to your [account api key page](https://www.quandl.com/account/profile). Then input your API key (with quotes):
 
 ```r
 Quandl.api_key("tEsTkEy123456789")
@@ -34,7 +34,7 @@ Quandl.api_key("tEsTkEy123456789")
 
 # Usage
 
-The Quandl package functions use the Quandl API. Optional Quandl API query parameters can be passed into each function. For more information on supported query parameters, please see the [Quandl API documentation page](https://www.quandl.com/docs/api). Once you find the data you would like to load into R on Quandl, copy the Quandl code from the description box and paste it into the function.
+The Quandl package functions use the Quandl API. Optional Quandl API query parameters can be passed into each function. For more information on supported query parameters, please see the [Quandl API documentation page](https://docs.quandl.com). Once you find the data you would like to load into R on Quandl, copy the Quandl code from the description box and paste it into the function.
 
 ```r
 data <- Quandl("NSE/OIL")
@@ -47,7 +47,7 @@ To create a graph of Google's performance month-over-month:
 plot(stl(Quandl("WIKI/GOOG",type="ts",collapse="monthly")[,11],s.window="per"))
 ```
 
-Note: `collapse` is a Quandl API query parameter. Click [here](https://www.quandl.com/docs/api#retrieve-data-and-metadata) for a full list of query parameter options.
+Note: `collapse` is a Quandl API query parameter. Click [here](https://docs.quandl.com/docs/in-depth-usage#get-time-series-metadata) for a full list of query parameter options.
 
 ## Return Types
 
@@ -119,7 +119,7 @@ Quandl.database.bulk_download_to_file("ZEA", "./ZEA.zip")
 
 Note you must set your [api key](#authentication) to download [premium databases](https://www.quandl.com/search?type=premium) to which you are subscribed.
 
-For a full list of optional query parameters for downloading an entire database, click [here](https://www.quandl.com/docs/api#entire-database).
+For a full list of optional query parameters for downloading an entire database, click [here](https://docs.quandl.com/docs/parameters-2).
 
 ## Datatables
 
@@ -235,4 +235,4 @@ Quandl.pit.between('DATABASE/CODE', '2020-01-01', '2020-01-31', qopts.columns=c(
 
 ## Additional Resources
 
-More help can be found at [Quandl](https://www.quandl.com) in our [R](https://www.quandl.com/help/r) and [API](https://www.quandl.com/docs/api) pages.
+More help can be found at [Quandl](https://www.quandl.com) in our [R](https://www.quandl.com/tools/r) and [API](https://docs.quandl.com) pages.

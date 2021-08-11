@@ -26,7 +26,7 @@ Retrieves Point In Time Data from the Quandl PIT endpoint.
 From start to end will also show all rows that were visible at any point between two specified points in time, including start, but excluding end.
 }
 \details{
-Set your \code{api_key} with \code{Quandl.api_key} function. For instructions on finding your api key go to \url{https://www.quandl.com/account/api}
+Set your \code{api_key} with \code{Quandl.api_key} function. For instructions on finding your api key go to \url{https://www.quandl.com/account/profile}
 }
 \examples{
 \dontrun{

@@ -24,7 +24,7 @@ Retrieves Point In Time Data from the Quandl PIT endpoint.
 As of date is used to see the table as it was at a specific point in time in the past.
 }
 \details{
-Set your \code{api_key} with \code{Quandl.api_key} function. For instructions on finding your api key go to \url{https://www.quandl.com/account/api}
+Set your \code{api_key} with \code{Quandl.api_key} function. For instructions on finding your api key go to \url{https://www.quandl.com/account/profile}
 }
 \examples{
 \dontrun{

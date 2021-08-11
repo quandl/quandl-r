@@ -1,11 +1,11 @@
 #' Executes Quandl API calls
 #'
-#' @details Set your \code{api_key} with \code{Quandl.api_key} function. For instructions on finding your api key go to \url{https://www.quandl.com/account/api}
+#' @details Set your \code{api_key} with \code{Quandl.api_key} function. For instructions on finding your api key go to \url{https://www.quandl.com/account/profile}
 #'
 #' @param path Path to api resource.
 #' @param http Type of http request sent.
 #' @param postdata A character or raw vector that is sent in a body.
-#' @param ... Named values that are interpretted as Quandl API parameters. Please see \url{https://www.quandl.com/docs/api}.
+#' @param ... Named values that are interpretted as Quandl API parameters. Please see \url{https://docs.quandl.com}.
 #' @return Quandl API response.
 #' @seealso \code{\link{Quandl.api_key}}
 #' @examples \dontrun{

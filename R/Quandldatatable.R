@@ -1,6 +1,6 @@
 #' Retrieves Data from the Quandl Datatable endpoint
 #'
-#' @details Set your \code{api_key} with \code{Quandl.api_key} function. For instructions on finding your api key go to \url{https://www.quandl.com/account/api}
+#' @details Set your \code{api_key} with \code{Quandl.api_key} function. For instructions on finding your api key go to \url{https://www.quandl.com/account/profile}
 #'
 #' @param datatable_code Datatable code on Quandl specified as a string.
 #' @param paginate When set to TRUE, fetches up to 1,000,000 rows of data
@@ -57,7 +57,7 @@ quandl.datatable.perform <- function(path, paginate, params) {
 
 #' Downloads a zip with all data requested from a Quandl database
 #'
-#' @details Set your \code{api_key} with \code{Quandl.api_key} function. For instructions on finding your api key go to \url{https://www.quandl.com/account/api}
+#' @details Set your \code{api_key} with \code{Quandl.api_key} function. For instructions on finding your api key go to \url{https://www.quandl.com/account/profile}
 #'
 #' @param datatable_code Datatable code on Quandl specified as a string.
 #' @param filename Filename (including path) of file to download.
@@ -78,10 +78,10 @@ Quandl.datatable.bulk_download_to_file <- function(datatable_code, filename, ...
 
 #' Generates and returns a bulk download url
 #'
-#' @details Set your \code{api_key} with \code{Quandl.api_key} function. For instructions on finding your api key go to \url{https://www.quandl.com/account/api}
+#' @details Set your \code{api_key} with \code{Quandl.api_key} function. For instructions on finding your api key go to \url{https://www.quandl.com/account/profile}
 #'
 #' @param datatable_code Datatable code on Quandl specified as a string.
-#' @param ... Additional named values that are interpreted as Quandl API parameters. Please see \url{https://www.quandl.com/docs/api#entire-database} for a full list of parameters.
+#' @param ... Additional named values that are interpreted as Quandl API parameters. Please see \url{https://docs.quandl.com/docs/parameters-1} for a full list of parameters.
 #' @return Returns the download url.
 #' @seealso \code{\link{Quandl.api_key}}
 #' @examples \dontrun{

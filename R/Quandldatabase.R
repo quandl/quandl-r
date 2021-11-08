@@ -1,10 +1,10 @@
 
 #' Returns the bulk download url
 #'
-#' @details Set your \code{api_key} with \code{Quandl.api_key} function. For instructions on finding your api key go to \url{https://www.quandl.com/account/api}
+#' @details Set your \code{api_key} with \code{Quandl.api_key} function. For instructions on finding your api key go to \url{https://www.quandl.com/account/profile}
 #'
 #' @param database_code Database code on Quandl specified as a string.
-#' @param ... Additional named values that are interpreted as Quandl API parameters. Please see \url{https://www.quandl.com/docs/api#entire-database} for a full list of parameters.
+#' @param ... Additional named values that are interpreted as Quandl API parameters. Please see \url{https://docs.quandl.com/docs/parameters-2} for a full list of parameters.
 #' @return Returns the download url.
 #' @seealso \code{\link{Quandl.api_key}}
 #' @examples \dontrun{
@@ -39,11 +39,11 @@ Quandl.database.bulk_download_url <- function(database_code, ...) {
 
 #' Downloads a zip with all data from a Quandl database
 #'
-#' @details Set your \code{api_key} with \code{Quandl.api_key} function. For instructions on finding your api key go to \url{https://www.quandl.com/account/api}
+#' @details Set your \code{api_key} with \code{Quandl.api_key} function. For instructions on finding your api key go to \url{https://www.quandl.com/account/profile}
 #'
 #' @param database_code Database code on Quandl specified as a string.
 #' @param filename Filename (including path) of file to download.
-#' @param ... Additional named values that are interpreted as Quandl API parameters. Please see \url{https://www.quandl.com/docs/api#entire-database} for a full list of parameters.
+#' @param ... Additional named values that are interpreted as Quandl API parameters. Please see \url{https://docs.quandl.com/docs/parameters-2} for a full list of parameters.
 #' @return The filename of the downloaded file.
 #' @seealso \code{\link{Quandl.api_key}}
 #' @examples \dontrun{

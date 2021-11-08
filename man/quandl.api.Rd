@@ -4,8 +4,12 @@
 \alias{quandl.api}
 \title{Executes Quandl API calls}
 \usage{
-quandl.api(path, http = c("GET", "PUT", "POST", "DELETE"),
-  postdata = NULL, ...)
+quandl.api(
+  path,
+  http = c("GET", "PUT", "POST", "DELETE"),
+  postdata = NULL,
+  ...
+)
 }
 \arguments{
 \item{path}{Path to api resource.}
@@ -14,7 +18,7 @@ quandl.api(path, http = c("GET", "PUT", "POST", "DELETE"),
 
 \item{postdata}{A character or raw vector that is sent in a body.}
 
-\item{...}{Named values that are interpretted as Quandl API parameters. Please see \url{https://www.quandl.com/docs/api}.}
+\item{...}{Named values that are interpretted as Quandl API parameters. Please see \url{https://docs.quandl.com}.}
 }
 \value{
 Quandl API response.
@@ -23,7 +27,7 @@ Quandl API response.
 Executes Quandl API calls
 }
 \details{
-Set your \code{api_key} with \code{Quandl.api_key} function. For instructions on finding your api key go to \url{https://www.quandl.com/account/api}
+Set your \code{api_key} with \code{Quandl.api_key} function. For instructions on finding your api key go to \url{https://www.quandl.com/account/profile}
 }
 \examples{
 \dontrun{

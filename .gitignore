@@ -2,6 +2,9 @@
 .Rhistory
 .Rapp.history
 
+# Test files
+tests/testthat/testthat-problems.rds
+
 
 # Example code in package build process
 *-Ex.R

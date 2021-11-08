@@ -4,11 +4,16 @@
 \alias{Quandl}
 \title{Retrieves Data from the Quandl Dataset endpoint and formats}
 \usage{
-Quandl(code, type = c("raw", "ts", "zoo", "xts", "timeSeries"),
+Quandl(
+  code,
+  type = c("raw", "ts", "zoo", "xts", "timeSeries"),
   transform = c("", "diff", "rdiff", "normalize", "cumul", "rdiff_from"),
   collapse = c("", "daily", "weekly", "monthly", "quarterly", "annual"),
-  order = c("desc", "asc"), meta = FALSE, force_irregular = FALSE,
-  ...)
+  order = c("desc", "asc"),
+  meta = FALSE,
+  force_irregular = FALSE,
+  ...
+)
 }
 \arguments{
 \item{code}{Dataset code on Quandl specified as a string or an array of strings.}
@@ -25,7 +30,7 @@ Quandl(code, type = c("raw", "ts", "zoo", "xts", "timeSeries"),
 
 \item{force_irregular}{When set to TRUE, forces the index of the Data to be of date format yyyy-mm-dd}
 
-\item{...}{Additional named values that are interpreted as Quandl API parameters. Please see \url{https://www.quandl.com/docs/api#retrieve-data-and-metadata} for a full list of parameters.}
+\item{...}{Additional named values that are interpreted as Quandl API parameters. Please see \url{https://docs.quandl.com/docs/in-depth-usage#get-time-series-metadata} for a full list of parameters.}
 }
 \value{
 Depending on the type the class is either data.frame, time series, xts, zoo or timeSeries.
@@ -34,7 +39,7 @@ Depending on the type the class is either data.frame, time series, xts, zoo or t
 Retrieves Data from the Quandl Dataset endpoint and formats
 }
 \details{
-Set your \code{api_key} with \code{Quandl.api_key} function. For instructions on finding your api key go to \url{https://www.quandl.com/account/api}.
+Set your \code{api_key} with \code{Quandl.api_key} function. For instructions on finding your api key go to \url{https://www.quandl.com/account/profile}.
 }
 \examples{
 \dontrun{
@@ -43,7 +48,7 @@ plot(quandldata[,1])
 }
 }
 \references{
-This R package uses the Quandl API. For more information go to \url{https://www.quandl.com/docs/api}. For more help on the package itself go to \url{https://www.quandl.com/help/r}.
+This R package uses the Quandl API. For more information go to \url{https://docs.quandl.com}. For more help on the package itself go to \url{https://www.quandl.com/tools/r}.
 }
 \seealso{
 \code{\link{Quandl.api_key}}

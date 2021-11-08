@@ -26,7 +26,7 @@ with_mock(
       expect_equal(http, "GET")
       expect_equal(url, "https://www.quandl.com/api/v3/datasets/NSE/OIL")
       expect_null(body)
-      expect_equal(query, list(transform = "rdiff", collapse = "annual", 
+      expect_equal(query, list(transform = "rdiff", collapse = "annual",
                                order = "desc", start_date = "2015-01-01"))
     })
     mock_response()
@@ -77,13 +77,38 @@ with_mock(
     dataset <- Quandl("NSE/OIL", type = "timeSeries")
     expect_is(dataset, "timeSeries")
   }),
+  test_that("display warning message if type ts is not supported by frequency", {
+    expect_warning(Quandl("NSE/OIL", type = "ts"),
+      "Type 'ts' does not support frequency 365. Returning zoo.", fixed = TRUE)
+  })
+)
+
+context("Quandl() annual collapse response data suppressed warning")
+with_mock(
+  `httr::VERB` = function(http, url, config, body, query) {
+    mock_response(content = mock_annual_data())
+  },
+  `httr::content` = function(response, as = "text") {
+    response$content
+  },
+  `warning` = function(warning, ...) {
+    return(TRUE)
+  },
   test_that("zoo is returned instead of ts if ts is not supported for frequency", {
     dataset <- Quandl("NSE/OIL", type = "ts")
     expect_is(dataset, "zoo")
   }),
-  test_that("display warning message if type ts is not supported by frequency", {
-    expect_warning(Quandl("NSE/OIL", type = "ts"),
-      "Type 'ts' does not support frequency 365. Returning zoo.", fixed = TRUE)
+  test_that("Data is the same across formats", {
+    annaulraw <- Quandl("NSE/OIL", type="raw", collapse = "annual")
+    annaults <- Quandl("NSE/OIL", type="ts", collapse = "annual")
+    annaulzoo <- Quandl("NSE/OIL", type="zoo", collapse = "annual")
+    annaulxts <- Quandl("NSE/OIL", type="xts", collapse = "annual")
+    annaultimeSeries <- Quandl("NSE/OIL", type="timeSeries")
+    expect_equal(max(abs(annaults - coredata(annaulzoo))), 0)
+    expect_equal(max(abs(coredata(annaulzoo) - coredata(annaulxts))) , 0)
+    # timeSeries keeps data in same order as passed in, not chronological
+    # Have to compare against raw as zoo and xts are sorted chronologically
+    expect_equal(max(abs(annaulraw[,-1] - getDataPart(annaultimeSeries))), 0)
   })
 )
 
@@ -99,20 +124,8 @@ with_mock(
     dataset <- Quandl("NSE/OIL", type = "ts", collapse = "annual")
     expect_is(dataset, "ts")
   }),
-  test_that("Data is the same across formats", {
-    annaulraw <- Quandl("NSE/OIL", type="raw", collapse = "annual")
-    annaults <- Quandl("NSE/OIL", type="ts", collapse = "annual")
-    annaulzoo <- Quandl("NSE/OIL", type="zoo", collapse = "annual")
-    annaulxts <- Quandl("NSE/OIL", type="xts", collapse = "annual")
-    annaultimeSeries <- Quandl("NSE/OIL", type="timeSeries")
-    expect_equal(max(abs(annaults - coredata(annaulzoo))), 0)
-    expect_equal(max(abs(coredata(annaulzoo) - coredata(annaulxts))) , 0)
-    # timeSeries keeps data in same order as passed in, not chronological
-    # Have to compare against raw as zoo and xts are sorted chronologically
-    expect_equal(max(abs(annaulraw[,-1] - getDataPart(annaultimeSeries))), 0)
-  }),
   test_that("When requesting xts annual warn user xts has non-standard meaning for frequency", {
-    expect_warning(Quandl("NSE/OIL", type="xts", collapse = "annual"), 
+    expect_warning(Quandl("NSE/OIL", type="xts", collapse = "annual"),
       "xts has a non-standard meaning for 'frequency'.", fixed = TRUE)
   })
 )
@@ -218,6 +231,9 @@ test_that("Multiple dataset codes with dataset code column indexes are requested
     `httr::content` = function(response, as = "text") {
       response$content
     },
+    `warning` = function(warning, ...) {
+      return(TRUE)
+    },
     Quandl(c("NSE/OIL.1", "AAPL/WIKI.2"), transform = "rdiff", column_index = 3)
   )
   expect_equal(i, 2)
@@ -249,6 +265,9 @@ test_that("Multiple dataset codes returns desired requested type", {
     },
     `httr::content` = function(response, as = "text") {
       response$content
+    },
+    `warning` = function(warning, ...) {
+      return(TRUE)
     },
     {
       types <- c('raw', 'ts', 'zoo', 'xts', 'timeSeries')

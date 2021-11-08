@@ -45,7 +45,7 @@ with_mock(
                     paginate=FALSE)
 )
 
-context("Quandl.datatable() response")
+context("Quandl.datatable() response with cursor")
 with_mock(
   `httr::VERB` = function(http, url, config, body, query) {
     mock_response(content = mock_datatable_data("\"cursor_foo_bar\""))
@@ -62,6 +62,42 @@ with_mock(
                          "in your Quandl.datatable() call. For more information see our documentation:",
                          "https://github.com/quandl/quandl-r/blob/master/README.md#datatables"), fixed = TRUE)
   }),
+  test_that("warning message is displayed when max number of rows fetched is reached", {
+    expect_warning(Quandl.datatable('ZACKS/FE', paginate=TRUE),
+      paste("This call returns a larger amount of data than Quandl.datatable() allows.",
+            "Please view our documentation on developer methods to request more data.",
+            "https://github.com/quandl/quandl-r/blob/master/README.md#datatables"), fixed = TRUE)
+  })
+)
+
+context("Quandl.datatable() response with cursor and suppressed warning")
+with_mock(
+  `httr::VERB` = function(http, url, config, body, query) {
+    mock_response(content = mock_datatable_data("\"cursor_foo_bar\""))
+  },
+  `httr::content` = function(response, as="text") {
+    response$content
+  },
+  `Quandl:::quandl.datatable.max_rows` = function() {
+    return(100)
+  },
+  `warning` = function(warning, ...) {
+    return(TRUE)
+  },
+  test_that("response data contains max rows if paginate=TRUE is set", {
+    data <- Quandl.datatable('ZACKS/FC', paginate=TRUE)
+    expect_equal(nrow(data), 100)
+  })
+)
+
+context("Quandl.datatable() response")
+with_mock(
+  `httr::VERB` = function(http, url, config, body, query) {
+    mock_response(content = mock_datatable_data())
+  },
+  `httr::content` = function(response, as="text") {
+    response$content
+  },
   test_that("response data is data frame", {
     expect_is(Quandl.datatable('ZACKS/FC'), "data.frame")
   }),
@@ -79,16 +115,6 @@ with_mock(
   test_that("response data is one page if paginate=TRUE is not set", {
     data <- Quandl.datatable('ZACKS/FC')
     expect_equal(nrow(data), 25)
-  }),
-  test_that("response data contains max rows if paginate=TRUE is set", {
-    data <- Quandl.datatable('ZACKS/FC', paginate=TRUE)
-    expect_equal(nrow(data), 100)
-  }),
-  test_that("warning message is displayed when max number of rows fetched is reached", {
-    expect_warning(Quandl.datatable('ZACKS/FE', paginate=TRUE),
-      paste("This call returns a larger amount of data than Quandl.datatable() allows.",
-            "Please view our documentation on developer methods to request more data.",
-            "https://github.com/quandl/quandl-r/blob/master/README.md#datatables"), fixed = TRUE)
   })
 )
 

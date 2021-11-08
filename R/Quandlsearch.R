@@ -1,8 +1,8 @@
 #' Search the Quandl database
 #'
-#' @details Set your \code{api_key} with \code{Quandl.api_key} function. For instructions on finding your api key go to \url{https://www.quandl.com/account/api}
+#' @details Set your \code{api_key} with \code{Quandl.api_key} function. For instructions on finding your api key go to \url{https://www.quandl.com/account/profile}
 #'
-#' For instructions on finding your authentication token go to https://www.quandl.com/account/api
+#' For instructions on finding your authentication token go to https://www.quandl.com/account/profile
 #' @param query Search terms
 #' @param silent Prints the results when FALSE.
 #' @param per_page Number of results returned per page.

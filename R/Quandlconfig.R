@@ -12,6 +12,20 @@ Quandl.api_key <- function(api_key) {
   invisible(getOption("Quandl.api_key"))
 }
 
+#' Query or set Base URL for White-labeled sites
+#' @param base_url Optionally passed parameter to set Quandl \code{base_url}.
+#' @return Returns invisibly the currently set \code{base_url}.
+#' @examples \dontrun{
+#' Quandl.base_url('http://localhost')
+#' }
+#' @export
+Quandl.base_url <- function(base_url) {
+  if (!missing(base_url)) {
+    options(Quandl.base_url = paste(gsub('\\/$', '', base_url), "/api/v3", sep = ""))
+  }
+  invisible(getOption("Quandl.base_url", "https://www.quandl.com/api/v3"))
+}
+
 #' Query or set Quandl API token
 #'
 #' Deprecated. Alias of \code{\link{Quandl.api_key}}
@@ -33,11 +47,4 @@ Quandl.api_version <- function(api_version) {
     options(Quandl.api_version = api_version)
   }
   invisible(getOption("Quandl.api_version"))
-}
-
-Quandl.base_url <- function(base_url) {
-  if (!missing(base_url)) {
-    options(Quandl.base_url = base_url)
-  }
-  invisible(getOption("Quandl.base_url", "https://www.quandl.com/api/v3"))
 }

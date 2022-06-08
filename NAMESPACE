@@ -3,6 +3,7 @@
 export(Quandl)
 export(Quandl.api_key)
 export(Quandl.auth)
+export(Quandl.base_url)
 export(Quandl.database.bulk_download_to_file)
 export(Quandl.database.bulk_download_url)
 export(Quandl.dataset.get)

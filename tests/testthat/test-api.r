@@ -33,7 +33,6 @@ test_that('base url is set', {
   Quandl.api_key('test_key')
   Quandl.base_url('https://test.this')
   path <- 'datasets'
-  str(path)
   results <- quandl.api.build_request(path, start_date = '2015-01-01', end_date = as.Date('2015-02-01'))
   expected_url <- "https://test.this/api/v3/datasets"
   expect_equal(results[1], list(request_url = expected_url))
